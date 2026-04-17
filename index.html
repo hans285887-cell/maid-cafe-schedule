@@ -69,6 +69,7 @@
         .menu-sub { font-size: 11px; color: #888; font-weight: normal; margin-top: 2px; }
         .menu-dots { flex-grow: 1; border-bottom: 1px dotted #ccc; margin: 0 10px; position: relative; top: -5px; }
         .menu-price { font-weight: bold; color: #d63031; font-size: 15px; }
+        .menu-note { background: #fff9db; padding: 10px; border-radius: 8px; font-size: 13px; color: #d63031; font-weight: bold; border: 1px dashed #fdcb6e; margin-bottom: 15px; text-align: center; }
         .supply-time { font-size: 13px; color: #d63031; font-weight: bold; text-align: center; margin-bottom: 15px; background: #ffeef2; padding: 4px; border-radius: 4px; }
         
         .maid-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-top: 15px; }
@@ -121,10 +122,10 @@
         body.admin-mode .shift-tag:hover, body.admin-mode .event-label:hover { cursor: pointer; filter: brightness(0.9); text-decoration: line-through; }
         #sync-status { text-align: center; font-size: 12px; color: #00b894; margin-bottom: 10px; font-weight: bold; display: none; }
 
-        #today-angels-banner { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); border-radius: 10px; padding: 15px; margin-bottom: 20px; color: #2d3436; box-shadow: 0 4px 15px rgba(255, 154, 158, 0.3); display: none; }
-        #today-angels-banner h3 { margin: 0 0 10px 0; color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); font-size: 16px; display: flex; align-items: center; gap: 5px; }
-        #today-angels-list { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
-        #today-angels-list::-webkit-scrollbar { display: none; }
+        .today-angels-banner { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); border-radius: 10px; padding: 15px; margin-bottom: 20px; color: #2d3436; box-shadow: 0 4px 15px rgba(255, 154, 158, 0.3); display: none; }
+        .today-angels-banner h3 { margin: 0 0 10px 0; color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); font-size: 16px; display: flex; align-items: center; gap: 5px; }
+        .today-angels-list { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
+        .today-angels-list::-webkit-scrollbar { display: none; }
         .today-angel-item { display: flex; flex-direction: column; align-items: center; min-width: 70px; }
         .today-angel-img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .today-angel-name { font-size: 13px; font-weight: bold; margin-top: 5px; }
@@ -173,6 +174,10 @@
                 </div>
                 <div class="map-container">
                     <iframe width="100%" height="100%" frameborder="0" style="border:0" src="https://maps.google.com/maps?q=106台北市大安區新生南路三段96-5號&t=&z=15&ie=UTF8&iwloc=&output=embed" allowfullscreen></iframe>
+                </div>
+                <div class="today-angels-banner" style="margin-top: 15px;">
+                    <h3>✨ 本日降臨天使</h3>
+                    <div class="today-angels-list"></div>
                 </div>
             </div>
             
@@ -319,9 +324,9 @@
     </div>
 
     <div id="tab-schedule" class="tab-content">
-        <div id="today-angels-banner">
+        <div class="today-angels-banner">
             <h3>✨ 本日降臨天使</h3>
-            <div id="today-angels-list"></div>
+            <div class="today-angels-list"></div>
         </div>
 
         <div class="calendar-nav">
@@ -484,12 +489,12 @@
         const day = today.getDate();
         const monthKey = `${year}-${month}`;
         
-        const banner = document.getElementById('today-angels-banner');
-        const list = document.getElementById('today-angels-list');
-        list.innerHTML = '';
+        const banners = document.querySelectorAll('.today-angels-banner');
+        const lists = document.querySelectorAll('.today-angels-list');
+        
+        let htmlContent = '';
 
         if (scheduleData[monthKey] && scheduleData[monthKey][day] && scheduleData[monthKey][day].shifts && scheduleData[monthKey][day].shifts.length > 0) {
-            banner.style.display = 'block'; 
             scheduleData[monthKey][day].shifts.forEach(s => {
                 const mData = maidData[s.name] || {};
                 let imgUrl = mData.photo;
@@ -497,7 +502,7 @@
                     const encodedColor = (mData.color || '#ccc').replace('#', '%23');
                     imgUrl = `data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='${encodedColor}' opacity='0.2'/%3E%3Ctext x='50%25' y='50%25' fill='${encodedColor}' font-size='20' font-family='sans-serif' font-weight='bold' dominant-baseline='middle' text-anchor='middle'%3E${s.name}%3C/text%3E%3C/svg%3E`;
                 }
-                list.innerHTML += `
+                htmlContent += `
                     <div class="today-angel-item">
                         <img src="${imgUrl}" class="today-angel-img" style="border-color: ${mData.color || '#fff'};">
                         <span class="today-angel-name">${s.name}</span>
@@ -506,9 +511,11 @@
                 `;
             });
         } else {
-            banner.style.display = 'block';
-            list.innerHTML = '<div style="font-size: 14px; color: #fff; padding: 10px; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.1);">今日天界休息，或天使們尚未排班喔！</div>';
+            htmlContent = '<div style="font-size: 14px; color: #fff; padding: 10px; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.1);">今日天界休息，或天使們尚未排班喔！</div>';
         }
+
+        banners.forEach(b => b.style.display = 'block');
+        lists.forEach(l => l.innerHTML = htmlContent);
     }
 
     window.renderCalendar = function() {
