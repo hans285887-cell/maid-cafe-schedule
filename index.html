@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>天使ハート 女僕咖啡廳 - 天界入口網</title>
+    <title>天使ハート 女僕咖啡廳 - 天界入口</title>
+    <link rel="icon" href="logo.jpg" type="image/jpeg">
     <style>
         :root {
             --primary-color: #f36896; 
@@ -16,7 +17,6 @@
         body { font-family: "Microsoft JhengHei", sans-serif; background-color: var(--bg-color); padding: 0; color: var(--text-color); margin: 0; -webkit-tap-highlight-color: transparent; display: flex; flex-direction: column; min-height: 100vh; }
         
         .header { background-color: #2d3436; color: white; padding: 20px 10px 0 10px; text-align: center; position: relative; }
-        .footer-logo { max-height: 80px; margin-bottom: 15px; display: block; margin-left: auto; margin-right: auto; }
         .header h1 { margin: 0 0 10px 0; font-size: 20px; color: var(--primary-color); }
         .header p { margin: 0 0 15px 0; font-size: 12px; color: #ccc; }
         
@@ -26,7 +26,6 @@
         @media (max-width: 768px) {
             .header { padding-top: 60px; } 
             .header h1 { font-size: 18px; }
-            .footer-logo { max-height: 60px; }
             .admin-login-btn { top: 10px; right: 10px; padding: 5px 10px; font-size: 11px; }
             .nav-tabs { display: grid !important; grid-template-columns: repeat(2, 1fr); gap: 4px; }
             .tab-btn { padding: 10px 0 !important; font-size: 13px !important; max-width: none !important; border-radius: 6px !important; }
@@ -81,7 +80,7 @@
         .maid-photo-container { position: relative; height: 160px; overflow: hidden; background-color: #f1f1f1; }
         @media (min-width: 768px) { .maid-photo-container { height: 220px; } }
         .maid-img { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.3s; }
-        .maid-photo-fallback { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; align-items: center; justify-content: center; font-size: 1.5em; font-weight: bold; color: #777; font-family: 'Montserrat', sans-serif; text-transform: uppercase; background-color: #eaeaea; }
+        .maid-photo-fallback { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; align-items: center; justify-content: center; font-size: 1.5em; font-weight: bold; color: #777; font-family: sans-serif; background-color: #eaeaea; }
         .maid-info { padding: 10px; }
         .maid-name { font-size: 15px; font-weight: bold; margin: 0; }
         .maid-ig { color: #636e72; font-size: 12px; text-decoration: none; margin-bottom: 10px; display: block; }
@@ -153,9 +152,7 @@
 
 <div class="header">
     <button class="admin-login-btn" id="login-btn" onclick="toggleAdmin()">🔒 店長登入</button>
-    
-    <img src="logo.png" alt="天使心 Logo" style="max-height: 80px; margin-bottom: 10px; display: block; margin-left: auto; margin-right: auto;">
-    
+    <img src="logo.jpg" alt="天使心 Logo" style="max-height: 80px; margin-bottom: 10px; display: block; margin-left: auto; margin-right: auto; border-radius: 50%;">
     <h1 style="margin-top: 0;">天使ハート 女僕咖啡廳</h1>
     <p>Angel Heart Maid Cafe - 天界入口</p>
     <div class="nav-tabs">
@@ -213,7 +210,7 @@
                     
                     <h4 style="margin-top: 15px;">🚫 隱私與防騷擾（踩線即面臨永久出禁）</h4>
                     <ul>
-                        <li><strong>禁止私下騷擾：</strong> 嚴禁私約、過度傳訊、電話騷擾 or 探討女僕的個人隱私。</li>
+                        <li><strong>禁止私下騷擾：</strong> 嚴禁私約、過度傳訊、電話騷擾或探討女僕的個人隱私。</li>
                         <li><strong>禁止跟蹤與堵人：</strong> 嚴禁在女僕下班後跟蹤、在樓下蹲點堵人，或前往女僕的其他工作場所打擾。</li>
                         <li><strong>禁止情緒勒索與造謠：</strong> 勿對女僕進行情緒勒索；店內從未設立「天使長/女僕長」職位，請勿造謠或輕信謠言。</li>
                     </ul>
@@ -360,7 +357,7 @@
                 <h3 id="edit-title">👥 1. 建立/編輯女僕</h3>
                 <div class="form-group"><label>名稱</label><input type="text" id="new-name" placeholder="安晨"></div>
                 <div class="form-group"><label>IG</label><input type="text" id="new-ig" placeholder="@ig"></div>
-                <div class="form-group"><label>照片</label><input type="text" id="new-photo" placeholder="網址 (可留空)"></div>
+                <div class="form-group"><label>照片</label><input type="text" id="new-photo" placeholder="網址或檔名 (如: anchen.jpg)"></div>
                 <div class="form-group"><label>色</label><input type="color" id="new-color" value="#f36896"></div>
                 <button class="btn" id="btn-save-member" style="background: #2d3436;" onclick="addOrUpdateMember()">💾 儲存 (同步雲端)</button>
             </div>
@@ -558,7 +555,8 @@
                 }
                 htmlContent += `
                     <div class="today-angel-item">
-                        <img src="${imgUrl}" class="today-angel-img" style="border-color: ${mData.color || '#fff'};">
+                        <img src="${imgUrl}" class="today-angel-img" style="border-color: ${mData.color || '#fff'};" onerror="window.handlePhotoError(this, '${s.name}')">
+                        <div class="maid-photo-fallback" style="border-radius: 50%; width: 60px; height: 60px; font-size: 14px;">${s.name}</div>
                         <span class="today-angel-name">${s.name}</span>
                         <span class="today-angel-time">${s.time}</span>
                     </div>
@@ -572,9 +570,10 @@
         lists.forEach(l => l.innerHTML = htmlContent);
     }
 
-    window.handlePhotoError = function(img) {
+    window.handlePhotoError = function(img, name) {
         img.style.display = 'none';
         img.nextElementSibling.style.display = 'flex';
+        if(name) { img.nextElementSibling.innerText = name; }
     }
 
     window.renderCalendar = function() {
