@@ -13,9 +13,10 @@
             --border-color: #f8a5c2;
             --today-bg: #fff9db; 
         }
-        body { font-family: "Microsoft JhengHei", sans-serif; background-color: var(--bg-color); padding: 0; color: var(--text-color); margin: 0; -webkit-tap-highlight-color: transparent; }
+        body { font-family: "Microsoft JhengHei", sans-serif; background-color: var(--bg-color); padding: 0; color: var(--text-color); margin: 0; -webkit-tap-highlight-color: transparent; display: flex; flex-direction: column; min-height: 100vh; }
         
         .header { background-color: #2d3436; color: white; padding: 20px 10px 0 10px; text-align: center; position: relative; }
+        .footer-logo { max-height: 80px; margin-bottom: 15px; display: block; margin-left: auto; margin-right: auto; }
         .header h1 { margin: 0 0 10px 0; font-size: 20px; color: var(--primary-color); }
         .header p { margin: 0 0 15px 0; font-size: 12px; color: #ccc; }
         
@@ -25,6 +26,7 @@
         @media (max-width: 768px) {
             .header { padding-top: 60px; } 
             .header h1 { font-size: 18px; }
+            .footer-logo { max-height: 60px; }
             .admin-login-btn { top: 10px; right: 10px; padding: 5px 10px; font-size: 11px; }
             .nav-tabs { display: grid !important; grid-template-columns: repeat(2, 1fr); gap: 4px; }
             .tab-btn { padding: 10px 0 !important; font-size: 13px !important; max-width: none !important; border-radius: 6px !important; }
@@ -34,7 +36,7 @@
         .tab-btn { background-color: #b2bec3; color: #2d3436; border: none; padding: 10px 20px; font-size: 14px; font-weight: bold; cursor: pointer; border-radius: 8px 8px 0 0; transition: 0.3s; flex-grow: 1; max-width: 150px; }
         .tab-btn.active { background-color: var(--primary-color); color: white; }
 
-        .container { max-width: 1200px; margin: 10px auto; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .container { max-width: 1200px; margin: 10px auto; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); flex-grow: 1; width: calc(100% - 20px); box-sizing: border-box; }
         .tab-content { display: none; animation: fadeIn 0.4s ease; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
@@ -51,7 +53,8 @@
         .info-list { list-style: none; padding: 0; line-height: 1.6; font-size: 14px; }
         .info-list li { margin-bottom: 8px; border-bottom: 1px dashed #f8a5c2; padding-bottom: 4px; }
         .info-list span { font-weight: bold; color: var(--primary-dark); width: 70px; display: inline-block; }
-        .link-btn { display: block; text-align: center; background: var(--primary-color); color: white; text-decoration: none; padding: 10px; border-radius: 5px; margin-top: 10px; font-weight: bold; }
+        .link-btn { display: block; text-align: center; background: var(--primary-color); color: white; text-decoration: none; padding: 10px; border-radius: 5px; margin-top: 10px; font-weight: bold; transition: 0.3s; }
+        .link-btn:hover { filter: brightness(1.1); }
         .map-container { margin-top: 10px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); height: 200px; }
 
         .rules-container { background: #fff4f4; border-left: 4px solid #e17055; padding: 15px; border-radius: 0 8px 8px 0; margin-top: 10px; font-size: 13.5px; line-height: 1.7; color: #2d3436; }
@@ -75,8 +78,10 @@
         .maid-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-top: 15px; }
         @media (min-width: 768px) { .maid-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; } }
         .maid-card { background: white; border: 1px solid #eee; border-radius: 10px; overflow: hidden; text-align: center; }
-        .maid-img { width: 100%; height: 160px; object-fit: cover; }
-        @media (min-width: 768px) { .maid-img { height: 220px; } }
+        .maid-photo-container { position: relative; height: 160px; overflow: hidden; background-color: #f1f1f1; }
+        @media (min-width: 768px) { .maid-photo-container { height: 220px; } }
+        .maid-img { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.3s; }
+        .maid-photo-fallback { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; align-items: center; justify-content: center; font-size: 1.5em; font-weight: bold; color: #777; font-family: 'Montserrat', sans-serif; text-transform: uppercase; background-color: #eaeaea; }
         .maid-info { padding: 10px; }
         .maid-name { font-size: 15px; font-weight: bold; margin: 0; }
         .maid-ig { color: #636e72; font-size: 12px; text-decoration: none; margin-bottom: 10px; display: block; }
@@ -122,7 +127,7 @@
         body.admin-mode .shift-tag:hover, body.admin-mode .event-label:hover { cursor: pointer; filter: brightness(0.9); text-decoration: line-through; }
         #sync-status { text-align: center; font-size: 12px; color: #00b894; margin-bottom: 10px; font-weight: bold; display: none; }
 
-        .today-angels-banner { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); border-radius: 10px; padding: 15px; margin-bottom: 20px; color: #2d3436; box-shadow: 0 4px 15px rgba(255, 154, 158, 0.3); display: none; }
+        .today-angels-banner { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); border-radius: 10px; padding: 15px; color: #2d3436; box-shadow: 0 4px 15px rgba(255, 154, 158, 0.3); display: none; }
         .today-angels-banner h3 { margin: 0 0 10px 0; color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); font-size: 16px; display: flex; align-items: center; gap: 5px; }
         .today-angels-list { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
         .today-angels-list::-webkit-scrollbar { display: none; }
@@ -130,6 +135,18 @@
         .today-angel-img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .today-angel-name { font-size: 13px; font-weight: bold; margin-top: 5px; }
         .today-angel-time { font-size: 11px; color: #d84373; background: rgba(255,255,255,0.9); padding: 2px 6px; border-radius: 10px; margin-top: 2px; font-weight: bold; }
+
+        .footer { background-color: #2d3436; color: white; padding: 40px 20px 20px; margin-top: 40px; }
+        .footer-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
+        .footer-column h4 { color: var(--primary-color); font-size: 16px; margin-top: 0; margin-bottom: 15px; border-bottom: 1px solid #555; padding-bottom: 8px; }
+        .footer-column ul { list-style: none; padding: 0; margin: 0; }
+        .footer-column li { margin-bottom: 10px; }
+        .footer-column a { color: #ccc; text-decoration: none; font-size: 13px; transition: 0.3s; }
+        .footer-column a:hover { color: white; }
+        .footer-bottom { text-align: center; padding-top: 20px; margin-top: 30px; border-top: 1px solid #555; font-size: 12px; color: #888; line-height: 1.8; }
+        
+        .scroll-to-top { position: fixed; bottom: 20px; right: 20px; background-color: var(--primary-color); color: white; width: 45px; height: 45px; border-radius: 50%; display: none; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1000; font-size: 20px; font-weight: bold; transition: 0.3s; }
+        .scroll-to-top:hover { transform: translateY(-3px); background-color: var(--primary-dark); }
     </style>
 </head>
 <body>
@@ -168,7 +185,7 @@
                     <li><span>官方 IG</span> <a href="https://instagram.com/angelheartmaid_official" target="_blank" style="color:var(--primary-color);">@angelheartmaid_official</a></li>
                     <li><span>付款方式</span> 現金、LINE Pay</li>
                 </ul>
-                <div style="display:flex; gap:10px; margin-top:10px;">
+                <div style="display:flex; gap:10px; margin-top:10px; margin-bottom:15px;">
                     <a href="https://shop.ichefpos.com/store/Hkll__kj/ordering" target="_blank" class="link-btn" style="flex:1;">✨ 天使線上拍</a>
                     <a href="https://reserve.oddle.me/zh_TW/angelheart/ticket/5572" target="_blank" class="link-btn" style="background:#2d3436; flex:1;">📖 預約系統</a>
                 </div>
@@ -193,7 +210,7 @@
                     
                     <h4 style="margin-top: 15px;">🚫 隱私與防騷擾（踩線即面臨永久出禁）</h4>
                     <ul>
-                        <li><strong>禁止私下騷擾：</strong> 嚴禁私約、過度傳訊、電話騷擾或探討女僕的個人隱私。</li>
+                        <li><strong>禁止私下騷擾：</strong> 嚴禁私約、過度傳訊、電話騷擾 or 探討女僕的個人隱私。</li>
                         <li><strong>禁止跟蹤與堵人：</strong> 嚴禁在女僕下班後跟蹤、在樓下蹲點堵人，或前往女僕的其他工作場所打擾。</li>
                         <li><strong>禁止情緒勒索與造謠：</strong> 勿對女僕進行情緒勒索；店內從未設立「天使長/女僕長」職位，請勿造謠或輕信謠言。</li>
                     </ul>
@@ -324,7 +341,7 @@
     </div>
 
     <div id="tab-schedule" class="tab-content">
-        <div class="today-angels-banner">
+        <div class="today-angels-banner" style="margin-bottom: 20px;">
             <h3>✨ 本日降臨天使</h3>
             <div class="today-angels-list"></div>
         </div>
@@ -373,6 +390,40 @@
         <div class="calendar-grid" id="calendar"></div>
     </div>
 </div>
+
+<div class="footer">
+    <div class="footer-container">
+        <div class="footer-column">
+            <h4>關於天界</h4>
+            <ul>
+                <li><a href="#" onclick="window.switchTab('tab-info', document.querySelectorAll('.tab-btn')[0]); window.scrollTo(0,0); return false;">營業資訊與規範</a></li>
+                <li><a href="#" onclick="window.switchTab('tab-menu', document.querySelectorAll('.tab-btn')[1]); window.scrollTo(0,0); return false;">天界聖宴菜單</a></li>
+                <li><a href="#" onclick="window.switchTab('tab-members', document.querySelectorAll('.tab-btn')[2]); window.scrollTo(0,0); return false;">天使成員圖鑑</a></li>
+            </ul>
+        </div>
+        <div class="footer-column">
+            <h4>相關連結</h4>
+            <ul>
+                <li><a href="https://instagram.com/angelheartmaid_official" target="_blank">官方 Instagram 粉專</a></li>
+                <li><a href="https://shop.ichefpos.com/store/Hkll__kj/ordering" target="_blank">天使線上拍系統</a></li>
+                <li><a href="https://reserve.oddle.me/zh_TW/angelheart/ticket/5572" target="_blank">天界預約系統</a></li>
+            </ul>
+        </div>
+        <div class="footer-column">
+            <h4>聯絡我們</h4>
+            <ul>
+                <li style="color: #ccc; font-size: 13px;">106 台北市大安區新生南路三段96-5號2樓</li>
+                <li style="color: #ccc; font-size: 13px;">營業時間：13:00 - 22:00</li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        為守護天使們的健康與天界的和平，願各位在天界度過閃閃發光的美好時光。<br><br>
+        Copyright © Angel Heart Maid Cafe. All Rights Reserved.
+    </div>
+</div>
+
+<div class="scroll-to-top" id="scrollToTopBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
@@ -518,6 +569,11 @@
         lists.forEach(l => l.innerHTML = htmlContent);
     }
 
+    window.handlePhotoError = function(img) {
+        img.style.display = 'none';
+        img.nextElementSibling.style.display = 'flex';
+    }
+
     window.renderCalendar = function() {
         const year = parseInt(document.getElementById("view-year").value);
         const month = parseInt(document.getElementById("view-month").value);
@@ -656,7 +712,10 @@
             }
             const div = document.createElement("div"); div.className = "maid-card";
             div.innerHTML = `
-                <img src="${imgUrl}" alt="${name}" class="maid-img" style="border-bottom-color: ${data.color};">
+                <div class="maid-photo-container">
+                    <img src="${imgUrl}" alt="${name}" class="maid-img" style="border-bottom: 3px solid ${data.color};" onerror="window.handlePhotoError(this)">
+                    <div class="maid-photo-fallback">${name}</div>
+                </div>
                 <div class="maid-info">
                     <h3 class="maid-name"><span class="color-dot" style="background-color: ${data.color}"></span> ${name}</h3>
                     <a href="https://instagram.com/${data.ig.replace('@','')}" target="_blank" class="maid-ig">${data.ig || "IG"}</a>
@@ -719,6 +778,15 @@
     }
 
     initCalendarDropdowns();
+
+    window.addEventListener('scroll', () => {
+        const btn = document.getElementById('scrollToTopBtn');
+        if (window.scrollY > 300) {
+            btn.style.display = 'flex';
+        } else {
+            btn.style.display = 'none';
+        }
+    });
 </script>
 </body>
 </html>
