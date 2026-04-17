@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天使ハート 女僕咖啡廳 - 內部管理系統 V8</title>
+    <style>
+        :root {
+            --primary-color: #f36896; 
+            --primary-dark: #d84373;
+            --text-color: #2d3436;
+            --bg-color: #fff0f3; 
+            --border-color: #f8a5c2;
+        }
+        body { font-family: "Microsoft JhengHei", sans-serif; background-color: var(--bg-color); padding: 0; color: var(--text-color); margin: 0; }
+        
+        /* 頂部區域與登入按鈕 */
+        .header { background-color: #2d3436; color: white; padding: 20px 20px 0 20px; text-align: center; position: relative; }
+        .header h1 { margin: 0 0 10px 0; font-size: 24px; color: var(--primary-color); }
+        .header p { margin: 0 0 20px 0; font-size: 14px; color: #ccc; }
+        
+        .admin-login-btn { position: absolute; top: 20px; right: 20px; background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 13px; font-weight: bold; transition: 0.3s; }
+        .admin-login-btn:hover { background: var(--primary-color); color: white; }
+        .admin-login-btn.logged-in { background: #00b894; border-color: #00b894; color: white; }
+
+        .nav-tabs { display: flex; justify-content: center; gap: 5px; flex-wrap: wrap; }
+        .tab-btn { background-color: #b2bec3; color: #2d3436; border: none; padding: 12px 25px; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 8px 8px 0 0; transition: 0.3s; }
+        .tab-btn:hover { background-color: #dfe6e9; }
+        .tab-btn.active { background-color: var(--primary-color); color: white; }
+
+        .container { max-width: 1200px; margin: 20px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .tab-content { display: none; animation: fadeIn 0.4s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        h2 { color: var(--primary-color); border-bottom: 2px solid #ffeeef; padding-bottom: 10px; margin-top: 0; }
+
+        /* --- 咖啡廳資訊 --- */
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .info-card { background: #fffafb; border: 1px solid var(--border-color); padding: 20px; border-radius: 8px; }
+        .info-list { list-style: none; padding: 0; line-height: 1.8; }
+        .info-list span { font-weight: bold; color: #555; width: 80px; display: inline-block; }
+        .link-btn { display: inline-block; background: var(--primary-color); color: white; text-decoration: none; padding: 10px 15px; border-radius: 5px; margin-right: 10px; margin-top: 10px; font-weight: bold; transition: 0.2s; }
+        
+        /* 地圖容器樣式 */
+        .map-container { margin-top: 15px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+
+        /* --- 女僕圖鑑 --- */
+        .maid-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; margin-top: 20px; }
+        .maid-card { background: white; border: 1px solid #eee; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: center; transition: 0.3s; }
+        .maid-card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(243,104,150,0.2); }
+        .maid-img { width: 100%; height: 220px; object-fit: cover; background-color: #f1f2f6; border-bottom: 3px solid var(--primary-color); }
+        .maid-info { padding: 15px; }
+        .maid-name { font-size: 18px; font-weight: bold; margin: 0 0 5px 0; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        .maid-ig { color: #636e72; font-size: 14px; margin-bottom: 15px; text-decoration: none; display: inline-block; }
+        .maid-ig:hover { color: var(--primary-color); }
+        .btn-schedule-link { background: #fff0f3; color: var(--primary-dark); border: 1px solid var(--border-color); padding: 8px; width: 100%; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .btn-schedule-link:hover { background: var(--primary-color); color: white; }
+
+        /* --- 排班系統控制列 (預設隱藏，需登入) --- */
+        .admin-tools { display: none; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 20px; background: #fffafb; padding: 20px; border-radius: 10px; border: 2px dashed #f8a5c2; }
+        .card { background: #fff; border: 1px solid var(--border-color); padding: 15px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
+        .card h3 { margin-top: 0; font-size: 16px; color: #636e72; border-bottom: 1px dashed var(--border-color); padding-bottom: 8px; margin-bottom: 15px; }
+        .form-group { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 14px; }
+        .form-group label { width: 70px; text-align: right; color: #555; font-weight: bold; flex-shrink: 0; }
+        .form-group input, .form-group select { flex: 1; padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px; outline: none; width: 100%; box-sizing: border-box; }
+        .form-group input[type="color"] { width: 40px; height: 35px; padding: 0; border: none; cursor: pointer; }
+        .btn { width: 100%; background: var(--primary-color); color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 5px; transition: 0.2s; }
+        
+        /* --- 篩選與日曆 --- */
+        .filter-section { border: 1px solid #ffeaa7; background: #fff9db; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .member-list { display: flex; flex-wrap: wrap; gap: 12px; }
+        .member-item { font-size: 14px; display: flex; align-items: center; gap: 6px; background: white; padding: 4px 10px; border-radius: 20px; border: 1px solid #ddd; }
+        .color-dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; }
+        .btn-show-all { background: #2d3436; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+
+        .calendar-header { display: grid; grid-template-columns: repeat(7, 1fr); background: #2d3436; color: white; text-align: center; font-weight: bold; border-radius: 6px 6px 0 0; }
+        .calendar-header div { padding: 12px 0; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); grid-auto-rows: minmax(140px, auto); border-left: 1px solid #eee; }
+        .day-cell { border-right: 1px solid #eee; border-bottom: 1px solid #eee; padding: 8px; position: relative; background: #fff; }
+        .date-num { font-weight: bold; margin-bottom: 8px; color: #636e72; }
+        .event-label { display: block; color: white; font-size: 12px; padding: 4px; border-radius: 4px; text-align: center; font-weight: bold; margin-bottom: 8px; }
+        .shift-tag { font-size: 12px; padding: 4px 8px; border-radius: 4px; margin-bottom: 5px; border-left: 5px solid; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.1); font-weight: bold; color: #333; display: flex; justify-content: space-between; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <button class="admin-login-btn" id="login-btn" onclick="toggleAdmin()">🔒 店長登入</button>
+    <h1>天使ハート 女僕咖啡廳</h1>
+    <p>Angel Heart Maid Cafe - 內部入口網</p>
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('tab-info', this)">🎀 咖啡廳資訊</button>
+        <button class="tab-btn" onclick="switchTab('tab-members', this)">💖 女僕圖鑑</button>
+        <button class="tab-btn" onclick="switchTab('tab-schedule', this)">📅 排班系統</button>
+    </div>
+</div>
+
+<div class="container">
+    
+    <div id="tab-info" class="tab-content active">
+        <h2>🎀 店鋪基本資訊</h2>
+        <div class="info-grid">
+            <div class="info-card">
+                <h3>📍 聯絡與營業資訊</h3>
+                <ul class="info-list">
+                    <li><span>早班時段</span> 13:00 - 17:30</li>
+                    <li><span>晚班時段</span> 17:30 - 22:00</li>
+                    <li><span>店家地址</span> 106 台北市大安區新生南路三段96-5號2樓</li>
+                    <li><span>官方 IG</span> <a href="https://instagram.com/angelheartmaid_official" target="_blank" style="color:var(--primary-color);">@angelheartmaid_official</a></li>
+                    <li><span>付款方式</span> 現金、LINE Pay</li>
+                </ul>
+                <div class="map-container">
+                    <iframe 
+                        width="100%" 
+                        height="250" 
+                        frameborder="0" 
+                        style="border:0;" 
+                        src="https://maps.google.com/maps?q=台北市大安區新生南路三段96-5號&hl=zh-TW&z=16&output=embed" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+            <div class="info-card">
+                <h3>🔗 重要系統連結</h3>
+                <a href="https://shop.ichefpos.com/store/Hkll__kj/ordering" target="_blank" class="link-btn">✨ 天使線上拍 (iCHEF)</a>
+                <a href="https://reserve.oddle.me/zh_TW/angelheart/ticket/5572" target="_blank" class="link-btn" style="background:#2d3436;">📖 天界預約系統 (Oddle)</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="tab-members" class="tab-content">
+        <h2>💖 天使成員圖鑑</h2>
+        <div class="maid-grid" id="maid-gallery">
+            </div>
+    </div>
+
+    <div id="tab-schedule" class="tab-content">
+        
+        <div class="admin-tools" id="admin-panel">
+            <div class="card">
+                <h3>👥 1. 建立 / 編輯女僕資料</h3>
+                <div class="form-group"><label>名稱</label><input type="text" id="new-name" placeholder="如：安晨"></div>
+                <div class="form-group"><label>IG 帳號</label><input type="text" id="new-ig" placeholder="如：@anchen_maid"></div>
+                <div class="form-group"><label>照片網址</label><input type="text" id="new-photo" placeholder="貼上網址 (留空會自動生成預設圖)"></div>
+                <div class="form-group"><label>代表色</label><input type="color" id="new-color" value="#f36896"></div>
+                <button class="btn" style="background: #2d3436;" onclick="addOrUpdateMember()">💾 儲存並更新圖鑑</button>
+            </div>
+
+            <div class="card">
+                <h3>📅 2. 新增排班</h3>
+                <div class="form-group"><label>日期</label><input type="number" id="shift-date" min="1" max="31" value="1"></div>
+                <div class="form-group"><label>選擇成員</label><select id="shift-member"></select></div>
+                <div class="form-group">
+                    <label>班別</label>
+                    <select id="shift-type"><option value="morning">早班</option><option value="night">晚班</option><option value="full">一日</option></select>
+                </div>
+                <button class="btn" onclick="addShift()">新增至班表</button>
+            </div>
+
+            <div class="card">
+                <h3>🎉 3. 設定主題活動</h3>
+                <div class="form-group"><label>日期</label><input type="number" id="event-date" min="1" max="31" value="12"></div>
+                <div class="form-group"><label>活動名稱</label><input type="text" id="event-name" placeholder="例如：制服日"></div>
+                <div class="form-group"><label>外框顏色</label><input type="color" id="event-color" value="#e84393"></div>
+                <button class="btn" style="background: #e17055;" onclick="addEvent()">設定當日活動</button>
+            </div>
+        </div>
+
+        <div class="filter-section">
+            <div>
+                <strong>🔍 篩選成員班表：</strong>
+                <div class="member-list" id="filter-members"></div>
+            </div>
+            <button class="btn-show-all" onclick="showAllMembers()">顯示所有人</button>
+        </div>
+
+        <div class="calendar-header"><div>日</div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div></div>
+        <div class="calendar-grid" id="calendar"></div>
+    </div>
+
+</div>
+
+<script>
+    // --- 權限管理系統 ---
+    let isAdmin = false;
+    function toggleAdmin() {
+        const btn = document.getElementById('login-btn');
+        const panel = document.getElementById('admin-panel');
+        
+        if (isAdmin) {
+            isAdmin = false;
+            btn.innerHTML = '🔒 店長登入';
+            btn.classList.remove('logged-in');
+            panel.style.display = 'none'; 
+            alert('已登出管理員模式');
+        } else {
+            const pwd = prompt('請輸入店長專屬密碼：\n(測試請輸入: angel)');
+            if (pwd === 'angel') {
+                isAdmin = true;
+                btn.innerHTML = '🔓 登出管理員';
+                btn.classList.add('logged-in');
+                panel.style.display = 'grid'; 
+                switchTab('tab-schedule', document.querySelectorAll('.tab-btn')[2]);
+                alert('登入成功！已解鎖「圖鑑編輯」與「排班設定」功能。');
+            } else if (pwd !== null) {
+                alert('密碼錯誤，請重新嘗試！');
+            }
+        }
+    }
+
+    // --- 頁籤切換 ---
+    function switchTab(tabId, btnElement) {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        btnElement.classList.add('active');
+    }
+
+    // --- 資料庫 ---
+    let maidData = {
+        "安晨": { color: "#ff7675", ig: "@anchen_ig", photo: "" },
+        "闇咪": { color: "#fdcb6e", ig: "@yami_cute", photo: "" },
+        "漸乃": { color: "#a29bfe", ig: "@jiannai.x", photo: "" },
+        "蜜糖": { color: "#00cec9", ig: "@honey_maid", photo: "" }
+    };
+
+    let scheduleData = {
+        "12": { event: { name: "💖 雙馬尾日", color: "#e84393" }, shifts: [{ name: "安晨", time: "一日" }, { name: "闇咪", time: "早班" }] },
+        "15": { event: null, shifts: [{ name: "漸乃", time: "晚班" }] },
+        "18": { event: null, shifts: [{ name: "蜜糖", time: "一日" }, { name: "安晨", time: "晚班" }] }
+    };
+
+    let allMembers = new Set(Object.keys(maidData));
+    let activeFilters = new Set(allMembers);
+
+    function init() {
+        updateMemberDropdown();
+        renderMaidGallery();
+        renderFilters();
+        renderCalendar();
+    }
+
+    // --- 圖鑑渲染 ---
+    function renderMaidGallery() {
+        const gallery = document.getElementById("maid-gallery");
+        gallery.innerHTML = "";
+        
+        allMembers.forEach(name => {
+            const data = maidData[name];
+            
+            let imgUrl = data.photo;
+            if (!imgUrl) {
+                const encodedColor = data.color.replace('#', '%23');
+                imgUrl = `data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Crect width='300' height='300' fill='${encodedColor}' opacity='0.2'/%3E%3Ctext x='50%25' y='50%25' fill='${encodedColor}' font-size='40' font-family='sans-serif' font-weight='bold' dominant-baseline='middle' text-anchor='middle'%3E${name}%3C/text%3E%3C/svg%3E`;
+            }
+            
+            const card = document.createElement("div");
+            card.className = "maid-card";
+            card.innerHTML = `
+                <img src="${imgUrl}" alt="${name}" class="maid-img" style="border-bottom-color: ${data.color};">
+                <div class="maid-info">
+                    <h3 class="maid-name"><span class="color-dot" style="background-color: ${data.color}"></span> ${name}</h3>
+                    <a href="https://instagram.com/${data.ig.replace('@','')}" target="_blank" class="maid-ig">${data.ig || "未提供 IG"}</a>
+                    <button class="btn-schedule-link" style="color:${data.color}; border-color:${data.color};" onclick="viewMaidSchedule('${name}')">📅 查看 ${name} 班表</button>
+                </div>
+            `;
+            gallery.appendChild(card);
+        });
+    }
+
+    // --- 系統運作邏輯 ---
+    function viewMaidSchedule(name) {
+        switchTab('tab-schedule', document.querySelectorAll('.tab-btn')[2]);
+        activeFilters.clear();
+        activeFilters.add(name);
+        renderFilters();
+        renderCalendar();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showAllMembers() {
+        activeFilters = new Set(allMembers);
+        renderFilters();
+        renderCalendar();
+    }
+
+    function addOrUpdateMember() {
+        const name = document.getElementById("new-name").value.trim();
+        const ig = document.getElementById("new-ig").value.trim();
+        const photo = document.getElementById("new-photo").value.trim();
+        const color = document.getElementById("new-color").value;
+        
+        if (!name) return alert("請輸入女僕名稱！");
+
+        maidData[name] = { color: color, ig: ig, photo: photo };
+        allMembers.add(name);
+        activeFilters.add(name);
+        
+        updateMemberDropdown();
+        renderMaidGallery(); 
+        renderFilters();
+        renderCalendar();
+        
+        document.getElementById("new-name").value = "";
+        document.getElementById("new-ig").value = "";
+        document.getElementById("new-photo").value = "";
+        alert(`已成功將 ${name} 加入女僕圖鑑與排班名單中！`);
+    }
+
+    function updateMemberDropdown() {
+        const select = document.getElementById("shift-member");
+        select.innerHTML = "";
+        allMembers.forEach(member => {
+            const option = document.createElement("option");
+            option.value = member;
+            option.textContent = member;
+            select.appendChild(option);
+        });
+    }
+
+    function renderFilters() {
+        const filterBox = document.getElementById("filter-members");
+        filterBox.innerHTML = "";
+        allMembers.forEach(member => {
+            const div = document.createElement("div");
+            div.className = "member-item";
+            const checked = activeFilters.has(member) ? "checked" : "";
+            const color = maidData[member].color;
+            div.innerHTML = `
+                <input type="checkbox" ${checked} onchange="toggleFilter('${member}')" id="chk-${member}">
+                <span class="color-dot" style="background-color: ${color};"></span>
+                <label for="chk-${member}" style="cursor: pointer;">${member}</label>
+            `;
+            filterBox.appendChild(div);
+        });
+    }
+
+    function toggleFilter(member) {
+        if (activeFilters.has(member)) activeFilters.delete(member);
+        else activeFilters.add(member);
+        renderCalendar();
+    }
+
+    function addShift() {
+        const date = document.getElementById("shift-date").value;
+        const name = document.getElementById("shift-member").value;
+        const type = document.getElementById("shift-type").value;
+        const timeText = type === "full" ? "一日" : (type === "morning" ? "早班" : "晚班");
+
+        if (!name) return alert("請先建立並選擇成員！");
+        if (!scheduleData[date]) scheduleData[date] = { event: null, shifts: [] };
+        scheduleData[date].shifts.push({ name: name, time: timeText });
+        renderCalendar();
+    }
+
+    function addEvent() {
+        const date = document.getElementById("event-date").value;
+        const name = document.getElementById("event-name").value.trim();
+        const color = document.getElementById("event-color").value;
+
+        if (!name) return alert("請輸入活動名稱！");
+        if (!scheduleData[date]) scheduleData[date] = { event: null, shifts: [] };
+        scheduleData[date].event = { name: name, color: color };
+        renderCalendar();
+        document.getElementById("event-name").value = "";
+    }
+
+    function renderCalendar() {
+        const calendarEl = document.getElementById("calendar");
+        calendarEl.innerHTML = "";
+        const totalDays = 30;
+        const startDay = 3; 
+
+        for (let i = 0; i < startDay; i++) {
+            const empty = document.createElement("div");
+            empty.className = "day-cell";
+            empty.style.background = "#fafafa";
+            calendarEl.appendChild(empty);
+        }
+
+        for (let day = 1; day <= totalDays; day++) {
+            const cell = document.createElement("div");
+            cell.className = "day-cell";
+            const dateStr = day.toString();
+            let html = `<div class="date-num">${day}</div>`;
+            
+            if (scheduleData[dateStr]) {
+                const dayData = scheduleData[dateStr];
+                if (dayData.event) {
+                    const evtColor = dayData.event.color;
+                    cell.style.border = `2px solid ${evtColor}`;
+                    cell.style.backgroundColor = `${evtColor}1A`; 
+                    html += `<div class="event-label" style="background-color: ${evtColor};">${dayData.event.name}</div>`;
+                }
+
+                dayData.shifts.forEach(s => {
+                    if (activeFilters.has(s.name)) {
+                        const mColor = maidData[s.name] ? maidData[s.name].color : "#ccc";
+                        html += `
+                            <div class="shift-tag" style="border-left-color: ${mColor}; background-color: ${mColor}1A;">
+                                <span>${s.name}</span>
+                                <span style="color:#666; font-size:11px;">${s.time}</span>
+                            </div>`;
+                    }
+                });
+            }
+            cell.innerHTML = html;
+            calendarEl.appendChild(cell);
+        }
+    }
+
+    init();
+</script>
+
+</body>
+</html>
