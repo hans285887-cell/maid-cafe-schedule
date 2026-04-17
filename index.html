@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>天使ハート 女僕咖啡廳 - 內部管理系統 V11 (雲端同步版)</title>
+    <title>天使ハート 女僕咖啡廳 - 內部管理系統 V12 (完美編輯版)</title>
     <style>
         :root {
             --primary-color: #f36896; 
@@ -14,7 +14,6 @@
         }
         body { font-family: "Microsoft JhengHei", sans-serif; background-color: var(--bg-color); padding: 0; color: var(--text-color); margin: 0; -webkit-tap-highlight-color: transparent; }
         
-        /* 頂部區域與登入按鈕 */
         .header { background-color: #2d3436; color: white; padding: 20px 10px 0 10px; text-align: center; position: relative; }
         .header h1 { margin: 0 0 10px 0; font-size: 20px; color: var(--primary-color); }
         .header p { margin: 0 0 15px 0; font-size: 12px; color: #ccc; }
@@ -41,7 +40,6 @@
 
         h2 { color: var(--primary-color); border-bottom: 2px solid #ffeeef; padding-bottom: 8px; margin-top: 0; font-size: 18px; }
 
-        /* --- 咖啡廳資訊 響應式佈局 --- */
         .info-grid { display: flex; flex-direction: column; gap: 15px; }
         @media (min-width: 768px) { .info-grid { flex-direction: row; } .info-card { flex: 1; } }
         .info-card { background: #fffafb; border: 1px solid var(--border-color); padding: 15px; border-radius: 8px; }
@@ -51,7 +49,7 @@
         .link-btn { display: block; text-align: center; background: var(--primary-color); color: white; text-decoration: none; padding: 10px; border-radius: 5px; margin-top: 10px; font-weight: bold; }
         .map-container { margin-top: 10px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); height: 250px; }
 
-        /* --- 女僕圖鑑 --- */
+        /* --- 女僕圖鑑與編輯按鈕 --- */
         .maid-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-top: 15px; }
         @media (min-width: 768px) { .maid-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; } }
         .maid-card { background: white; border: 1px solid #eee; border-radius: 10px; overflow: hidden; text-align: center; }
@@ -61,8 +59,14 @@
         .maid-name { font-size: 15px; font-weight: bold; margin: 0; }
         .maid-ig { color: #636e72; font-size: 12px; text-decoration: none; margin-bottom: 10px; display: block; }
         .btn-schedule-link { background: #fff0f3; color: var(--primary-dark); border: 1px solid var(--border-color); padding: 6px; width: 100%; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; }
+        
+        /* 隱藏/顯示 管理員專用按鈕 */
+        body:not(.admin-mode) .admin-action { display: none !important; }
+        .admin-btn-group { display: flex; gap: 5px; margin-top: 8px; }
+        .admin-btn-group button { flex: 1; padding: 6px; border: none; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; color: white; }
+        .btn-edit { background-color: #0984e3; }
+        .btn-delete { background-color: #d63031; }
 
-        /* --- 排班系統控制列 --- */
         .calendar-nav { display: flex; gap: 10px; align-items: center; margin-bottom: 15px; background: #fffafb; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); }
         .calendar-nav select { padding: 8px; border-radius: 4px; border: 1px solid #ccc; font-weight: bold; font-size: 14px; }
 
@@ -75,14 +79,12 @@
         .form-group input, .form-group select { flex: 1; padding: 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; }
         .btn { width: 100%; background: var(--primary-color); color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; }
 
-        /* --- 篩選列設計 --- */
         .filter-section { border: 1px solid #ffeaa7; background: #fff9db; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
         .member-list { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 5px; }
         .member-item { font-size: 14px; display: flex; align-items: center; gap: 6px; background: white; padding: 4px 10px; border-radius: 20px; border: 1px solid #ddd; }
         .color-dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; }
         .btn-show-all { background: #2d3436; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold; white-space: nowrap; }
 
-        /* --- 日曆優化 --- */
         .calendar-header { display: grid; grid-template-columns: repeat(7, 1fr); background: #2d3436; color: white; text-align: center; font-weight: bold; font-size: 12px; border-radius: 6px 6px 0 0; }
         .calendar-header div { padding: 8px 0; }
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); grid-auto-rows: minmax(80px, auto); border-left: 1px solid #eee; }
@@ -93,7 +95,6 @@
         .shift-tag { font-size: 10px; padding: 2px 4px; border-radius: 3px; margin-bottom: 3px; border-left: 4px solid; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.1); display: block; font-weight: bold; }
         @media (min-width: 768px) { .event-label { font-size: 12px; padding: 4px; } .shift-tag { font-size: 12px; border-left-width: 5px; padding: 4px; } }
         
-        /* 系統狀態提示 */
         #sync-status { text-align: center; font-size: 12px; color: #00b894; margin-bottom: 10px; font-weight: bold; display: none; }
     </style>
 </head>
@@ -125,7 +126,7 @@
                     <li><span>付款方式</span> 現金、LINE Pay</li>
                 </ul>
                 <div class="map-container">
-                    <iframe width="100%" height="100%" frameborder="0" style="border:0" src="https://www.google.com/maps?q=台北市大安區新生南路三段96-5號&output=embed" allowfullscreen></iframe>
+                    <iframe width="100%" height="100%" frameborder="0" style="border:0" src="https://maps.google.com/maps?q=106台北市大安區新生南路三段96-5號&t=&z=15&ie=UTF8&iwloc=&output=embed" allowfullscreen></iframe>
                 </div>
             </div>
             <div class="info-card">
@@ -149,13 +150,13 @@
         </div>
         
         <div class="admin-tools" id="admin-panel">
-            <div class="card">
-                <h3>👥 1. 建立女僕</h3>
+            <div class="card" style="border: 2px solid #0984e3;">
+                <h3 id="edit-title">👥 1. 建立/編輯女僕</h3>
                 <div class="form-group"><label>名稱</label><input type="text" id="new-name" placeholder="安晨"></div>
                 <div class="form-group"><label>IG</label><input type="text" id="new-ig" placeholder="@ig"></div>
                 <div class="form-group"><label>照片</label><input type="text" id="new-photo" placeholder="網址 (可留空)"></div>
                 <div class="form-group"><label>色</label><input type="color" id="new-color" value="#f36896"></div>
-                <button class="btn" style="background: #2d3436;" onclick="addOrUpdateMember()">儲存成員 (同步至雲端)</button>
+                <button class="btn" id="btn-save-member" style="background: #2d3436;" onclick="addOrUpdateMember()">💾 儲存成員 (同步至雲端)</button>
             </div>
             <div class="card">
                 <h3>📅 2. 新增排班</h3>
@@ -187,83 +188,78 @@
 </div>
 
 <script type="module">
-    // 引入 Firebase 官方套件
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
     import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-    // 填入你專屬的 Firebase 金鑰設定
+    // 🔴🔴🔴 請在這裡貼上你剛剛截圖裡面的 firebaseConfig 金鑰！ 🔴🔴🔴
     const firebaseConfig = {
-        apiKey: "AIzaSyBldLYsUHMo8ES_xNJyomTBvYNXPBZXlkc",
+        apiKey: "YOUR_API_KEY",
         authDomain: "angel-heart-schedule.firebaseapp.com",
         projectId: "angel-heart-schedule",
         storageBucket: "angel-heart-schedule.firebasestorage.app",
-        messagingSenderId: "171300193054",
-        appId: "1:171300193054:web:3d291652dd464346b4bf0f"
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+        appId: "YOUR_APP_ID"
     };
 
-    // 初始化 Firebase 與資料庫
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    // 我們在資料庫裡建立一份名為 "AngelHeart" 資料夾，檔案叫 "MainData"
     const docRef = doc(db, "AngelHeart", "MainData");
 
-    // 全域變數
     let isAdmin = false;
     let maidData = {};
     let scheduleData = {};
     let activeFilters = new Set();
-    let isDataLoaded = false; // 判斷是否為第一次載入
+    let isDataLoaded = false; 
+    let currentEditName = null; // 用來追蹤目前正在編輯誰
 
-    // -----------------------------------------------------
-    // 雲端同步核心：只要資料庫有變動，這裡就會自動觸發重新渲染！
-    // -----------------------------------------------------
+    // 監聽雲端資料庫
     onSnapshot(docRef, (snapshot) => {
         if (snapshot.exists()) {
             const data = snapshot.data();
             maidData = data.maidData || {};
             scheduleData = data.scheduleData || {};
             
-            // 第一次載入時，預設顯示所有女僕
             if (!isDataLoaded) {
                 activeFilters = new Set(Object.keys(maidData));
                 isDataLoaded = true;
-                document.getElementById('sync-status').style.display = 'block'; // 顯示連線成功提示
+                document.getElementById('sync-status').style.display = 'block'; 
             }
             
-            // 資料更新後，重新渲染所有畫面
             updateMemberDropdown();
             renderMaidGallery();
             renderFilters();
             renderCalendar();
         } else {
-            // 如果是全新的資料庫，塞入初始空資料
             setDoc(docRef, { maidData: {}, scheduleData: {} });
         }
     });
 
-    // 將資料寫入雲端的通用函式
     async function saveToCloud() {
         try {
             await setDoc(docRef, { maidData: maidData, scheduleData: scheduleData });
         } catch (e) {
             console.error("寫入錯誤: ", e);
-            alert("儲存失敗！請確認 Firebase 資料庫規則是否設定為測試模式。");
+            alert("儲存失敗！請確認 Firebase 設定。");
         }
     }
-
-    // ==========================================
-    // 介面與操作邏輯 (將函式綁定到 window 讓 HTML 呼叫)
-    // ==========================================
     
     window.toggleAdmin = function() {
         const btn = document.getElementById('login-btn');
         const panel = document.getElementById('admin-panel');
         if (isAdmin) {
-            isAdmin = false; btn.innerHTML = '🔒 店長登入'; btn.classList.remove('logged-in'); panel.style.display = 'none';
+            isAdmin = false; 
+            btn.innerHTML = '🔒 店長登入'; 
+            btn.classList.remove('logged-in'); 
+            panel.style.display = 'none';
+            document.body.classList.remove('admin-mode'); // 關閉管理員樣式 (隱藏編輯/刪除按鈕)
         } else {
             const pwd = prompt('請輸入店長密碼 (angel)：');
             if (pwd === 'angel') {
-                isAdmin = true; btn.innerHTML = '🔓 登出'; btn.classList.add('logged-in'); panel.style.display = 'flex';
+                isAdmin = true; 
+                btn.innerHTML = '🔓 登出'; 
+                btn.classList.add('logged-in'); 
+                panel.style.display = 'flex';
+                document.body.classList.add('admin-mode'); // 開啟管理員樣式
                 window.switchTab('tab-schedule', document.querySelectorAll('.tab-btn')[2]);
             }
         }
@@ -340,7 +336,7 @@
         if (!scheduleData[monthKey][day]) scheduleData[monthKey][day] = { event: null, shifts: [] };
         
         scheduleData[monthKey][day].shifts.push({ name: name, time: timeText });
-        saveToCloud(); // 儲存到雲端
+        saveToCloud(); 
     }
 
     window.addEvent = function() {
@@ -355,7 +351,7 @@
         if (!scheduleData[monthKey][day]) scheduleData[monthKey][day] = { event: null, shifts: [] };
         
         scheduleData[monthKey][day].event = { name: name, color: color };
-        saveToCloud(); // 儲存到雲端
+        saveToCloud(); 
     }
 
     function updateMemberDropdown() {
@@ -410,39 +406,82 @@
                     <h3 class="maid-name"><span class="color-dot" style="background-color: ${data.color}"></span> ${name}</h3>
                     <a href="https://instagram.com/${data.ig.replace('@','')}" target="_blank" class="maid-ig">${data.ig || "未提供 IG"}</a>
                     <button class="btn-schedule-link" style="color:${data.color}; border-color:${data.color};" onclick="viewMaidSchedule('${name}')">📅 查看 ${name} 班表</button>
+                    
+                    <div class="admin-btn-group admin-action">
+                        <button class="btn-edit" onclick="editMember('${name}')">✏️ 編輯</button>
+                        <button class="btn-delete" onclick="deleteMember('${name}')">🗑️ 刪除</button>
+                    </div>
                 </div>
             `;
             gallery.appendChild(div);
         });
     }
 
-    window.viewMaidSchedule = function(n) { 
-        window.switchTab('tab-schedule', document.querySelectorAll('.tab-btn')[2]); 
-        activeFilters.clear(); 
-        activeFilters.add(n); 
-        renderFilters(); 
-        window.renderCalendar(); 
+    // --- 新增：啟動編輯模式 ---
+    window.editMember = function(name) {
+        const data = maidData[name];
+        document.getElementById("new-name").value = name;
+        document.getElementById("new-ig").value = data.ig || "";
+        document.getElementById("new-photo").value = data.photo || "";
+        document.getElementById("new-color").value = data.color || "#f36896";
+        
+        currentEditName = name; // 記住現在正在編輯誰
+        document.getElementById("edit-title").innerText = `✏️ 編輯中：${name}`;
+        document.getElementById("btn-save-member").innerText = "💾 更新成員 (同步至雲端)";
+        
+        // 切換到排班頁籤的表單區塊
+        window.switchTab('tab-schedule', document.querySelectorAll('.tab-btn')[2]);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    // --- 新增：刪除成員 ---
+    window.deleteMember = function(name) {
+        if(confirm(`確定要刪除「${name}」嗎？這將會從圖鑑中完全移除。`)) {
+            delete maidData[name];
+            activeFilters.delete(name);
+            saveToCloud();
+        }
+    }
+
+    // --- 更新：儲存或更新成員 ---
     window.addOrUpdateMember = function() {
-        const n = document.getElementById("new-name").value; 
-        const ig = document.getElementById("new-ig").value; 
-        const photo = document.getElementById("new-photo").value;
+        const n = document.getElementById("new-name").value.trim(); 
+        const ig = document.getElementById("new-ig").value.trim(); 
+        const photo = document.getElementById("new-photo").value.trim();
         const c = document.getElementById("new-color").value;
         if(!n) return alert("請輸入女僕名稱！"); 
         
+        // 如果目前是「編輯模式」，且名字被改掉了 (修正錯字的情況)
+        if (currentEditName && currentEditName !== n) {
+            delete maidData[currentEditName]; // 刪除舊名字的資料
+            activeFilters.delete(currentEditName);
+            
+            // 貼心功能：自動將班表裡舊名字改成新名字
+            for (let monthKey in scheduleData) {
+                for (let day in scheduleData[monthKey]) {
+                    if (scheduleData[monthKey][day].shifts) {
+                        scheduleData[monthKey][day].shifts.forEach(shift => {
+                            if (shift.name === currentEditName) shift.name = n;
+                        });
+                    }
+                }
+            }
+        }
+        
+        // 儲存新資料
         maidData[n] = { color: c, ig: ig, photo: photo }; 
         activeFilters.add(n);
+        saveToCloud(); 
         
-        saveToCloud(); // 儲存到雲端
-        
+        // 恢復表單預設狀態
         document.getElementById("new-name").value = "";
         document.getElementById("new-ig").value = "";
         document.getElementById("new-photo").value = "";
+        currentEditName = null;
+        document.getElementById("edit-title").innerText = "👥 1. 建立/編輯女僕";
+        document.getElementById("btn-save-member").innerText = "💾 儲存成員 (同步至雲端)";
     }
 
-    // 初始化年份/月份下拉選單
     initCalendarDropdowns();
 </script>
 </body>
