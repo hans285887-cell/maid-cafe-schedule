@@ -635,5 +635,643 @@
 
     initCalendarDropdowns();
 </script>
+</body><!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>天使ハート 女僕咖啡廳 - 天界入口網</title>
+    <style>
+        :root {
+            --primary-color: #f36896; 
+            --primary-dark: #d84373;
+            --text-color: #2d3436;
+            --bg-color: #fff0f3; 
+            --border-color: #f8a5c2;
+            --today-bg: #fff9db; 
+        }
+        body { font-family: "Microsoft JhengHei", sans-serif; background-color: var(--bg-color); padding: 0; color: var(--text-color); margin: 0; -webkit-tap-highlight-color: transparent; }
+        
+        .header { background-color: #2d3436; color: white; padding: 20px 10px 0 10px; text-align: center; position: relative; }
+        .header h1 { margin: 0 0 10px 0; font-size: 20px; color: var(--primary-color); }
+        .header p { margin: 0 0 15px 0; font-size: 12px; color: #ccc; }
+        
+        .admin-login-btn { position: absolute; top: 15px; right: 15px; background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: bold; }
+        .admin-login-btn.logged-in { background: #00b894; border-color: #00b894; color: white; }
+
+        @media (max-width: 768px) {
+            .header { padding-top: 60px; } 
+            .header h1 { font-size: 18px; }
+            .admin-login-btn { top: 10px; right: 10px; padding: 5px 10px; font-size: 11px; }
+            .nav-tabs { display: grid !important; grid-template-columns: repeat(2, 1fr); gap: 4px; }
+            .tab-btn { padding: 10px 0 !important; font-size: 13px !important; max-width: none !important; border-radius: 6px !important; }
+        }
+
+        .nav-tabs { display: flex; justify-content: center; gap: 5px; flex-wrap: wrap; }
+        .tab-btn { background-color: #b2bec3; color: #2d3436; border: none; padding: 10px 20px; font-size: 14px; font-weight: bold; cursor: pointer; border-radius: 8px 8px 0 0; transition: 0.3s; flex-grow: 1; max-width: 150px; }
+        .tab-btn.active { background-color: var(--primary-color); color: white; }
+
+        .container { max-width: 1200px; margin: 10px auto; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .tab-content { display: none; animation: fadeIn 0.4s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        h2 { color: var(--primary-color); border-bottom: 2px solid #ffeeef; padding-bottom: 8px; margin-top: 0; font-size: 18px; }
+
+        .announcement-box { margin-bottom: 15px; border-left: 5px solid #fdcb6e; background: #fffdf5; padding: 15px; border-radius: 8px; border-top: 1px solid #f8ecc2; border-right: 1px solid #f8ecc2; border-bottom: 1px solid #f8ecc2; }
+        .announcement-box h3 { margin-top: 0; color: #d35400; display: flex; align-items: center; gap: 8px; font-size: 16px; margin-bottom: 10px; }
+        .announcement-box p { font-size: 14px; line-height: 1.7; margin-bottom: 0; color: #444; font-weight: bold; }
+
+        .info-grid { display: flex; flex-direction: column; gap: 15px; }
+        @media (min-width: 768px) { .info-grid { flex-direction: row; } .info-card { flex: 1; } }
+        .info-card { background: #fffafb; border: 1px solid var(--border-color); padding: 15px; border-radius: 8px; }
+        .info-list { list-style: none; padding: 0; line-height: 1.6; font-size: 14px; }
+        .info-list li { margin-bottom: 8px; border-bottom: 1px dashed #f8a5c2; padding-bottom: 4px; }
+        .info-list span { font-weight: bold; color: var(--primary-dark); width: 70px; display: inline-block; }
+        .link-btn { display: block; text-align: center; background: var(--primary-color); color: white; text-decoration: none; padding: 10px; border-radius: 5px; margin-top: 10px; font-weight: bold; }
+        .map-container { margin-top: 10px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); height: 200px; }
+
+        .rules-container { background: #fff4f4; border-left: 4px solid #e17055; padding: 12px; border-radius: 0 8px 8px 0; margin-top: 10px; font-size: 13.5px; line-height: 1.7; color: #2d3436; }
+        .rules-container h4 { margin: 0 0 8px 0; color: #e17055; font-size: 15px; }
+        .rules-container strong { color: #d63031; }
+
+        .menu-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        @media (min-width: 768px) { .menu-grid { grid-template-columns: 1fr 1fr; } }
+        .menu-section { background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .menu-title { text-align: center; color: white; background: var(--primary-color); padding: 5px; border-radius: 4px; font-weight: bold; margin-top: 0; margin-bottom: 15px; font-size: 16px; letter-spacing: 2px; }
+        .menu-item { display: flex; align-items: flex-end; margin-bottom: 12px; }
+        .menu-name { font-weight: bold; color: #2d3436; font-size: 14px; display: flex; flex-direction: column; }
+        .menu-sub { font-size: 11px; color: #888; font-weight: normal; margin-top: 2px; }
+        .menu-dots { flex-grow: 1; border-bottom: 1px dotted #ccc; margin: 0 10px; position: relative; top: -5px; }
+        .menu-price { font-weight: bold; color: #d63031; font-size: 15px; }
+        .supply-time { font-size: 13px; color: #d63031; font-weight: bold; text-align: center; margin-bottom: 15px; background: #ffeef2; padding: 4px; border-radius: 4px; }
+        
+        .maid-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-top: 15px; }
+        @media (min-width: 768px) { .maid-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; } }
+        .maid-card { background: white; border: 1px solid #eee; border-radius: 10px; overflow: hidden; text-align: center; }
+        .maid-img { width: 100%; height: 160px; object-fit: cover; }
+        @media (min-width: 768px) { .maid-img { height: 220px; } }
+        .maid-info { padding: 10px; }
+        .maid-name { font-size: 15px; font-weight: bold; margin: 0; }
+        .maid-ig { color: #636e72; font-size: 12px; text-decoration: none; margin-bottom: 10px; display: block; }
+        .btn-schedule-link { background: #fff0f3; color: var(--primary-dark); border: 1px solid var(--border-color); padding: 6px; width: 100%; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; }
+        
+        body:not(.admin-mode) .admin-action { display: none !important; }
+        .admin-btn-group { display: flex; gap: 5px; margin-top: 8px; }
+        .admin-btn-group button { flex: 1; padding: 6px; border: none; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; color: white; }
+        .btn-edit { background-color: #0984e3; }
+        .btn-delete { background-color: #d63031; }
+
+        .calendar-nav { display: flex; gap: 10px; align-items: center; margin-bottom: 15px; background: #fffafb; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); }
+        .calendar-nav select { padding: 8px; border-radius: 4px; border: 1px solid #ccc; font-weight: bold; font-size: 14px; }
+
+        .admin-tools { display: none; flex-direction: column; gap: 10px; margin-bottom: 20px; background: #fffafb; padding: 15px; border-radius: 10px; border: 2px dashed #f8a5c2; }
+        @media (min-width: 992px) { .admin-tools { flex-direction: row; } .card { flex: 1; } }
+        .card { background: #fff; border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; }
+        .card h3 { margin-top: 0; font-size: 14px; color: #636e72; border-bottom: 1px dashed var(--border-color); padding-bottom: 5px; }
+        .form-group { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 13px; }
+        .form-group label { width: 60px; text-align: right; flex-shrink: 0; font-weight: bold; color: #555; }
+        .form-group input, .form-group select { flex: 1; padding: 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; }
+        .btn { width: 100%; background: var(--primary-color); color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+
+        .filter-section { border: 1px solid #ffeaa7; background: #fff9db; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .member-list { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 5px; }
+        .member-item { font-size: 14px; display: flex; align-items: center; gap: 6px; background: white; padding: 4px 10px; border-radius: 20px; border: 1px solid #ddd; }
+        .color-dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; }
+        .btn-show-all { background: #2d3436; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold; white-space: nowrap; }
+
+        .calendar-header { display: grid; grid-template-columns: repeat(7, 1fr); background: #2d3436; color: white; text-align: center; font-weight: bold; font-size: 12px; border-radius: 6px 6px 0 0; }
+        .calendar-header div { padding: 8px 0; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); grid-auto-rows: minmax(90px, auto); border-left: 1px solid #eee; }
+        @media (min-width: 768px) { .calendar-grid { grid-auto-rows: minmax(130px, auto); } }
+        
+        .day-cell { border-right: 1px solid #eee; border-bottom: 1px solid #eee; padding: 4px; position: relative; background: #fff; font-size: 11px; transition: 0.2s; }
+        .today-cell { background-color: var(--today-bg) !important; box-shadow: inset 0 0 0 2px #fdcb6e; }
+        .today-badge { position: absolute; top: 2px; right: 2px; background: #fdcb6e; color: #d35400; font-size: 10px; padding: 2px 5px; border-radius: 4px; font-weight: bold; }
+        .date-num { font-weight: bold; margin-bottom: 4px; color: #636e72; font-size: 12px; }
+        .event-label { color: white; font-size: 10px; padding: 3px; border-radius: 3px; text-align: center; font-weight: bold; margin-bottom: 4px; display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+        .shift-tag { font-size: 10px; padding: 2px 4px; border-radius: 3px; margin-bottom: 3px; border-left: 4px solid; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.1); display: block; font-weight: bold; }
+        @media (min-width: 768px) { .event-label { font-size: 12px; padding: 4px; } .shift-tag { font-size: 12px; border-left-width: 5px; padding: 4px; } }
+        
+        body.admin-mode .shift-tag:hover, body.admin-mode .event-label:hover { cursor: pointer; filter: brightness(0.9); text-decoration: line-through; }
+        #sync-status { text-align: center; font-size: 12px; color: #00b894; margin-bottom: 10px; font-weight: bold; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <button class="admin-login-btn" id="login-btn" onclick="toggleAdmin()">🔒 店長登入</button>
+    <h1>天使ハート 女僕咖啡廳</h1>
+    <p>Angel Heart Maid Cafe - 天界入口</p>
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('tab-info', this)">🎀 店鋪與公告</button>
+        <button class="tab-btn" onclick="switchTab('tab-menu', this)">🍽️ 天界菜單</button>
+        <button class="tab-btn" onclick="switchTab('tab-members', this)">💖 成員圖鑑</button>
+        <button class="tab-btn" onclick="switchTab('tab-schedule', this)">📅 每月班表</button>
+    </div>
+</div>
+
+<div class="container">
+    <div id="sync-status">🟢 雲端資料庫已連線，即時同步中...</div>
+    
+    <div id="tab-info" class="tab-content active">
+        
+        <div class="announcement-box">
+            <h3>📢 最新公告</h3>
+            <p>
+                各位主人 / 大小姐您好：<br>
+                近期收到些許網路惡意造謠及下班騷擾事件，請各位務必遵守天界規定！若有過分情緒勒索、探詢私人資訊或下班堵人等行為，將依嚴重程度處置。<br>
+                天使心希望能帶給大家溫暖歡樂的體驗，若有建議請私訊 IG，讓我們一起成長！
+            </p>
+        </div>
+
+        <h2>🎀 營業資訊與天界規範</h2>
+        <div class="info-grid">
+            <div class="info-card">
+                <ul class="info-list">
+                    <li><span>營業時段</span> 13:00 - 22:00 (早班至17:30結束 / 晚班自17:30開始)</li>
+                    <li><span>店家地址</span> 106 台北市大安區新生南路三段96-5號2樓</li>
+                    <li><span>官方 IG</span> <a href="https://instagram.com/angelheartmaid_official" target="_blank" style="color:var(--primary-color);">@angelheartmaid_official</a></li>
+                    <li><span>付款方式</span> 現金、LINE Pay</li>
+                </ul>
+                <div style="display:flex; gap:10px; margin-top:10px;">
+                    <a href="https://shop.ichefpos.com/store/Hkll__kj/ordering" target="_blank" class="link-btn" style="flex:1;">✨ 天使線上拍</a>
+                    <a href="https://reserve.oddle.me/zh_TW/angelheart/ticket/5572" target="_blank" class="link-btn" style="background:#2d3436; flex:1;">📖 預約系統</a>
+                </div>
+                <div class="map-container">
+                    <iframe width="100%" height="100%" frameborder="0" style="border:0" src="https://maps.google.com/maps?q=106台北市大安區新生南路三段96-5號&t=&z=15&ie=UTF8&iwloc=&output=embed" allowfullscreen></iframe>
+                </div>
+            </div>
+            
+            <div class="info-card">
+                <h3>📜 天界公約與重要提醒</h3>
+                <div class="rules-container">
+                    <h4>⚠️ 守護天使規範</h4>
+                    <ul>
+                        <li><strong>拒絕騷擾：</strong>嚴禁下班跟蹤、堵人或過度探詢私人隱私，請給予天使私人空間。</li>
+                        <li><strong>互動與拍照：</strong>請勿隨意觸碰或「動手餵食」。拍照尺度依天使意願為主，嚴禁親密肢體接觸要求。</li>
+                        <li><strong>環境維護：</strong>請勿隨意更換座位，樓梯間候位請留通道。上廁所務必鎖門。</li>
+                        <li><strong>寵物規範：</strong>為守護天使健康(嚴重過敏)，攜帶寵物入店請「全程」置於寵物籠內。</li>
+                        <li>店內並無「天使長/女僕長」之職位，切勿聽信網路謠言。</li>
+                    </ul>
+                    <h4 style="margin-top: 15px;">🎂 生日禮</h4>
+                    <ul>
+                        <li>生日前後一天內(含當天)出示證件，贈送特製繪盤蛋糕一份！</li>
+                        <li>一人一年限領一次。當日壽星加贈全體天使拍立得一張。</li>
+                    </ul>
+                    <p style="font-size: 12px; color: #888; margin-bottom:0; margin-top: 10px;">※ 屢勸不聽者，將啟動天界禁令，永生無法進入天界。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="tab-menu" class="tab-content">
+        <h2>🍽️ 天界聖宴菜單</h2>
+        
+        <div class="rules-container" style="margin-bottom: 20px; border-left-color: var(--primary-color);">
+            <h4 style="color: var(--primary-dark); font-size: 15px;">⚠️ 基本消費與用餐須知</h4>
+            <ul style="margin-bottom: 0; font-size: 14px; line-height: 1.7;">
+                <li><strong>最低消費：</strong> 200元 + 10%服務費</li>
+                <li><strong>用餐時間：</strong> 90分鐘</li>
+                <li><strong>最後服務時間：</strong> 餐點至晚上 9:00，周邊加點至晚上 9:30。</li>
+                <li><strong>晚上 9:00 後：</strong> 低消不變，但不得點主餐、輕食、炸物。</li>
+                <li>所有餐點、飲品及周邊均收10%服務費。禁止於店內吸菸、攜帶外食。</li>
+            </ul>
+        </div>
+
+        <div class="menu-grid">
+            <div class="menu-section">
+                <h3 class="menu-title">🍛 MAIN COURSE (主餐)</h3>
+                <div class="supply-time">供應時間：13:00~15:30、17:30~21:00</div>
+                <div class="menu-item"><div class="menu-name">《黃金律典•聖焰試煉》咖哩雞肉飯</div><div class="menu-dots"></div><div class="menu-price">260</div></div>
+                <div class="menu-item"><div class="menu-name">《黑曜灼律•牛神深層誓約》咖哩牛肉飯</div><div class="menu-dots"></div><div class="menu-price">280</div></div>
+                <div class="menu-item"><div class="menu-name">《紅蓮契文•番茄原典交錯》番茄肉醬義大利麵</div><div class="menu-dots"></div><div class="menu-price">300</div></div>
+                <div class="menu-item"><div class="menu-name">《蒼白密語•海詠咒環》白醬蛤蠣義大利麵</div><div class="menu-dots"></div><div class="menu-price">300</div></div>
+                <div class="menu-item"><div class="menu-name">《界限破碎•煉焰空鳴斬》炒泡麵</div><div class="menu-dots"></div><div class="menu-price">260</div></div>
+                <div class="menu-item"><div class="menu-name">《煉獄熱潮•斷界辛咒》辣炒泡麵 🌶️</div><div class="menu-dots"></div><div class="menu-price">260</div></div>
+                <div class="menu-item"><div class="menu-name">《獄炎咆哮•紅辣密咒鏈》泰式打拋豬辣炒義大利麵 🌶️</div><div class="menu-dots"></div><div class="menu-price">300</div></div>
+                <div class="menu-item"><div class="menu-name">《封羽神奏•煙痕絕響》煙燻鴨胸飯</div><div class="menu-dots"></div><div class="menu-price">340</div></div>
+                <div class="menu-item"><div class="menu-name">《天雷御鱗•煌焰裁決》鰻魚飯 (每日限量)</div><div class="menu-dots"></div><div class="menu-price">400</div></div>
+                <p style="font-size: 11px; text-align: center; color: var(--primary-dark); font-weight: bold; margin-top: 10px;">★ 主餐、輕食、炸物、甜點均可 +50 升級套餐 (附 100 元飲品)</p>
+            </div>
+
+            <div class="menu-section">
+                <h3 class="menu-title">🍟 LIGHT MEAL & FRIED FOOD (輕食/炸物)</h3>
+                <div class="menu-item"><div class="menu-name">《焰封三重奏•餞符之書》起司培根壓烤吐司</div><div class="menu-dots"></div><div class="menu-price">200</div></div>
+                <div class="menu-item"><div class="menu-name">《深海符印•熔核雙誓》起司鮪魚壓烤吐司</div><div class="menu-dots"></div><div class="menu-price">200</div></div>
+                <div class="menu-item"><div class="menu-name">《晨曦封印•神蛋交響詩》起司火腿蛋壓烤吐司</div><div class="menu-dots"></div><div class="menu-price">220</div></div>
+                <div class="menu-item"><div class="menu-name">《翼獸聖劍•炙炎之約》起司雞肉壓烤吐司</div><div class="menu-dots"></div><div class="menu-price">220</div></div>
+                <div style="height: 10px;"></div>
+                <div class="menu-item"><div class="menu-name">《審判天羽•碎肉爆鳴》炸雞塊</div><div class="menu-dots"></div><div class="menu-price">200</div></div>
+                <div class="menu-item"><div class="menu-name">《九煌神擊•連珠封陣》九星連珠</div><div class="menu-dots"></div><div class="menu-price">200</div></div>
+                <div class="menu-item"><div class="menu-name">《墮星之槍•熔魂地獄雨》起司熔岩薯條</div><div class="menu-dots"></div><div class="menu-price">220</div></div>
+                <div class="menu-item"><div class="menu-name">《姬戰羽斬•炸裂型態》雞雞姬</div><div class="menu-dots"></div><div class="menu-price">260</div></div>
+            </div>
+
+            <div class="menu-section">
+                <h3 class="menu-title">🍹 DRINKS & DESSERTS (飲品/甜點)</h3>
+                <div class="menu-item"><div class="menu-name">《光語之葉•琥珀淨露》紅茶</div><div class="menu-dots"></div><div class="menu-price">100</div></div>
+                <div class="menu-item"><div class="menu-name">《翠風誓約•森靈綠印》綠茶</div><div class="menu-dots"></div><div class="menu-price">100</div></div>
+                <div class="menu-item"><div class="menu-name">《月白契約•聖乳調和》鮮奶茶</div><div class="menu-dots"></div><div class="menu-price">180</div></div>
+                <div class="menu-item"><div class="menu-name">《翠月蒸律•乳光之綠》鮮奶綠</div><div class="menu-dots"></div><div class="menu-price">180</div></div>
+                <div class="menu-item"><div class="menu-name">《沉冥咒典•暗黑濾影》美式咖啡</div><div class="menu-dots"></div><div class="menu-price">150</div></div>
+                <div class="menu-item"><div class="menu-name">《聖魂注解•白煉之環》拿鐵</div><div class="menu-dots"></div><div class="menu-price">200</div></div>
+                <div class="menu-item"><div class="menu-name">《天使禁調•光翼浮影》天使特調</div><div class="menu-dots"></div><div class="menu-price">200</div></div>
+                <div class="menu-item"><div class="menu-name">《侍奉密語•戀咒之露》女僕特調</div><div class="menu-dots"></div><div class="menu-price">200</div></div>
+                <div class="menu-item"><div class="menu-name">《封渴雙極•黑白雙神》可樂 / 雪碧</div><div class="menu-dots"></div><div class="menu-price">200</div></div>
+                <div style="height: 10px;"></div>
+                <div class="menu-item"><div class="menu-name">《黑糖星降•柔影月凝》黑糖奶茶布丁</div><div class="menu-dots"></div><div class="menu-price">160</div></div>
+                <div class="menu-item"><div class="menu-name">《聖卷召喚•原熔與闇焰雙律》生乳捲</div><div class="menu-dots"></div><div class="menu-price">200</div></div>
+                <div class="menu-item"><div class="menu-name">《焙燄結晶•巴斯克審判》巴斯克蛋糕</div><div class="menu-dots"></div><div class="menu-price">200</div></div>
+                <div class="menu-item"><div class="menu-name">《秘典喚現•季輪詠章》季節限定蛋糕</div><div class="menu-dots"></div><div class="menu-price">250</div></div>
+            </div>
+
+            <div class="menu-section">
+                <h3 class="menu-title">📸 MERCH (天界聖宴•周邊物語)</h3>
+                <div class="menu-item">
+                    <div class="menu-name">《映影神紋•天使顯像》<span class="menu-sub">拍立得/手機拍 (合照/獨照,含簽繪)</span></div>
+                    <div class="menu-dots"></div><div class="menu-price">200</div>
+                </div>
+                <div class="menu-item">
+                    <div class="menu-name">《星願舞儀•表演降臨》<span class="menu-sub">天使表演</span></div>
+                    <div class="menu-dots"></div><div class="menu-price">300</div>
+                </div>
+                <div class="menu-item">
+                    <div class="menu-name">《筆跡聖紋•真名顯現》<span class="menu-sub">天使簽名</span></div>
+                    <div class="menu-dots"></div><div class="menu-price">100</div>
+                </div>
+                <div class="menu-item">
+                    <div class="menu-name">《時光之匣•記憶片段錄》<span class="menu-sub">紀念影片 (15秒)</span></div>
+                    <div class="menu-dots"></div><div class="menu-price">250</div>
+                </div>
+                <div class="menu-item">
+                    <div class="menu-name">《結界咒牢•私語結界》<span class="menu-sub">關起來 (30秒)</span></div>
+                    <div class="menu-dots"></div><div class="menu-price">400</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="tab-members" class="tab-content">
+        <h2>💖 天使成員圖鑑</h2>
+        <div class="maid-grid" id="maid-gallery"></div>
+    </div>
+
+    <div id="tab-schedule" class="tab-content">
+        <div class="calendar-nav">
+            <label style="font-weight: bold; color: #d84373;">📅 選擇月份：</label>
+            <select id="view-year" onchange="renderCalendar()"></select>
+            <select id="view-month" onchange="renderCalendar()"></select>
+        </div>
+        
+        <div class="admin-tools" id="admin-panel">
+            <div class="card" style="border: 2px solid #0984e3;">
+                <h3 id="edit-title">👥 1. 建立/編輯女僕</h3>
+                <div class="form-group"><label>名稱</label><input type="text" id="new-name" placeholder="安晨"></div>
+                <div class="form-group"><label>IG</label><input type="text" id="new-ig" placeholder="@ig"></div>
+                <div class="form-group"><label>照片</label><input type="text" id="new-photo" placeholder="網址 (可留空)"></div>
+                <div class="form-group"><label>色</label><input type="color" id="new-color" value="#f36896"></div>
+                <button class="btn" id="btn-save-member" style="background: #2d3436;" onclick="addOrUpdateMember()">💾 儲存 (同步雲端)</button>
+            </div>
+            <div class="card">
+                <h3>📅 2. 新增排班</h3>
+                <div class="form-group"><label>日期</label><input type="number" id="shift-day" min="1" max="31" value="1"></div>
+                <div class="form-group"><label>女僕</label><select id="shift-member"></select></div>
+                <div class="form-group"><label>班別</label><select id="shift-type"><option value="morning">早班</option><option value="night">晚班</option><option value="full">一日</option></select></div>
+                <button class="btn" onclick="addShift()">新增排班 (同步雲端)</button>
+            </div>
+            <div class="card">
+                <h3>🎉 3. 主題活動</h3>
+                <div class="form-group"><label>日期</label><input type="number" id="event-day" min="1" max="31" value="1"></div>
+                <div class="form-group"><label>名稱</label><input type="text" id="event-name" placeholder="制服日"></div>
+                <div class="form-group"><label>色</label><input type="color" id="event-color" value="#e84393"></div>
+                <button class="btn" style="background: #e17055;" onclick="addEvent()">設定活動 (同步雲端)</button>
+            </div>
+            <p style="width: 100%; font-size: 12px; color: #d63031; margin-top: 5px;">💡 管理員提示：欲刪除日曆上的班表或活動，請直接在日曆上點擊該標籤即可刪除。</p>
+        </div>
+
+        <div class="filter-section">
+            <div>
+                <strong>🔍 篩選成員班表：</strong>
+                <div class="member-list" id="filter-members"></div>
+            </div>
+            <button class="btn-show-all" onclick="showAllMembers()">顯示所有人</button>
+        </div>
+
+        <div class="calendar-header"><div>日</div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div></div>
+        <div class="calendar-grid" id="calendar"></div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBlDlYsUHMo8ES_xnJYomTBvYNXPBZXlkc",
+        authDomain: "angel-heart-schedule.firebaseapp.com",
+        projectId: "angel-heart-schedule",
+        storageBucket: "angel-heart-schedule.firebasestorage.app",
+        messagingSenderId: "171300193054",
+        appId: "1:171300193054:web:3d291652dd464346b4bf0f",
+        measurementId: "G-FE796K62GR"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const docRef = doc(db, "AngelHeart", "MainData");
+
+    let isAdmin = false;
+    let maidData = {};
+    let scheduleData = {};
+    let activeFilters = new Set();
+    let isDataLoaded = false; 
+    let currentEditName = null;
+
+    const syncStatusEl = document.getElementById('sync-status');
+
+    onSnapshot(docRef, (snapshot) => {
+        if (snapshot.exists()) {
+            const data = snapshot.data();
+            maidData = data.maidData || {};
+            scheduleData = data.scheduleData || {};
+            
+            if (!isDataLoaded) {
+                activeFilters = new Set(Object.keys(maidData));
+                isDataLoaded = true;
+                syncStatusEl.innerText = '🟢 雲端資料庫已連線，即時同步中...';
+                syncStatusEl.style.color = '#00b894';
+                syncStatusEl.style.display = 'block'; 
+            }
+            
+            updateMemberDropdown();
+            renderMaidGallery();
+            renderFilters();
+            renderCalendar();
+        } else {
+            setDoc(docRef, { maidData: {}, scheduleData: {} }).catch(err => {
+                syncStatusEl.innerText = '🔴 資料庫初始化失敗，請檢查 Firebase 權限。';
+                syncStatusEl.style.color = '#d63031';
+                syncStatusEl.style.display = 'block';
+            });
+        }
+    }, (error) => {
+        syncStatusEl.innerText = '🔴 無法連線至雲端資料庫，請檢查網路或金鑰設定！';
+        syncStatusEl.style.color = '#d63031';
+        syncStatusEl.style.display = 'block';
+    });
+
+    async function saveToCloud() {
+        try { 
+            await setDoc(docRef, { maidData: maidData, scheduleData: scheduleData }); 
+        } catch (e) { 
+            alert('儲存失敗！請確認 Firebase 資料庫規則是否設定為測試模式。');
+        }
+    }
+    
+    window.toggleAdmin = function() {
+        const btn = document.getElementById('login-btn');
+        const panel = document.getElementById('admin-panel');
+        if (isAdmin) {
+            isAdmin = false; btn.innerHTML = '🔒 店長登入'; btn.classList.remove('logged-in'); 
+            panel.style.display = 'none'; document.body.classList.remove('admin-mode'); 
+            window.renderCalendar(); 
+        } else {
+            const pwd = prompt('請輸入密碼：');
+            if (pwd === 'angel') {
+                isAdmin = true; btn.innerHTML = '🔓 登出'; btn.classList.add('logged-in'); 
+                panel.style.display = 'flex'; document.body.classList.add('admin-mode'); 
+                window.switchTab('tab-schedule', document.querySelectorAll('.tab-btn')[3]); 
+                window.renderCalendar(); 
+            } else if (pwd !== null) {
+                alert('密碼錯誤！');
+            }
+        }
+    }
+
+    window.switchTab = function(tabId, btnElement) {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        btnElement.classList.add('active');
+    }
+
+    function initCalendarDropdowns() {
+        const yearSelect = document.getElementById("view-year");
+        const monthSelect = document.getElementById("view-month");
+        const now = new Date();
+        for(let y=2025; y<=2027; y++){
+            const opt = document.createElement("option"); opt.value = y; opt.textContent = y + "年";
+            if(y === now.getFullYear()) opt.selected = true; yearSelect.appendChild(opt);
+        }
+        for(let m=1; m<=12; m++){
+            const opt = document.createElement("option"); opt.value = m; opt.textContent = m + "月";
+            if(m === (now.getMonth()+1)) opt.selected = true; monthSelect.appendChild(opt);
+        }
+    }
+
+    window.renderCalendar = function() {
+        const year = parseInt(document.getElementById("view-year").value);
+        const month = parseInt(document.getElementById("view-month").value);
+        const calendarEl = document.getElementById("calendar");
+        calendarEl.innerHTML = "";
+
+        const firstDay = new Date(year, month - 1, 1).getDay();
+        const daysInMonth = new Date(year, month, 0).getDate();
+        const monthKey = `${year}-${month}`;
+        
+        const today = new Date();
+        const isCurrentMonth = (year === today.getFullYear() && month === (today.getMonth() + 1));
+        const currentDay = today.getDate();
+
+        for (let i = 0; i < firstDay; i++) {
+            const empty = document.createElement("div"); empty.className = "day-cell";
+            empty.style.background = "#fafafa"; calendarEl.appendChild(empty);
+        }
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const cell = document.createElement("div"); cell.className = "day-cell";
+            let html = `<div class="date-num">${day}</div>`;
+            
+            if (isCurrentMonth && day === currentDay) {
+                cell.classList.add("today-cell");
+                html += `<div class="today-badge">📍 今日</div>`;
+            }
+            
+            if (scheduleData[monthKey] && scheduleData[monthKey][day]) {
+                const dayData = scheduleData[monthKey][day];
+                
+                if (dayData.event) {
+                    const ec = dayData.event.color;
+                    cell.style.border = `1.5px solid ${ec}`; cell.style.backgroundColor = `${ec}1A`;
+                    const clickAction = isAdmin ? `onclick="deleteEvent('${monthKey}', ${day})"` : '';
+                    html += `<div class="event-label" style="background-color: ${ec};" ${clickAction}>${dayData.event.name}</div>`;
+                }
+                
+                dayData.shifts.forEach((s, index) => {
+                    if (activeFilters.has(s.name)) {
+                        const mc = maidData[s.name] ? maidData[s.name].color : "#ccc";
+                        const clickAction = isAdmin ? `onclick="deleteShift('${monthKey}', ${day}, ${index})"` : '';
+                        html += `<div class="shift-tag" style="border-left-color: ${mc}; background-color: ${mc}1A; color: #333;" ${clickAction}>${s.name}(${s.time})</div>`;
+                    }
+                });
+            }
+            cell.innerHTML = html; calendarEl.appendChild(cell);
+        }
+    }
+
+    window.deleteShift = function(monthKey, day, index) {
+        if(!isAdmin) return;
+        const shift = scheduleData[monthKey][day].shifts[index];
+        if(confirm(`刪除「${day}號 ${shift.name}」？`)) {
+            scheduleData[monthKey][day].shifts.splice(index, 1); saveToCloud();
+        }
+    }
+
+    window.deleteEvent = function(monthKey, day) {
+        if(!isAdmin) return;
+        const evtName = scheduleData[monthKey][day].event.name;
+        if(confirm(`刪除活動【${evtName}】？`)) {
+            scheduleData[monthKey][day].event = null; saveToCloud();
+        }
+    }
+
+    window.addShift = function() {
+        const year = document.getElementById("view-year").value;
+        const month = document.getElementById("view-month").value;
+        const day = document.getElementById("shift-day").value;
+        const name = document.getElementById("shift-member").value;
+        const type = document.getElementById("shift-type").value;
+        const monthKey = `${year}-${month}`;
+        const timeText = type === "full" ? "一日" : (type === "morning" ? "早班" : "晚班");
+
+        if (!scheduleData[monthKey]) scheduleData[monthKey] = {};
+        if (!scheduleData[monthKey][day]) scheduleData[monthKey][day] = { event: null, shifts: [] };
+        
+        scheduleData[monthKey][day].shifts.push({ name: name, time: timeText }); saveToCloud(); 
+    }
+
+    window.addEvent = function() {
+        const year = document.getElementById("view-year").value;
+        const month = document.getElementById("view-month").value;
+        const day = document.getElementById("event-day").value;
+        const name = document.getElementById("event-name").value;
+        const color = document.getElementById("event-color").value;
+        const monthKey = `${year}-${month}`;
+        
+        if (!scheduleData[monthKey]) scheduleData[monthKey] = {};
+        if (!scheduleData[monthKey][day]) scheduleData[monthKey][day] = { event: null, shifts: [] };
+        
+        scheduleData[monthKey][day].event = { name: name, color: color }; saveToCloud(); 
+    }
+
+    function updateMemberDropdown() {
+        const select = document.getElementById("shift-member"); select.innerHTML = "";
+        Object.keys(maidData).forEach(m => {
+            const opt = document.createElement("option"); opt.value = m; opt.textContent = m; select.appendChild(opt);
+        });
+    }
+
+    function renderFilters() {
+        const filterBox = document.getElementById("filter-members"); filterBox.innerHTML = "";
+        Object.keys(maidData).forEach(member => {
+            const div = document.createElement("div"); div.className = "member-item";
+            const checked = activeFilters.has(member) ? "checked" : "";
+            const color = maidData[member].color;
+            div.innerHTML = `
+                <input type="checkbox" ${checked} onchange="toggleFilter('${member}')" id="chk-${member}">
+                <span class="color-dot" style="background-color: ${color};"></span>
+                <label for="chk-${member}" style="cursor: pointer; font-weight: bold; color: #555;">${member}</label>
+            `;
+            filterBox.appendChild(div);
+        });
+    }
+
+    window.toggleFilter = function(member) {
+        if (activeFilters.has(member)) activeFilters.delete(member); 
+        else activeFilters.add(member); 
+        window.renderCalendar();
+    }
+    
+    window.showAllMembers = function() {
+        activeFilters = new Set(Object.keys(maidData)); renderFilters(); window.renderCalendar();
+    }
+
+    function renderMaidGallery() {
+        const gallery = document.getElementById("maid-gallery"); gallery.innerHTML = "";
+        Object.keys(maidData).forEach(name => {
+            const data = maidData[name];
+            let imgUrl = data.photo;
+            if (!imgUrl) {
+                const encodedColor = data.color.replace('#', '%23');
+                imgUrl = `data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Crect width='300' height='300' fill='${encodedColor}' opacity='0.2'/%3E%3Ctext x='50%25' y='50%25' fill='${encodedColor}' font-size='40' font-family='sans-serif' font-weight='bold' dominant-baseline='middle' text-anchor='middle'%3E${name}%3C/text%3E%3C/svg%3E`;
+            }
+            const div = document.createElement("div"); div.className = "maid-card";
+            div.innerHTML = `
+                <img src="${imgUrl}" alt="${name}" class="maid-img" style="border-bottom-color: ${data.color};">
+                <div class="maid-info">
+                    <h3 class="maid-name"><span class="color-dot" style="background-color: ${data.color}"></span> ${name}</h3>
+                    <a href="https://instagram.com/${data.ig.replace('@','')}" target="_blank" class="maid-ig">${data.ig || "IG"}</a>
+                    <button class="btn-schedule-link" style="color:${data.color}; border-color:${data.color};" onclick="viewMaidSchedule('${name}')">📅 班表</button>
+                    <div class="admin-btn-group admin-action">
+                        <button class="btn-edit" onclick="editMember('${name}')">✏️</button>
+                        <button class="btn-delete" onclick="deleteMember('${name}')">🗑️</button>
+                    </div>
+                </div>
+            `;
+            gallery.appendChild(div);
+        });
+    }
+
+    window.viewMaidSchedule = function(n) { 
+        window.switchTab('tab-schedule', document.querySelectorAll('.tab-btn')[3]); 
+        activeFilters.clear(); activeFilters.add(n); 
+        renderFilters(); window.renderCalendar(); window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    window.editMember = function(name) {
+        const data = maidData[name];
+        document.getElementById("new-name").value = name;
+        document.getElementById("new-ig").value = data.ig || "";
+        document.getElementById("new-photo").value = data.photo || "";
+        document.getElementById("new-color").value = data.color || "#f36896";
+        currentEditName = name;
+        document.getElementById("edit-title").innerText = `✏️ 編輯：${name}`;
+        window.switchTab('tab-schedule', document.querySelectorAll('.tab-btn')[3]);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    window.deleteMember = function(name) {
+        if(confirm(`刪除「${name}」？`)) { delete maidData[name]; activeFilters.delete(name); saveToCloud(); }
+    }
+
+    window.addOrUpdateMember = function() {
+        const n = document.getElementById("new-name").value.trim(); 
+        const ig = document.getElementById("new-ig").value.trim(); 
+        const photo = document.getElementById("new-photo").value.trim();
+        const c = document.getElementById("new-color").value;
+        if(!n) return alert("輸入名稱！"); 
+        
+        if (currentEditName && currentEditName !== n) {
+            delete maidData[currentEditName]; activeFilters.delete(currentEditName);
+            for (let monthKey in scheduleData) {
+                for (let day in scheduleData[monthKey]) {
+                    if (scheduleData[monthKey][day].shifts) {
+                        scheduleData[monthKey][day].shifts.forEach(shift => { if (shift.name === currentEditName) shift.name = n; });
+                    }
+                }
+            }
+        }
+        
+        maidData[n] = { color: c, ig: ig, photo: photo }; 
+        activeFilters.add(n); saveToCloud(); 
+        
+        document.getElementById("new-name").value = ""; document.getElementById("new-ig").value = ""; document.getElementById("new-photo").value = "";
+        currentEditName = null; document.getElementById("edit-title").innerText = "👥 1. 建立/編輯女僕";
+    }
+
+    initCalendarDropdowns();
+</script>
 </body>
+</html>
 </html>
