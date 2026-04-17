@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>天使ハート 女僕咖啡廳 - 內部管理系統 V10</title>
+    <title>天使ハート 女僕咖啡廳 - 內部管理系統 V11 (雲端同步版)</title>
     <style>
         :root {
             --primary-color: #f36896; 
@@ -19,10 +19,17 @@
         .header h1 { margin: 0 0 10px 0; font-size: 20px; color: var(--primary-color); }
         .header p { margin: 0 0 15px 0; font-size: 12px; color: #ccc; }
         
-        .admin-login-btn { position: absolute; top: 10px; right: 10px; background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 4px 10px; border-radius: 20px; cursor: pointer; font-size: 11px; font-weight: bold; }
+        .admin-login-btn { position: absolute; top: 15px; right: 15px; background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: bold; }
         .admin-login-btn.logged-in { background: #00b894; border-color: #00b894; color: white; }
 
-        /* 導覽列優化 */
+        @media (max-width: 768px) {
+            .header { padding-top: 60px; } 
+            .header h1 { font-size: 18px; }
+            .admin-login-btn { top: 10px; right: 10px; padding: 5px 10px; font-size: 11px; }
+            .nav-tabs { display: grid !important; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+            .tab-btn { padding: 10px 0 !important; font-size: 13px !important; max-width: none !important; }
+        }
+
         .nav-tabs { display: flex; justify-content: center; gap: 5px; flex-wrap: wrap; }
         .tab-btn { background-color: #b2bec3; color: #2d3436; border: none; padding: 10px 15px; font-size: 14px; font-weight: bold; cursor: pointer; border-radius: 8px 8px 0 0; transition: 0.3s; flex-grow: 1; max-width: 150px; }
         .tab-btn.active { background-color: var(--primary-color); color: white; }
@@ -42,7 +49,6 @@
         .info-list li { margin-bottom: 8px; border-bottom: 1px solid #fff0f3; padding-bottom: 4px; }
         .info-list span { font-weight: bold; color: #555; width: 70px; display: inline-block; }
         .link-btn { display: block; text-align: center; background: var(--primary-color); color: white; text-decoration: none; padding: 10px; border-radius: 5px; margin-top: 10px; font-weight: bold; }
-        
         .map-container { margin-top: 10px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); height: 250px; }
 
         /* --- 女僕圖鑑 --- */
@@ -69,7 +75,7 @@
         .form-group input, .form-group select { flex: 1; padding: 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; }
         .btn { width: 100%; background: var(--primary-color); color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; }
 
-        /* --- 恢復 V8 的精美篩選列設計 --- */
+        /* --- 篩選列設計 --- */
         .filter-section { border: 1px solid #ffeaa7; background: #fff9db; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
         .member-list { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 5px; }
         .member-item { font-size: 14px; display: flex; align-items: center; gap: 6px; background: white; padding: 4px 10px; border-radius: 20px; border: 1px solid #ddd; }
@@ -86,6 +92,9 @@
         .event-label { color: white; font-size: 10px; padding: 3px; border-radius: 3px; text-align: center; font-weight: bold; margin-bottom: 4px; display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
         .shift-tag { font-size: 10px; padding: 2px 4px; border-radius: 3px; margin-bottom: 3px; border-left: 4px solid; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.1); display: block; font-weight: bold; }
         @media (min-width: 768px) { .event-label { font-size: 12px; padding: 4px; } .shift-tag { font-size: 12px; border-left-width: 5px; padding: 4px; } }
+        
+        /* 系統狀態提示 */
+        #sync-status { text-align: center; font-size: 12px; color: #00b894; margin-bottom: 10px; font-weight: bold; display: none; }
     </style>
 </head>
 <body>
@@ -102,6 +111,7 @@
 </div>
 
 <div class="container">
+    <div id="sync-status">🟢 雲端資料庫已連線，即時同步中...</div>
     
     <div id="tab-info" class="tab-content active">
         <h2>🎀 聯絡與營業資訊</h2>
@@ -115,14 +125,7 @@
                     <li><span>付款方式</span> 現金、LINE Pay</li>
                 </ul>
                 <div class="map-container">
-                    <iframe 
-                        width="100%" 
-                        height="100%" 
-                        frameborder="0" 
-                        style="border:0" 
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3615.111956555543!2d121.531238615006!3d25.01809058397985!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3442a98b0f209703%3A0xc3b8fb328ab837f!2zMTA25Y-w5YyX5biC5aSn5a6J5Y2A5paw55Sf5Y2X6Lev5LiJ5q61OTYtNeiZnw!5e0!3m2!1szh-TW!2stw!4v1715000000000!5m2!1szh-TW!2stw" 
-                        allowfullscreen>
-                    </iframe>
+                    <iframe width="100%" height="100%" frameborder="0" style="border:0" src="https://www.google.com/maps?q=台北市大安區新生南路三段96-5號&output=embed" allowfullscreen></iframe>
                 </div>
             </div>
             <div class="info-card">
@@ -152,21 +155,21 @@
                 <div class="form-group"><label>IG</label><input type="text" id="new-ig" placeholder="@ig"></div>
                 <div class="form-group"><label>照片</label><input type="text" id="new-photo" placeholder="網址 (可留空)"></div>
                 <div class="form-group"><label>色</label><input type="color" id="new-color" value="#f36896"></div>
-                <button class="btn" style="background: #2d3436;" onclick="addOrUpdateMember()">儲存成員</button>
+                <button class="btn" style="background: #2d3436;" onclick="addOrUpdateMember()">儲存成員 (同步至雲端)</button>
             </div>
             <div class="card">
                 <h3>📅 2. 新增排班</h3>
                 <div class="form-group"><label>日期</label><input type="number" id="shift-day" min="1" max="31" value="1"></div>
                 <div class="form-group"><label>女僕</label><select id="shift-member"></select></div>
                 <div class="form-group"><label>班別</label><select id="shift-type"><option value="morning">早班</option><option value="night">晚班</option><option value="full">一日</option></select></div>
-                <button class="btn" onclick="addShift()">新增排班</button>
+                <button class="btn" onclick="addShift()">新增排班 (同步至雲端)</button>
             </div>
             <div class="card">
                 <h3>🎉 3. 主題活動</h3>
                 <div class="form-group"><label>日期</label><input type="number" id="event-day" min="1" max="31" value="1"></div>
                 <div class="form-group"><label>名稱</label><input type="text" id="event-name" placeholder="制服日"></div>
                 <div class="form-group"><label>色</label><input type="color" id="event-color" value="#e84393"></div>
-                <button class="btn" style="background: #e17055;" onclick="addEvent()">設定活動</button>
+                <button class="btn" style="background: #e17055;" onclick="addEvent()">設定活動 (同步至雲端)</button>
             </div>
         </div>
 
@@ -183,23 +186,76 @@
     </div>
 </div>
 
-<script>
+<script type="module">
+    // 引入 Firebase 官方套件
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    // 填入你專屬的 Firebase 金鑰設定
+    const firebaseConfig = {
+        apiKey: "AIzaSyBldLYsUHMo8ES_xNJyomTBvYNXPBZXlkc",
+        authDomain: "angel-heart-schedule.firebaseapp.com",
+        projectId: "angel-heart-schedule",
+        storageBucket: "angel-heart-schedule.firebasestorage.app",
+        messagingSenderId: "171300193054",
+        appId: "1:171300193054:web:3d291652dd464346b4bf0f"
+    };
+
+    // 初始化 Firebase 與資料庫
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    // 我們在資料庫裡建立一份名為 "AngelHeart" 資料夾，檔案叫 "MainData"
+    const docRef = doc(db, "AngelHeart", "MainData");
+
+    // 全域變數
     let isAdmin = false;
-    let maidData = {
-        "安晨": { color: "#ff7675", ig: "@anchen_ig", photo: "" },
-        "闇咪": { color: "#fdcb6e", ig: "@yami_cute", photo: "" }
-    };
-    
-    // scheduleData 結構 { "2026-4": { "12": { event, shifts } } }
-    let scheduleData = {
-        "2026-4": {
-            "12": { event: { name: "💖 雙馬尾日", color: "#e84393" }, shifts: [{ name: "安晨", time: "一日" }] }
+    let maidData = {};
+    let scheduleData = {};
+    let activeFilters = new Set();
+    let isDataLoaded = false; // 判斷是否為第一次載入
+
+    // -----------------------------------------------------
+    // 雲端同步核心：只要資料庫有變動，這裡就會自動觸發重新渲染！
+    // -----------------------------------------------------
+    onSnapshot(docRef, (snapshot) => {
+        if (snapshot.exists()) {
+            const data = snapshot.data();
+            maidData = data.maidData || {};
+            scheduleData = data.scheduleData || {};
+            
+            // 第一次載入時，預設顯示所有女僕
+            if (!isDataLoaded) {
+                activeFilters = new Set(Object.keys(maidData));
+                isDataLoaded = true;
+                document.getElementById('sync-status').style.display = 'block'; // 顯示連線成功提示
+            }
+            
+            // 資料更新後，重新渲染所有畫面
+            updateMemberDropdown();
+            renderMaidGallery();
+            renderFilters();
+            renderCalendar();
+        } else {
+            // 如果是全新的資料庫，塞入初始空資料
+            setDoc(docRef, { maidData: {}, scheduleData: {} });
         }
-    };
+    });
 
-    let activeFilters = new Set(Object.keys(maidData));
+    // 將資料寫入雲端的通用函式
+    async function saveToCloud() {
+        try {
+            await setDoc(docRef, { maidData: maidData, scheduleData: scheduleData });
+        } catch (e) {
+            console.error("寫入錯誤: ", e);
+            alert("儲存失敗！請確認 Firebase 資料庫規則是否設定為測試模式。");
+        }
+    }
 
-    function toggleAdmin() {
+    // ==========================================
+    // 介面與操作邏輯 (將函式綁定到 window 讓 HTML 呼叫)
+    // ==========================================
+    
+    window.toggleAdmin = function() {
         const btn = document.getElementById('login-btn');
         const panel = document.getElementById('admin-panel');
         if (isAdmin) {
@@ -208,19 +264,19 @@
             const pwd = prompt('請輸入店長密碼 (angel)：');
             if (pwd === 'angel') {
                 isAdmin = true; btn.innerHTML = '🔓 登出'; btn.classList.add('logged-in'); panel.style.display = 'flex';
-                switchTab('tab-schedule', document.querySelectorAll('.tab-btn')[2]);
+                window.switchTab('tab-schedule', document.querySelectorAll('.tab-btn')[2]);
             }
         }
     }
 
-    function switchTab(tabId, btnElement) {
+    window.switchTab = function(tabId, btnElement) {
         document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         document.getElementById(tabId).classList.add('active');
         btnElement.classList.add('active');
     }
 
-    function init() {
+    function initCalendarDropdowns() {
         const yearSelect = document.getElementById("view-year");
         const monthSelect = document.getElementById("view-month");
         const now = new Date();
@@ -232,10 +288,9 @@
             const opt = document.createElement("option"); opt.value = m; opt.textContent = m + "月";
             if(m === (now.getMonth()+1)) opt.selected = true; monthSelect.appendChild(opt);
         }
-        updateMemberDropdown(); renderMaidGallery(); renderFilters(); renderCalendar();
     }
 
-    function renderCalendar() {
+    window.renderCalendar = function() {
         const year = parseInt(document.getElementById("view-year").value);
         const month = parseInt(document.getElementById("view-month").value);
         const calendarEl = document.getElementById("calendar");
@@ -272,7 +327,7 @@
         }
     }
 
-    function addShift() {
+    window.addShift = function() {
         const year = document.getElementById("view-year").value;
         const month = document.getElementById("view-month").value;
         const day = document.getElementById("shift-day").value;
@@ -283,21 +338,24 @@
 
         if (!scheduleData[monthKey]) scheduleData[monthKey] = {};
         if (!scheduleData[monthKey][day]) scheduleData[monthKey][day] = { event: null, shifts: [] };
+        
         scheduleData[monthKey][day].shifts.push({ name: name, time: timeText });
-        renderCalendar();
+        saveToCloud(); // 儲存到雲端
     }
 
-    function addEvent() {
+    window.addEvent = function() {
         const year = document.getElementById("view-year").value;
         const month = document.getElementById("view-month").value;
         const day = document.getElementById("event-day").value;
         const name = document.getElementById("event-name").value;
         const color = document.getElementById("event-color").value;
         const monthKey = `${year}-${month}`;
+        
         if (!scheduleData[monthKey]) scheduleData[monthKey] = {};
         if (!scheduleData[monthKey][day]) scheduleData[monthKey][day] = { event: null, shifts: [] };
+        
         scheduleData[monthKey][day].event = { name: name, color: color };
-        renderCalendar();
+        saveToCloud(); // 儲存到雲端
     }
 
     function updateMemberDropdown() {
@@ -307,7 +365,6 @@
         });
     }
 
-    /* 恢復 V8 美觀的篩選按鈕渲染方式 */
     function renderFilters() {
         const filterBox = document.getElementById("filter-members");
         filterBox.innerHTML = "";
@@ -325,16 +382,16 @@
         });
     }
 
-    function toggleFilter(member) {
+    window.toggleFilter = function(member) {
         if (activeFilters.has(member)) activeFilters.delete(member); 
         else activeFilters.add(member); 
-        renderCalendar();
+        window.renderCalendar();
     }
 
-    function showAllMembers() {
+    window.showAllMembers = function() {
         activeFilters = new Set(Object.keys(maidData));
         renderFilters();
-        renderCalendar();
+        window.renderCalendar();
     }
 
     function renderMaidGallery() {
@@ -359,16 +416,16 @@
         });
     }
 
-    function viewMaidSchedule(n) { 
-        switchTab('tab-schedule', document.querySelectorAll('.tab-btn')[2]); 
+    window.viewMaidSchedule = function(n) { 
+        window.switchTab('tab-schedule', document.querySelectorAll('.tab-btn')[2]); 
         activeFilters.clear(); 
         activeFilters.add(n); 
         renderFilters(); 
-        renderCalendar(); 
+        window.renderCalendar(); 
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function addOrUpdateMember() {
+    window.addOrUpdateMember = function() {
         const n = document.getElementById("new-name").value; 
         const ig = document.getElementById("new-ig").value; 
         const photo = document.getElementById("new-photo").value;
@@ -378,18 +435,15 @@
         maidData[n] = { color: c, ig: ig, photo: photo }; 
         activeFilters.add(n);
         
-        updateMemberDropdown(); 
-        renderMaidGallery(); 
-        renderFilters(); 
-        renderCalendar();
+        saveToCloud(); // 儲存到雲端
         
         document.getElementById("new-name").value = "";
         document.getElementById("new-ig").value = "";
         document.getElementById("new-photo").value = "";
-        alert(`已成功將 ${n} 加入圖鑑與排班名單中！`);
     }
 
-    init();
+    // 初始化年份/月份下拉選單
+    initCalendarDropdowns();
 </script>
 </body>
 </html>
