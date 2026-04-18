@@ -1,1 +1,1033 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>愛神・阿芙羅黛蒂 女僕咖啡廳 - 愛神系統</title>
+    <link rel="icon" href="aphrodite_logo.png" type="image/png">
+    <style>
+        :root {
+            --primary-color: #a29bfe; 
+            --primary-dark: #6c5ce7;
+            --text-color: #2d3436;
+            --bg-color: #f4f0ff; 
+            --card-bg: #ffffff;
+            --border-color: #dcdde1;
+            --today-bg: #f8f9fa; 
+            --menu-sub: #888;
+            --calendar-border: #eee;
+            --header-bg: #1e272e;
+            --info-bg: #f8f9fa;
+            --rules-red-bg: #fff4f4;
+            --rules-purple-bg: #f4f0ff;
+            --announcement-bg: #f1f2f6;
+            --announcement-border: #dcdde1;
+            --price-color: #e84118;
+            --input-bg: #ffffff;
+            --input-text: #333;
+            --tab-inactive-bg: #ced6e0;
+            --tab-inactive-txt: #2f3640;
+            --banner-bg: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+            --banner-shadow: rgba(108, 92, 231, 0.3);
+            
+            --shift-full-bg: #fde047; --shift-full-txt: #713f12;
+            --shift-morning-bg: #fdba74; --shift-morning-txt: #7c2d12;
+            --shift-night-bg: #7dd3fc; --shift-night-txt: #0c4a6e;
+            --shift-off-bg: #fca5a5; --shift-off-txt: #7f1d1d;
+        }
+        
+        body.dark-mode {
+            --primary-color: #8c7ae6; 
+            --primary-dark: #a29bfe;
+            --text-color: #e2e8f0;
+            --bg-color: #1a1a2e; 
+            --card-bg: #16213e;
+            --border-color: #4a4e69;
+            --today-bg: #2d3748; 
+            --menu-sub: #a0aec0;
+            --calendar-border: #4a4e69;
+            --header-bg: #0f3460;
+            --info-bg: #1e293b;
+            --rules-red-bg: #3f1d1d;
+            --rules-purple-bg: #2d2442;
+            --announcement-bg: #1e293b;
+            --announcement-border: #4a4e69;
+            --price-color: #ff7675;
+            --input-bg: #0f3460;
+            --input-text: #f8f9fa;
+            --tab-inactive-bg: #4a4e69;
+            --tab-inactive-txt: #f8f9fa;
+            --banner-bg: linear-gradient(135deg, #4834d4 0%, #686de0 100%);
+            --banner-shadow: rgba(0,0,0,0.5);
 
+            --shift-full-bg: #854d0e; --shift-full-txt: #fef08a;
+            --shift-morning-bg: #9a3412; --shift-morning-txt: #ffedd5;
+            --shift-night-bg: #075985; --shift-night-txt: #e0f2fe;
+            --shift-off-bg: #991b1b; --shift-off-txt: #fee2e2;
+        }
+
+        body { font-family: "Microsoft JhengHei", sans-serif; background-color: var(--bg-color); padding: 0; color: var(--text-color); margin: 0; -webkit-tap-highlight-color: transparent; display: flex; flex-direction: column; min-height: 100vh; transition: background-color 0.3s, color 0.3s; }
+        
+        .header { background-color: var(--header-bg); color: white; padding: 20px 10px 0 10px; text-align: center; position: relative; transition: 0.3s; }
+        .header h1 { margin: 0 0 10px 0; font-size: 20px; color: var(--primary-color); }
+        .header p { margin: 0 0 15px 0; font-size: 12px; color: #ccc; }
+        
+        .menu-toggle-btn { position: absolute; top: 15px; left: 15px; background: transparent; border: none; color: var(--primary-color); font-size: 24px; cursor: pointer; padding: 0; line-height: 1; z-index: 100; }
+        .theme-toggle-btn { position: absolute; top: 18px; left: 55px; background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 5px 10px; border-radius: 20px; cursor: pointer; font-size: 11px; font-weight: bold; }
+        
+        .admin-login-btn { position: absolute; top: 15px; right: 15px; background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: bold; }
+        .admin-login-btn.logged-in { background: #00b894; border-color: #00b894; color: white; }
+
+        @media (max-width: 768px) {
+            .header { padding-top: 60px; } 
+            .header h1 { font-size: 18px; }
+            .menu-toggle-btn { top: 12px; left: 10px; font-size: 22px; }
+            .theme-toggle-btn { top: 14px; left: 45px; padding: 4px 8px; font-size: 10px; }
+            .admin-login-btn { top: 10px; right: 10px; padding: 5px 10px; font-size: 11px; }
+            .nav-tabs { display: flex !important; flex-wrap: wrap; justify-content: center; gap: 4px; }
+            .tab-btn { flex: 1 1 calc(30% - 10px) !important; padding: 10px 5px !important; font-size: 13px !important; border-radius: 6px !important; max-width: none !important; }
+        }
+
+        .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); z-index: 1999; opacity: 0; visibility: hidden; transition: 0.3s ease; }
+        .sidebar-overlay.active { opacity: 1; visibility: visible; }
+        .sidebar { position: fixed; top: 0; left: -280px; width: 260px; height: 100vh; background-color: var(--card-bg); z-index: 2000; transition: 0.3s ease; box-shadow: 4px 0 15px rgba(0,0,0,0.2); display: flex; flex-direction: column; }
+        .sidebar.active { left: 0; }
+        .sidebar-header-box { padding: 20px; background-color: var(--primary-color); color: white; font-size: 16px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        .close-sidebar-btn { background: transparent; border: none; color: white; font-size: 24px; cursor: pointer; line-height: 1; padding: 0; }
+        .sidebar-menu { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; }
+        .sidebar-menu li a { display: block; padding: 15px 20px; color: var(--text-color); text-decoration: none; font-weight: bold; border-bottom: 1px solid var(--border-color); transition: 0.2s; font-size: 15px; }
+        .sidebar-menu li a:hover { background-color: var(--today-bg); }
+        .sidebar-menu li a.active-link { background-color: var(--today-bg); color: var(--primary-dark); border-left: 5px solid var(--primary-color); }
+
+        .nav-tabs { display: flex; justify-content: center; gap: 5px; flex-wrap: wrap; }
+        .tab-btn { background-color: var(--tab-inactive-bg); color: var(--tab-inactive-txt); border: none; padding: 10px 20px; font-size: 14px; font-weight: bold; cursor: pointer; border-radius: 8px 8px 0 0; transition: 0.3s; flex-grow: 1; max-width: 150px; }
+        .tab-btn.active { background-color: var(--primary-color); color: white; }
+        .tab-btn-danger { color: var(--price-color); }
+        .tab-btn-danger.active { background-color: var(--price-color); color: white; }
+
+        .container { max-width: 1200px; margin: 10px auto; background: var(--card-bg); padding: 15px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); flex-grow: 1; width: calc(100% - 20px); box-sizing: border-box; transition: 0.3s; }
+        .tab-content { display: none; animation: fadeIn 0.4s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        h2 { color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 8px; margin-top: 0; font-size: 18px; }
+
+        .announcement-box { margin-bottom: 15px; border-left: 5px solid var(--primary-dark); background: var(--announcement-bg); padding: 15px; border-radius: 8px; border-top: 1px solid var(--announcement-border); border-right: 1px solid var(--announcement-border); border-bottom: 1px solid var(--announcement-border); transition: 0.3s; }
+        .announcement-box h3 { margin-top: 0; color: var(--primary-dark); display: flex; align-items: center; gap: 8px; font-size: 16px; margin-bottom: 10px; }
+        body.dark-mode .announcement-box h3 { color: var(--primary-color); }
+        .announcement-box p { font-size: 14px; line-height: 1.7; margin-bottom: 0; font-weight: bold; }
+
+        .info-grid { display: flex; flex-direction: column; gap: 15px; }
+        @media (min-width: 768px) { .info-grid { flex-direction: row; } .info-card { flex: 1; } }
+        .info-card { background: var(--info-bg); border: 1px solid var(--border-color); padding: 15px; border-radius: 8px; transition: 0.3s; }
+        .info-list { list-style: none; padding: 0; line-height: 1.6; font-size: 14px; }
+        .info-list li { margin-bottom: 8px; border-bottom: 1px dashed var(--border-color); padding-bottom: 4px; }
+        .info-list span { font-weight: bold; color: var(--primary-dark); width: 70px; display: inline-block; }
+        .link-btn { display: block; text-align: center; background: var(--primary-color); color: white; text-decoration: none; padding: 10px; border-radius: 5px; margin-top: 10px; font-weight: bold; transition: 0.3s; }
+        .link-btn:hover { filter: brightness(1.1); }
+        .map-container { margin-top: 10px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); height: 200px; }
+
+        .rules-red { background-color: var(--rules-red-bg); border-left: 4px solid var(--price-color); padding: 15px; border-radius: 0 8px 8px 0; margin-top: 10px; font-size: 13.5px; line-height: 1.7; transition: 0.3s; }
+        .rules-purple { background-color: var(--rules-purple-bg); border-left: 4px solid var(--primary-color); padding: 15px; border-radius: 0 8px 8px 0; margin-top: 10px; font-size: 13.5px; line-height: 1.7; transition: 0.3s; }
+        .rules-container h4 { margin: 0 0 8px 0; font-size: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 5px; }
+        .rules-red h4 { color: var(--price-color); }
+        .rules-purple h4 { color: var(--primary-dark); }
+        body.dark-mode .rules-purple h4 { color: var(--primary-color); }
+        .rules-container ul { padding-left: 20px; margin-top: 5px; margin-bottom: 0; }
+        .rules-container li { margin-bottom: 5px; }
+        .rules-container strong { color: var(--price-color); }
+
+        .menu-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        @media (min-width: 768px) { .menu-grid { grid-template-columns: 1fr 1fr; } }
+        .menu-section { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); transition: 0.3s; }
+        .menu-title { text-align: center; color: white; background: var(--primary-color); padding: 5px; border-radius: 4px; font-weight: bold; margin-top: 0; margin-bottom: 15px; font-size: 16px; letter-spacing: 2px; }
+        .menu-item { display: flex; align-items: flex-end; margin-bottom: 12px; }
+        .menu-name { font-weight: bold; font-size: 14px; display: flex; flex-direction: column; }
+        .menu-sub { font-size: 11px; color: var(--menu-sub); font-weight: normal; margin-top: 2px; }
+        .menu-dots { flex-grow: 1; border-bottom: 1px dotted var(--menu-sub); margin: 0 10px; position: relative; top: -5px; }
+        .menu-price { font-weight: bold; color: var(--price-color); font-size: 15px; }
+        .supply-time { font-size: 13px; color: var(--price-color); font-weight: bold; text-align: center; margin-bottom: 15px; background: var(--rules-red-bg); padding: 4px; border-radius: 4px; transition: 0.3s; }
+        
+        .maid-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-top: 15px; }
+        @media (min-width: 768px) { .maid-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; } }
+        .maid-card { background: var(--card-bg); border: 1px solid var(--calendar-border); border-radius: 10px; overflow: hidden; text-align: center; transition: 0.3s; }
+        .maid-photo-container { position: relative; height: 160px; overflow: hidden; background-color: var(--info-bg); }
+        @media (min-width: 768px) { .maid-photo-container { height: 220px; } }
+        .maid-img { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.3s; }
+        .maid-photo-fallback { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; align-items: center; justify-content: center; font-size: 1.5em; font-weight: bold; color: var(--menu-sub); font-family: sans-serif; background-color: var(--info-bg); }
+        .maid-info { padding: 10px; }
+        .maid-name { font-size: 15px; font-weight: bold; margin: 0; }
+        .maid-ig { color: var(--menu-sub); font-size: 12px; text-decoration: none; margin-bottom: 10px; display: block; }
+        .btn-schedule-link { background: var(--rules-red-bg); color: var(--primary-dark); border: 1px solid var(--border-color); padding: 6px; width: 100%; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; transition: 0.3s; }
+        
+        body:not(.admin-mode) .admin-action { display: none !important; }
+        .admin-btn-group { display: flex; gap: 5px; margin-top: 8px; }
+        .admin-btn-group button { flex: 1; padding: 6px; border: none; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; color: white; }
+        .btn-edit { background-color: #0984e3; }
+        .btn-delete { background-color: #d63031; }
+
+        .calendar-nav { display: flex; gap: 10px; align-items: center; margin-bottom: 15px; background: var(--info-bg); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); transition: 0.3s; }
+        .calendar-nav select { padding: 8px; border-radius: 4px; border: 1px solid var(--border-color); font-weight: bold; font-size: 14px; background-color: var(--input-bg); color: var(--input-text); }
+
+        .admin-tools { display: none; flex-direction: column; gap: 10px; margin-bottom: 20px; background: var(--info-bg); padding: 15px; border-radius: 10px; border: 2px dashed var(--border-color); transition: 0.3s; }
+        @media (min-width: 992px) { .admin-tools { flex-direction: row; flex-wrap: wrap; } .card { flex: 1 1 45%; } }
+        .card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; transition: 0.3s; }
+        .card h3 { margin-top: 0; font-size: 14px; color: var(--menu-sub); border-bottom: 1px dashed var(--border-color); padding-bottom: 5px; }
+        .form-group { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; font-size: 13px; }
+        .form-group label { width: 60px; text-align: right; flex-shrink: 0; font-weight: bold; color: var(--menu-sub); padding-top: 6px; }
+        .form-group input, .form-group select { flex: 1; padding: 6px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 13px; font-family: inherit; background-color: var(--input-bg); color: var(--input-text); }
+        .form-group textarea { flex: 1; padding: 6px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 13px; font-family: inherit; resize: vertical; min-height: 50px; background-color: var(--input-bg); color: var(--input-text); }
+        .btn { width: 100%; background: var(--primary-color); color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+
+        .filter-section { border: 1px solid var(--border-color); background: var(--today-bg); padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; transition: 0.3s; }
+        .member-list { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 5px; }
+        .member-item { font-size: 14px; display: flex; align-items: center; gap: 6px; background: var(--card-bg); padding: 4px 10px; border-radius: 20px; border: 1px solid var(--calendar-border); transition: 0.3s; }
+        .color-dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; }
+        .btn-show-all { background: var(--header-bg); color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold; white-space: nowrap; }
+
+        .calendar-wrapper { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 10px; border: 1px solid var(--calendar-border); border-radius: 8px; }
+        .calendar-inner { min-width: 800px; }
+
+        .calendar-header { display: grid; grid-template-columns: repeat(7, 1fr); background: var(--header-bg); color: white; text-align: center; font-weight: bold; font-size: 12px; border-radius: 6px 6px 0 0; transition: 0.3s; }
+        .calendar-header div { padding: 8px 0; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); grid-auto-rows: minmax(100px, auto); border-left: 1px solid var(--calendar-border); }
+        @media (min-width: 768px) { .calendar-grid { grid-auto-rows: minmax(130px, auto); } }
+        
+        .day-cell { border-right: 1px solid var(--calendar-border); border-bottom: 1px solid var(--calendar-border); padding: 4px; position: relative; background: var(--card-bg); transition: 0.3s; }
+        .today-cell { background-color: var(--today-bg) !important; box-shadow: inset 0 0 0 2px var(--primary-color); }
+        .today-badge { position: absolute; top: 2px; right: 2px; background: var(--primary-color); color: white; font-size: 10px; padding: 2px 5px; border-radius: 4px; font-weight: bold; z-index: 2; }
+        .date-num { font-weight: bold; margin-bottom: 4px; color: var(--menu-sub); font-size: 12px; }
+        
+        .event-label { color: white; font-size: 10px; padding: 3px; border-radius: 3px; text-align: center; font-weight: bold; margin-bottom: 4px; display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; line-height: 1.3; }
+        
+        .shift-tag { font-size: 10px; padding: 3px 4px; border-radius: 3px; margin-bottom: 4px; border-left: 4px solid; display: block; font-weight: bold; word-wrap: break-word; line-height: 1.3; transition: 0.3s; }
+        .shift-full { background-color: var(--shift-full-bg) !important; color: var(--shift-full-txt) !important; }
+        .shift-morning { background-color: var(--shift-morning-bg) !important; color: var(--shift-morning-txt) !important; }
+        .shift-night { background-color: var(--shift-night-bg) !important; color: var(--shift-night-txt) !important; }
+        .shift-off { background-color: var(--shift-off-bg) !important; color: var(--shift-off-txt) !important; }
+        
+        @media (min-width: 768px) { .event-label { font-size: 12px; padding: 4px; } .shift-tag { font-size: 12px; border-left-width: 5px; padding: 4px; } }
+        
+        body.admin-mode .shift-tag:hover, body.admin-mode .event-label:hover { cursor: pointer; filter: brightness(0.9); text-decoration: line-through; }
+        #sync-status { text-align: center; font-size: 12px; color: #00b894; margin-bottom: 10px; font-weight: bold; display: none; }
+
+        .today-angels-banner { background: var(--banner-bg); border-radius: 10px; padding: 15px; color: #fff; box-shadow: 0 4px 15px var(--banner-shadow); display: none; transition: 0.3s; }
+        .today-angels-banner h3 { margin: 0 0 10px 0; color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); font-size: 16px; display: flex; align-items: center; gap: 5px; }
+        .today-angels-list { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
+        .today-angels-list::-webkit-scrollbar { display: none; }
+        .today-angel-item { display: flex; flex-direction: column; align-items: center; min-width: 70px; }
+        .today-angel-img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .today-angel-name { font-size: 13px; font-weight: bold; margin-top: 5px; color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
+        .today-angel-time { font-size: 11px; color: var(--primary-dark); background: rgba(255,255,255,0.9); padding: 2px 6px; border-radius: 10px; margin-top: 2px; font-weight: bold; }
+
+        .banned-card { border: 2px solid var(--price-color); background: var(--card-bg); border-radius: 8px; padding: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative; transition: 0.3s; }
+        .banned-date { font-size: 12px; color: var(--price-color); margin-bottom: 5px; font-weight: bold; background: var(--today-bg); display: inline-block; padding: 2px 8px; border-radius: 10px; }
+        .banned-name { font-size: 18px; color: var(--price-color); margin-top: 8px; margin-bottom: 10px; font-weight: bold; }
+        .banned-reason { font-size: 13.5px; line-height: 1.6; margin: 0; background: var(--rules-red-bg); padding: 10px; border-radius: 6px; border-left: 3px solid var(--price-color); transition: 0.3s; }
+        .btn-delete-ban { position: absolute; top: 15px; right: 15px; background: var(--price-color); color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; }
+
+        .footer { background-color: var(--header-bg); color: white; padding: 40px 20px 20px; margin-top: 40px; transition: 0.3s; }
+        .footer-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
+        .footer-column h4 { color: var(--primary-color); font-size: 16px; margin-top: 0; margin-bottom: 15px; border-bottom: 1px solid #555; padding-bottom: 8px; }
+        .footer-column ul { list-style: none; padding: 0; margin: 0; }
+        .footer-column li { margin-bottom: 10px; }
+        .footer-column a { color: #ccc; text-decoration: none; font-size: 13px; transition: 0.3s; }
+        .footer-column a:hover { color: white; }
+        .footer-bottom { text-align: center; padding-top: 20px; margin-top: 30px; border-top: 1px solid #555; font-size: 12px; color: #888; line-height: 1.8; }
+        
+        .scroll-to-top { position: fixed; bottom: 20px; right: 20px; background-color: var(--primary-color); color: white; width: 45px; height: 45px; border-radius: 50%; display: none; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1000; font-size: 20px; font-weight: bold; transition: 0.3s; }
+        .scroll-to-top:hover { transform: translateY(-3px); background-color: var(--primary-dark); }
+    </style>
+</head>
+<body>
+
+<script>
+    if (localStorage.getItem('angelTheme') === 'dark') {
+        document.body.classList.add('dark-mode');
+    }
+</script>
+
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header-box">
+        切換店鋪 ☕
+        <button class="close-sidebar-btn" onclick="toggleSidebar()">×</button>
+    </div>
+    <ul class="sidebar-menu">
+        <li><a href="index.html">👼 天使ハート (一館)</a></li>
+        <li><a href="aphrodite.html" class="active-link">🔮 愛神・阿芙羅黛蒂 (二館)</a></li>
+    </ul>
+</div>
+
+<div class="header">
+    <button class="menu-toggle-btn" onclick="toggleSidebar()">☰</button>
+    <button class="theme-toggle-btn" id="theme-btn" onclick="toggleTheme()">🌙 護眼模式</button>
+    <button class="admin-login-btn" id="login-btn" onclick="toggleAdmin()">🔒 店長登入</button>
+    
+    <img src="aphrodite_logo.png" alt="愛神 Logo" style="max-height: 80px; margin-bottom: 10px; display: block; margin-left: auto; margin-right: auto; border-radius: 50%;">
+    <h1 style="margin-top: 0;">愛神・阿芙羅黛蒂 女僕咖啡廳</h1>
+    <p>Aphrodite Maid Cafe - 愛神系統</p>
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('tab-info', this)">🎀 營運與公告</button>
+        <button class="tab-btn" onclick="switchTab('tab-menu', this)">🍽️ 愛神菜單</button>
+        <button class="tab-btn" onclick="switchTab('tab-members', this)">💖 女僕圖鑑</button>
+        <button class="tab-btn" onclick="switchTab('tab-schedule', this)">📅 每月班表</button>
+        <button class="tab-btn tab-btn-danger" onclick="switchTab('tab-banned', this)">🚫 出禁公告</button>
+    </div>
+</div>
+
+<div class="container">
+    <div id="sync-status">🟢 愛神雲端系統已連線，即時同步中...</div>
+    
+    <div id="tab-info" class="tab-content active">
+        <div class="announcement-box">
+            <h3>📢 聯繫方式規範說明</h3>
+            <p>
+                近期發現部分主人 / 大小姐透過私訊方式聯繫女僕之個人帳號（包含本帳），已對女僕造成實際困擾。<br>
+                為維護女僕之個人隱私與工作分際，愛神・阿芙羅黛蒂 特此說明：<br>
+                除「手機拍必要聯繫事項」外，<strong>請勿以任何形式私訊女僕之個人帳號。</strong><br>
+                所有店內相關事務、活動詢問、協助需求，請一律私訊官方 IG，將由店方統一處理。敬請理解並配合！
+            </p>
+        </div>
+
+        <h2>🎀 營業資訊與規範</h2>
+        <div class="info-grid">
+            <div class="info-card">
+                <ul class="info-list">
+                    <li><span>營業時段</span> 週一～週五：15:00 - 22:00<br>週六～週日：13:00 - 22:00<br>(Last Order: 21:30)</li>
+                    <li><span>店家地址</span> 100 台北市中正區中華路一段29-1號</li>
+                    <li><span>官方 IG</span> <a href="https://instagram.com/aphrodite.maid" target="_blank" style="color:var(--primary-color);">@aphrodite.maid</a></li>
+                </ul>
+                <div style="display:flex; gap:10px; margin-top:10px; margin-bottom:15px; flex-wrap: wrap;">
+                    <a href="https://forms.gle/3s2Bt1Bokb4dTxgm7" target="_blank" class="link-btn" style="flex:1; min-width: 100px;">💙 預約表單</a>
+                    <a href="https://shop.ichefpos.com/store/ytt9DuYG/ordering" target="_blank" class="link-btn" style="background:#0984e3; flex:1; min-width: 100px;">✨ 線上點拍</a>
+                    <a href="https://lin.ee/qnxsAcuU" target="_blank" class="link-btn" style="background:#00b894; flex:1; min-width: 100px;">💬 LINE點拍</a>
+                </div>
+                <div class="map-container">
+                    <iframe width="100%" height="100%" frameborder="0" style="border:0" src="https://maps.google.com/maps?q=台北市中正區中華路一段29-1號&t=&z=15&ie=UTF8&iwloc=&output=embed" allowfullscreen></iframe>
+                </div>
+                <div class="today-angels-banner" style="margin-top: 15px;">
+                    <h3>✨ 本日降臨女僕</h3>
+                    <div class="today-angels-list"></div>
+                </div>
+            </div>
+            
+            <div class="info-card">
+                <h3>📜 愛神公約與重要提醒</h3>
+                <div class="rules-container rules-red">
+                    <h4>💬 互動與拍照界線</h4>
+                    <ul>
+                        <li><strong>禁止碰觸與餵食：</strong> 嚴禁隨意觸碰女僕，亦禁止任何形式的「親手餵食」。</li>
+                        <li><strong>尊重個人尺度：</strong> 拍照姿勢與尺度依各女僕意願為主，嚴禁親吻等親密接觸。請勿以「別的女僕可以」為由勉強他人配合。</li>
+                        <li><strong>禁止霸佔女僕：</strong> 店內採「輪桌制」，請勿要求或強迫女僕一直停留在您的座位上。</li>
+                    </ul>
+                    
+                    <h4 style="margin-top: 15px;">🚫 隱私與防騷擾（踩線即面臨永久出禁）</h4>
+                    <ul>
+                        <li><strong>禁止私下騷擾：</strong> 嚴禁私約、過度傳訊、電話騷擾或探討女僕的個人隱私。</li>
+                        <li><strong>禁止跟蹤與堵人：</strong> 嚴禁在女僕下班後跟蹤、在樓下蹲點堵人，或前往女僕的其他工作場所打擾。</li>
+                        <li><strong>禁止情緒勒索與造謠：</strong> 勿對女僕進行情緒勒索；請勿造謠或輕信謠言。</li>
+                    </ul>
+
+                    <h4 style="margin-top: 15px;">✨ 店內秩序與禮儀</h4>
+                    <ul>
+                        <li><strong>定點入座：</strong> 請勿在店內隨意走動或自行更換座位（若需換位請請示女僕）。</li>
+                        <li><strong>點餐效率：</strong> 繁忙時段請先決定好餐點與拍照項目，再呼叫女僕，並避免詢問與活動無關的問題以利作業。</li>
+                        <li><strong>洗手間：</strong> 使用廁所請務必鎖門。</li>
+                        <li><strong>寵物規範：</strong> 為顧及過敏及衛生，攜帶寵物入店必須全程待在寵物籠內，嚴禁放出。</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="tab-menu" class="tab-content">
+        <h2>🍽️ 愛神菜單 (請店長後續更新內容)</h2>
+        
+        <div class="rules-container rules-red" style="margin-bottom: 15px;">
+            <h4>⚠️ 基本消費與用餐須知</h4>
+            <ul style="margin-bottom: 0; font-size: 14px; line-height: 1.7;">
+                <li><strong>最低消費：</strong> 200元 + 10%服務費</li>
+                <li><strong>用餐時間：</strong> 90分鐘</li>
+                <li><strong>最後服務時間：</strong> 餐點至晚上 9:00，周邊加點至晚上 9:30。</li>
+            </ul>
+        </div>
+
+        <div class="menu-grid">
+            <div class="menu-section">
+                <h3 class="menu-title">🍛 測試主餐分類</h3>
+                <div class="supply-time">供應時間：依照店內規定</div>
+                <div class="menu-item"><div class="menu-name">《測試菜單 1》</div><div class="menu-dots"></div><div class="menu-price">260</div></div>
+                <div class="menu-item"><div class="menu-name">《測試菜單 2》</div><div class="menu-dots"></div><div class="menu-price">280</div></div>
+            </div>
+            
+            <div class="menu-section">
+                <h3 class="menu-title">📸 MERCH (周邊物語)</h3>
+                <div class="menu-item">
+                    <div class="menu-name">《映影神紋》<span class="menu-sub">拍立得/手機拍 (合照/獨照,含簽繪)</span></div>
+                    <div class="menu-dots"></div><div class="menu-price">200</div>
+                </div>
+                <div class="menu-item">
+                    <div class="menu-name">《星願舞儀》<span class="menu-sub">女僕表演</span></div>
+                    <div class="menu-dots"></div><div class="menu-price">300</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="tab-members" class="tab-content">
+        <h2>💖 女僕成員圖鑑</h2>
+        <div class="maid-grid" id="maid-gallery"></div>
+    </div>
+
+    <div id="tab-schedule" class="tab-content">
+        <div class="today-angels-banner" style="margin-bottom: 20px;">
+            <h3>✨ 本日降臨女僕</h3>
+            <div class="today-angels-list"></div>
+        </div>
+
+        <div class="calendar-nav">
+            <label style="font-weight: bold; color: var(--primary-dark);">📅 選擇月份：</label>
+            <select id="view-year" onchange="renderCalendar()"></select>
+            <select id="view-month" onchange="renderCalendar()"></select>
+        </div>
+        
+        <div class="admin-tools" id="admin-panel">
+            <div class="card" style="border: 2px solid #0984e3;">
+                <h3 id="edit-title">👥 1. 建立/編輯女僕</h3>
+                <div class="form-group"><label>名稱</label><input type="text" id="new-name" placeholder="小聯"></div>
+                <div class="form-group"><label>IG</label><input type="text" id="new-ig" placeholder="@ig"></div>
+                <div class="form-group"><label>照片</label><input type="text" id="new-photo" placeholder="網址或檔名 (如: lian.jpg)"></div>
+                <div class="form-group"><label>色</label><input type="color" id="new-color" value="#a29bfe"></div>
+                <button class="btn" id="btn-save-member" style="background: var(--header-bg);" onclick="addOrUpdateMember()">💾 儲存 (同步雲端)</button>
+            </div>
+            <div class="card">
+                <h3>📅 2. 新增排班</h3>
+                <div class="form-group"><label>日期</label><input type="number" id="shift-day" min="1" max="31" value="1"></div>
+                <div class="form-group"><label>女僕</label><select id="shift-member"></select></div>
+                <div class="form-group">
+                    <label>班別</label>
+                    <select id="shift-type">
+                        <option value="morning">☀️ 早班</option>
+                        <option value="night">🌙 晚班</option>
+                        <option value="full">⭐ 全班</option>
+                        <option value="off_full">🏠 全日公休</option>
+                        <option value="off_morning">🌅 早班公休</option>
+                        <option value="off_night">🌃 晚班公休</option>
+                    </select>
+                </div>
+                <button class="btn" onclick="addShift()">新增排班 (同步雲端)</button>
+            </div>
+            <div class="card">
+                <h3>🎉 3. 主題活動 (可連續)</h3>
+                <div class="form-group"><label>開始日</label><input type="number" id="event-day-start" min="1" max="31" value="1"></div>
+                <div class="form-group"><label>結束日</label><input type="number" id="event-day-end" min="1" max="31" value="1" placeholder="同上則為單日"></div>
+                <div class="form-group"><label>名稱</label><input type="text" id="event-name" placeholder="制服日"></div>
+                <div class="form-group"><label>色</label><input type="color" id="event-color" value="#e84393"></div>
+                <button class="btn" style="background: #e17055;" onclick="addEvent()">設定活動 (同步雲端)</button>
+            </div>
+            <p style="width: 100%; font-size: 12px; color: var(--price-color); margin-top: 5px;">💡 管理員提示：欲刪除日曆上的班表或活動，請直接在日曆上點擊該標籤即可刪除。刪除出禁人員請至「出禁公告」分頁操作。</p>
+        </div>
+
+        <div class="filter-section">
+            <div>
+                <strong>🔍 篩選成員班表：</strong>
+                <div class="member-list" id="filter-members"></div>
+            </div>
+            <button class="btn-show-all" onclick="showAllMembers()">顯示所有人</button>
+        </div>
+
+        <div class="calendar-wrapper">
+            <div class="calendar-inner">
+                <div class="calendar-header"><div>日</div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div></div>
+                <div class="calendar-grid" id="calendar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="tab-banned" class="tab-content">
+        <h2 style="color: var(--price-color); border-bottom-color: var(--border-color);">🚫 愛神系統出禁公告</h2>
+        
+        <div class="admin-tools" id="admin-panel-banned" style="margin-bottom: 20px; border-color: var(--price-color);">
+            <div class="card" style="border: 2px solid var(--price-color); width: 100%;">
+                <h3 style="color: var(--price-color);">🚫 新增出禁名單</h3>
+                <div class="form-group"><label>日期</label><input type="text" id="ban-date" placeholder="如: 系統公告"></div>
+                <div class="form-group"><label>名稱</label><input type="text" id="ban-name" placeholder="出禁者稱呼"></div>
+                <div class="form-group"><label>原因</label><textarea id="ban-reason" placeholder="請填寫出禁詳細原因..."></textarea></div>
+                <button class="btn" style="background: var(--price-color);" onclick="addBannedPerson()">新增出禁 (同步雲端)</button>
+            </div>
+        </div>
+
+        <div class="rules-container rules-red" style="margin-bottom: 20px; border-left-color: var(--price-color);">
+            <p style="margin: 0; color: var(--price-color); font-weight: bold; line-height: 1.6;">
+                為了提供給愛神女僕一個安心舒適的系統，以下名單將永久拒絕提供任何服務，並禁止進入愛神・阿芙羅黛蒂 女僕咖啡廳。凡屬出禁名單者，未經允許進入本店或經勸導仍不離開，本店將保留蒐證並依法處理之權利。
+            </p>
+        </div>
+        <div id="banned-list-container" style="display: flex; flex-direction: column; gap: 15px;"></div>
+    </div>
+
+</div>
+
+<div class="footer">
+    <div class="footer-container">
+        <div class="footer-column">
+            <h4>關於愛神</h4>
+            <ul>
+                <li><a href="#" onclick="window.switchTab('tab-info', document.querySelectorAll('.tab-btn')[0]); window.scrollTo(0,0); return false;">營業資訊與規範</a></li>
+                <li><a href="#" onclick="window.switchTab('tab-menu', document.querySelectorAll('.tab-btn')[1]); window.scrollTo(0,0); return false;">愛神菜單</a></li>
+                <li><a href="#" onclick="window.switchTab('tab-members', document.querySelectorAll('.tab-btn')[2]); window.scrollTo(0,0); return false;">女僕圖鑑</a></li>
+            </ul>
+        </div>
+        <div class="footer-column">
+            <h4>相關連結</h4>
+            <ul>
+                <li><a href="https://instagram.com/aphrodite.maid" target="_blank">Instagram 粉專</a></li>
+                <li><a href="https://shop.ichefpos.com/store/ytt9DuYG/ordering" target="_blank">線上點拍系統</a></li>
+                <li><a href="https://forms.gle/3s2Bt1Bokb4dTxgm7" target="_blank">預約訂位表單</a></li>
+            </ul>
+        </div>
+        <div class="footer-column">
+            <h4>聯絡我們</h4>
+            <ul>
+                <li style="color: #ccc; font-size: 13px;">100 台北市中正區中華路一段29-1號</li>
+                <li style="color: #ccc; font-size: 13px;">平日 15:00-22:00 / 假日 13:00-22:00</li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        Aphrodite Maid Cafe. All Rights Reserved.
+    </div>
+</div>
+
+<div class="scroll-to-top" id="scrollToTopBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBlDlYsUHMo8ES_xnJYomTBvYNXPBZXlkc",
+        authDomain: "angel-heart-schedule.firebaseapp.com",
+        projectId: "angel-heart-schedule",
+        storageBucket: "angel-heart-schedule.firebasestorage.app",
+        messagingSenderId: "171300193054",
+        appId: "1:171300193054:web:3d291652dd464346b4bf0f",
+        measurementId: "G-FE796K62GR"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    // ⚠️ 【重要】資料庫位置已改為 Aphrodite，兩家店資料將完全獨立
+    const docRef = doc(db, "Aphrodite", "MainData");
+
+    const defaultBannedData = [
+        {
+            date: "系統公告",
+            name: "腫泡泡",
+            reason: "因言語上造成女僕不安，今後不得登入愛神系統。"
+        },
+        {
+            date: "系統公告",
+            name: "陳若天",
+            reason: "因言語情緒勒索造成女僕及店家困擾，今後不得登入愛神系統。"
+        },
+        {
+            date: "系統公告",
+            name: "芋圓",
+            reason: "因多次訊息騷擾女僕個人所有帳號，私約以及約泡溫泉等造成女僕不堪其擾，今後不得登入愛神系統。"
+        },
+        {
+            date: "系統公告",
+            name: "小翔",
+            reason: "於女僕出勤期間出現過度肢體接觸行為，經現場勸導後仍未改善，事後更透過私訊進行騷擾，並提出私下邀約等不當行為。上述行為已嚴重影響女僕工作安全與店內秩序，自即日起禁止登入愛神系統。"
+        }
+    ];
+
+    let isAdmin = false;
+    let maidData = {};
+    let scheduleData = {};
+    let bannedData = [];
+    let activeFilters = new Set();
+    let isDataLoaded = false; 
+    let currentEditName = null;
+
+    const syncStatusEl = document.getElementById('sync-status');
+
+    window.toggleTheme = function() {
+        const body = document.body;
+        const btn = document.getElementById('theme-btn');
+        body.classList.toggle('dark-mode');
+        if (body.classList.contains('dark-mode')) {
+            localStorage.setItem('aphroditeTheme', 'dark');
+            btn.innerHTML = '☀️ 亮色模式';
+        } else {
+            localStorage.setItem('aphroditeTheme', 'light');
+            btn.innerHTML = '🌙 護眼模式';
+        }
+    }
+
+    if (localStorage.getItem('aphroditeTheme') === 'dark') {
+        document.body.classList.add('dark-mode');
+        document.getElementById('theme-btn').innerHTML = '☀️ 亮色模式';
+    }
+
+    window.toggleSidebar = function() {
+        document.getElementById('sidebar').classList.toggle('active');
+        document.getElementById('sidebar-overlay').classList.toggle('active');
+    }
+
+    onSnapshot(docRef, (snapshot) => {
+        if (snapshot.exists()) {
+            const data = snapshot.data();
+            maidData = data.maidData || {};
+            scheduleData = data.scheduleData || {};
+            bannedData = data.bannedData !== undefined ? data.bannedData : defaultBannedData;
+            
+            if (!isDataLoaded) {
+                activeFilters = new Set(Object.keys(maidData));
+                isDataLoaded = true;
+                syncStatusEl.innerText = '🟢 愛神雲端系統已連線，即時同步中...';
+                syncStatusEl.style.color = '#00b894';
+                syncStatusEl.style.display = 'block'; 
+            }
+            
+            updateMemberDropdown();
+            renderMaidGallery();
+            renderFilters();
+            renderCalendar();
+            renderTodayAngels();
+            renderBannedList();
+        } else {
+            setDoc(docRef, { maidData: {}, scheduleData: {}, bannedData: defaultBannedData }).catch(err => {
+                syncStatusEl.innerText = '🔴 資料庫初始化失敗，請檢查 Firebase 權限。';
+                syncStatusEl.style.color = '#d63031';
+                syncStatusEl.style.display = 'block';
+            });
+        }
+    }, (error) => {
+        syncStatusEl.innerText = '🔴 無法連線至雲端資料庫，請檢查網路或金鑰設定！';
+        syncStatusEl.style.color = '#d63031';
+        syncStatusEl.style.display = 'block';
+    });
+
+    async function saveToCloud() {
+        try { 
+            await setDoc(docRef, { maidData: maidData, scheduleData: scheduleData, bannedData: bannedData }); 
+        } catch (e) { 
+            alert('儲存失敗！請確認 Firebase 資料庫規則是否設定為測試模式。');
+        }
+    }
+    
+    window.toggleAdmin = function() {
+        const btn = document.getElementById('login-btn');
+        const panel = document.getElementById('admin-panel');
+        const panelBanned = document.getElementById('admin-panel-banned');
+        const deleteBanBtns = document.querySelectorAll('.btn-delete-ban');
+        
+        if (isAdmin) {
+            isAdmin = false; btn.innerHTML = '🔒 店長登入'; btn.classList.remove('logged-in'); 
+            panel.style.display = 'none'; panelBanned.style.display = 'none'; document.body.classList.remove('admin-mode'); 
+            deleteBanBtns.forEach(b => b.style.display = 'none');
+            window.renderCalendar(); 
+        } else {
+            const pwd = prompt('請輸入密碼：');
+            if (pwd === 'angel') {
+                isAdmin = true; btn.innerHTML = '🔓 登出'; btn.classList.add('logged-in'); 
+                panel.style.display = 'flex'; panelBanned.style.display = 'flex'; document.body.classList.add('admin-mode'); 
+                deleteBanBtns.forEach(b => b.style.display = 'block');
+                window.switchTab('tab-schedule', document.querySelectorAll('.tab-btn')[3]); 
+                window.renderCalendar(); 
+            } else if (pwd !== null) {
+                alert('密碼錯誤！');
+            }
+        }
+    }
+
+    window.switchTab = function(tabId, btnElement) {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        btnElement.classList.add('active');
+    }
+
+    function initCalendarDropdowns() {
+        const yearSelect = document.getElementById("view-year");
+        const monthSelect = document.getElementById("view-month");
+        const now = new Date();
+        for(let y=2024; y<=2027; y++){
+            const opt = document.createElement("option"); opt.value = y; opt.textContent = y + "年";
+            if(y === now.getFullYear()) opt.selected = true; yearSelect.appendChild(opt);
+        }
+        for(let m=1; m<=12; m++){
+            const opt = document.createElement("option"); opt.value = m; opt.textContent = m + "月";
+            if(m === (now.getMonth()+1)) opt.selected = true; monthSelect.appendChild(opt);
+        }
+    }
+
+    window.renderTodayAngels = function() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = today.getMonth() + 1;
+        const day = today.getDate();
+        const monthKey = `${year}-${month}`;
+        
+        const banners = document.querySelectorAll('.today-angels-banner');
+        const lists = document.querySelectorAll('.today-angels-list');
+        
+        let htmlContent = '';
+
+        if (scheduleData[monthKey] && scheduleData[monthKey][day] && scheduleData[monthKey][day].shifts && scheduleData[monthKey][day].shifts.length > 0) {
+            
+            let workingShifts = scheduleData[monthKey][day].shifts.filter(s => !s.time.includes('公休'));
+            
+            if (workingShifts.length > 0) {
+                workingShifts.sort((a, b) => {
+                    const getW = t => {
+                        if(t.includes('全班')) return 1;
+                        if(t.includes('早班')) return 2;
+                        if(t.includes('晚班')) return 3;
+                        return 4;
+                    };
+                    return getW(a.time) - getW(b.time);
+                }).forEach(s => {
+                    const mData = maidData[s.name] || {};
+                    let imgUrl = mData.photo;
+                    if (!imgUrl) {
+                        const encodedColor = (mData.color || '#ccc').replace('#', '%23');
+                        imgUrl = `data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='${encodedColor}' opacity='0.2'/%3E%3Ctext x='50%25' y='50%25' fill='${encodedColor}' font-size='20' font-family='sans-serif' font-weight='bold' dominant-baseline='middle' text-anchor='middle'%3E${s.name}%3C/text%3E%3C/svg%3E`;
+                    }
+                    htmlContent += `
+                        <div class="today-angel-item">
+                            <img src="${imgUrl}" class="today-angel-img" style="border-color: ${mData.color || '#fff'};" onerror="window.handlePhotoError(this, '${s.name}')">
+                            <div class="maid-photo-fallback" style="border-radius: 50%; width: 60px; height: 60px; font-size: 14px;">${s.name}</div>
+                            <span class="today-angel-name">${s.name}</span>
+                            <span class="today-angel-time">${s.time}</span>
+                        </div>
+                    `;
+                });
+            } else {
+                htmlContent = '<div style="font-size: 14px; color: #fff; padding: 10px; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">今日愛神皆為公休，系統休息喔！</div>';
+            }
+        } else {
+            htmlContent = '<div style="font-size: 14px; color: #fff; padding: 10px; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">今日愛神系統休息，或尚未排班喔！</div>';
+        }
+
+        banners.forEach(b => b.style.display = 'block');
+        lists.forEach(l => l.innerHTML = htmlContent);
+    }
+
+    window.renderBannedList = function() {
+        const container = document.getElementById("banned-list-container");
+        container.innerHTML = "";
+        
+        if(bannedData.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding:20px; color:var(--menu-sub);">目前無出禁名單，感謝大家維護愛神系統和平！</div>';
+            return;
+        }
+
+        bannedData.forEach((person, index) => {
+            const adminDeleteStyle = isAdmin ? "display: block;" : "display: none;";
+            container.innerHTML += `
+                <div class="banned-card">
+                    <button class="btn-delete-ban" style="${adminDeleteStyle}" onclick="deleteBannedPerson(${index})">🗑️ 刪除</button>
+                    <div class="banned-date">公告日期：${person.date}</div>
+                    <div class="banned-name">登入者名稱：${person.name}</div>
+                    <div class="banned-reason"><strong style="color:var(--price-color);">出禁原因：</strong><br><span style="color:var(--text-color);">${person.reason}</span></div>
+                </div>
+            `;
+        });
+    }
+
+    window.addBannedPerson = function() {
+        const date = document.getElementById("ban-date").value.trim();
+        const name = document.getElementById("ban-name").value.trim();
+        const reason = document.getElementById("ban-reason").value.trim();
+
+        if(!date || !name || !reason) return alert("日期、名稱與原因皆不可空白！");
+
+        bannedData.push({ date: date, name: name, reason: reason });
+        saveToCloud();
+        
+        document.getElementById("ban-date").value = "";
+        document.getElementById("ban-name").value = "";
+        document.getElementById("ban-reason").value = "";
+        renderBannedList();
+    }
+
+    window.deleteBannedPerson = function(index) {
+        if(confirm(`確定要刪除「${bannedData[index].name}」的出禁紀錄嗎？`)) {
+            bannedData.splice(index, 1);
+            saveToCloud();
+            renderBannedList();
+        }
+    }
+
+    window.handlePhotoError = function(img, name) {
+        img.style.display = 'none';
+        img.nextElementSibling.style.display = 'flex';
+        if(name) { img.nextElementSibling.innerText = name; }
+    }
+
+    window.renderCalendar = function() {
+        const year = parseInt(document.getElementById("view-year").value);
+        const month = parseInt(document.getElementById("view-month").value);
+        const calendarEl = document.getElementById("calendar");
+        calendarEl.innerHTML = "";
+
+        const firstDay = new Date(year, month - 1, 1).getDay();
+        const daysInMonth = new Date(year, month, 0).getDate();
+        const monthKey = `${year}-${month}`;
+        
+        const today = new Date();
+        const isCurrentMonth = (year === today.getFullYear() && month === (today.getMonth() + 1));
+        const currentDay = today.getDate();
+
+        for (let i = 0; i < firstDay; i++) {
+            const empty = document.createElement("div"); empty.className = "day-cell";
+            empty.style.background = "transparent"; calendarEl.appendChild(empty);
+        }
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const cell = document.createElement("div"); cell.className = "day-cell";
+            let html = `<div class="date-num">${day}</div>`;
+            
+            if (isCurrentMonth && day === currentDay) {
+                cell.classList.add("today-cell");
+                html += `<div class="today-badge">📍 本日</div>`;
+            }
+            
+            if (scheduleData[monthKey] && scheduleData[monthKey][day]) {
+                const dayData = scheduleData[monthKey][day];
+                
+                if (dayData.event) {
+                    const ec = dayData.event.color;
+                    cell.style.border = `1.5px solid ${ec}`; cell.style.backgroundColor = `${ec}1A`;
+                    const clickAction = isAdmin ? `onclick="deleteEvent('${monthKey}', ${day})"` : '';
+                    html += `<div class="event-label" style="background-color: ${ec};" ${clickAction}>${dayData.event.name}</div>`;
+                }
+                
+                let shiftsWithIndex = dayData.shifts.map((s, idx) => ({ ...s, originalIndex: idx }));
+                
+                shiftsWithIndex.sort((a, b) => {
+                    const getWeight = (t) => {
+                        if (t.includes('全班')) return 1;
+                        if (t.includes('早班') && !t.includes('公休')) return 2;
+                        if (t.includes('晚班') && !t.includes('公休')) return 3;
+                        if (t.includes('公休')) return 4;
+                        return 5;
+                    };
+                    return getWeight(a.time) - getWeight(b.time);
+                });
+
+                shiftsWithIndex.forEach((s) => {
+                    if (activeFilters.has(s.name)) {
+                        const mc = maidData[s.name] ? maidData[s.name].color : "#ccc";
+                        
+                        let shiftClass = '';
+                        if (s.time.includes('全班')) shiftClass = 'shift-full';
+                        else if (s.time.includes('早班') && !s.time.includes('公休')) shiftClass = 'shift-morning';
+                        else if (s.time.includes('晚班') && !s.time.includes('公休')) shiftClass = 'shift-night';
+                        else if (s.time.includes('公休')) shiftClass = 'shift-off';
+
+                        const clickAction = isAdmin ? `onclick="deleteShift('${monthKey}', ${day}, ${s.originalIndex})"` : '';
+                        html += `<div class="shift-tag ${shiftClass}" style="border-left-color: ${mc};" ${clickAction}>${s.name}(${s.time})</div>`;
+                    }
+                });
+            }
+            cell.innerHTML = html; calendarEl.appendChild(cell);
+        }
+    }
+
+    window.deleteShift = function(monthKey, day, index) {
+        if(!isAdmin) return;
+        const shift = scheduleData[monthKey][day].shifts[index];
+        if(confirm(`刪除「${day}號 ${shift.name}」？`)) {
+            scheduleData[monthKey][day].shifts.splice(index, 1); saveToCloud();
+        }
+    }
+
+    window.deleteEvent = function(monthKey, day) {
+        if(!isAdmin) return;
+        const evtName = scheduleData[monthKey][day].event.name;
+        if(confirm(`刪除活動【${evtName}】？`)) {
+            scheduleData[monthKey][day].event = null; saveToCloud();
+        }
+    }
+
+    window.addShift = function() {
+        const year = document.getElementById("view-year").value;
+        const month = document.getElementById("view-month").value;
+        const day = document.getElementById("shift-day").value;
+        const name = document.getElementById("shift-member").value;
+        const type = document.getElementById("shift-type").value;
+        const monthKey = `${year}-${month}`;
+        
+        let timeText = "⭐ 全班";
+        if (type === "morning") timeText = "☀️ 早班";
+        if (type === "night") timeText = "🌙 晚班";
+        if (type === "off_full") timeText = "🏠 全日公休";
+        if (type === "off_morning") timeText = "🌅 早班公休";
+        if (type === "off_night") timeText = "🌃 晚班公休";
+
+        if (!scheduleData[monthKey]) scheduleData[monthKey] = {};
+        if (!scheduleData[monthKey][day]) scheduleData[monthKey][day] = { event: null, shifts: [] };
+        
+        scheduleData[monthKey][day].shifts.push({ name: name, time: timeText }); 
+        saveToCloud(); 
+        
+        renderCalendar();
+        renderTodayAngels();
+    }
+
+    window.addEvent = function() {
+        const year = document.getElementById("view-year").value;
+        const month = document.getElementById("view-month").value;
+        const startDay = parseInt(document.getElementById("event-day-start").value);
+        const endDayInput = document.getElementById("event-day-end").value;
+        const endDay = endDayInput ? parseInt(endDayInput) : startDay;
+        const name = document.getElementById("event-name").value.trim();
+        const color = document.getElementById("event-color").value;
+        const monthKey = `${year}-${month}`;
+        
+        if (!name) return alert("請輸入活動名稱！");
+        if (startDay > endDay || startDay < 1 || endDay > 31) return alert("日期設定錯誤！");
+        
+        if (!scheduleData[monthKey]) scheduleData[monthKey] = {};
+        
+        for (let d = startDay; d <= endDay; d++) {
+            if (!scheduleData[monthKey][d]) scheduleData[monthKey][d] = { event: null, shifts: [] };
+            scheduleData[monthKey][d].event = { name: name, color: color }; 
+        }
+        
+        saveToCloud(); 
+        renderCalendar();
+    }
+
+    function updateMemberDropdown() {
+        const select = document.getElementById("shift-member");
+        const currentSelection = select.value;
+        select.innerHTML = "";
+        
+        Object.keys(maidData).sort().forEach(m => {
+            const opt = document.createElement("option"); opt.value = m; opt.textContent = m; select.appendChild(opt);
+        });
+        
+        if (currentSelection && maidData[currentSelection]) {
+            select.value = currentSelection;
+        }
+    }
+
+    function renderFilters() {
+        const filterBox = document.getElementById("filter-members"); filterBox.innerHTML = "";
+        Object.keys(maidData).sort().forEach(member => {
+            const div = document.createElement("div"); div.className = "member-item";
+            const checked = activeFilters.has(member) ? "checked" : "";
+            const color = maidData[member].color;
+            div.innerHTML = `
+                <input type="checkbox" ${checked} onchange="toggleFilter('${member}')" id="chk-${member}">
+                <span class="color-dot" style="background-color: ${color};"></span>
+                <label for="chk-${member}" style="cursor: pointer; font-weight: bold; color: var(--text-color);">${member}</label>
+            `;
+            filterBox.appendChild(div);
+        });
+    }
+
+    window.toggleFilter = function(member) {
+        if (activeFilters.has(member)) activeFilters.delete(member); 
+        else activeFilters.add(member); 
+        window.renderCalendar();
+    }
+    
+    window.showAllMembers = function() {
+        activeFilters = new Set(Object.keys(maidData)); renderFilters(); window.renderCalendar();
+    }
+
+    function renderMaidGallery() {
+        const gallery = document.getElementById("maid-gallery"); gallery.innerHTML = "";
+        Object.keys(maidData).sort().forEach(name => {
+            const data = maidData[name];
+            let imgUrl = data.photo;
+            if (!imgUrl) {
+                const encodedColor = data.color.replace('#', '%23');
+                imgUrl = `data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Crect width='300' height='300' fill='${encodedColor}' opacity='0.2'/%3E%3Ctext x='50%25' y='50%25' fill='${encodedColor}' font-size='40' font-family='sans-serif' font-weight='bold' dominant-baseline='middle' text-anchor='middle'%3E${name}%3C/text%3E%3C/svg%3E`;
+            }
+            const div = document.createElement("div"); div.className = "maid-card";
+            div.innerHTML = `
+                <div class="maid-photo-container">
+                    <img src="${imgUrl}" alt="${name}" class="maid-img" style="border-bottom: 3px solid ${data.color};" onerror="window.handlePhotoError(this)">
+                    <div class="maid-photo-fallback">${name}</div>
+                </div>
+                <div class="maid-info">
+                    <h3 class="maid-name"><span class="color-dot" style="background-color: ${data.color}"></span> ${name}</h3>
+                    <a href="https://instagram.com/${data.ig.replace('@','')}" target="_blank" class="maid-ig">${data.ig || "IG"}</a>
+                    <button class="btn-schedule-link" style="color:${data.color}; border-color:${data.color};" onclick="viewMaidSchedule('${name}')">📅 班表</button>
+                    <div class="admin-btn-group admin-action">
+                        <button class="btn-edit" onclick="editMember('${name}')">✏️</button>
+                        <button class="btn-delete" onclick="deleteMember('${name}')">🗑️</button>
+                    </div>
+                </div>
+            `;
+            gallery.appendChild(div);
+        });
+    }
+
+    window.viewMaidSchedule = function(n) { 
+        window.switchTab('tab-schedule', document.querySelectorAll('.tab-btn')[3]); 
+        activeFilters.clear(); activeFilters.add(n); 
+        renderFilters(); window.renderCalendar(); window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    window.editMember = function(name) {
+        const data = maidData[name];
+        document.getElementById("new-name").value = name;
+        document.getElementById("new-ig").value = data.ig || "";
+        document.getElementById("new-photo").value = data.photo || ""; 
+        document.getElementById("new-color").value = data.color || "#8c7ae6";
+        currentEditName = name;
+        document.getElementById("edit-title").innerText = `✏️ 編輯：${name}`;
+        window.switchTab('tab-schedule', document.querySelectorAll('.tab-btn')[3]);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    window.deleteMember = function(name) {
+        if(confirm(`刪除「${name}」？`)) { delete maidData[name]; activeFilters.delete(name); saveToCloud(); }
+    }
+
+    window.addOrUpdateMember = function() {
+        const n = document.getElementById("new-name").value.trim(); 
+        const ig = document.getElementById("new-ig").value.trim(); 
+        const photo = document.getElementById("new-photo").value.trim();
+        const c = document.getElementById("new-color").value;
+        if(!n) return alert("輸入名稱！"); 
+        
+        if (currentEditName && currentEditName !== n) {
+            delete maidData[currentEditName]; activeFilters.delete(currentEditName);
+            for (let monthKey in scheduleData) {
+                for (let day in scheduleData[monthKey]) {
+                    if (scheduleData[monthKey][day].shifts) {
+                        scheduleData[monthKey][day].shifts.forEach(shift => { if (shift.name === currentEditName) shift.name = n; });
+                    }
+                }
+            }
+        }
+        
+        maidData[n] = { color: c, ig: ig, photo: photo }; 
+        activeFilters.add(n); saveToCloud(); 
+        
+        document.getElementById("new-name").value = ""; document.getElementById("new-ig").value = ""; document.getElementById("new-photo").value = "";
+        currentEditName = null; document.getElementById("edit-title").innerText = "👥 1. 建立/編輯女僕";
+    }
+
+    initCalendarDropdowns();
+
+    window.addEventListener('scroll', () => {
+        const btn = document.getElementById('scrollToTopBtn');
+        if (window.scrollY > 300) {
+            btn.style.display = 'flex';
+        } else {
+            btn.style.display = 'none';
+        }
+    });
+</script>
+</body>
+</html>
