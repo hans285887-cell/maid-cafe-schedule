@@ -160,7 +160,7 @@
 
 <div class="header">
     <button class="admin-login-btn" id="login-btn" onclick="toggleAdmin()">🔒 店長登入</button>
-    <img src="logo.png" alt="天使心 Logo" style="max-height: 80px; margin-bottom: 10px; display: block; margin-left: auto; margin-right: auto; border-radius: 50%;">
+    <img src="logo.jpg" alt="天使心 Logo" style="max-height: 80px; margin-bottom: 10px; display: block; margin-left: auto; margin-right: auto; border-radius: 50%;">
     <h1 style="margin-top: 0;">天使ハート 女僕咖啡廳</h1>
     <p>Angel Heart Maid Cafe - 天界入口</p>
     <div class="nav-tabs">
@@ -378,18 +378,12 @@
                 <button class="btn" onclick="addShift()">新增排班 (同步雲端)</button>
             </div>
             <div class="card">
-                <h3>🎉 3. 主題活動</h3>
-                <div class="form-group"><label>日期</label><input type="number" id="event-day" min="1" max="31" value="1"></div>
+                <h3>🎉 3. 主題活動 (可跨日)</h3>
+                <div class="form-group"><label>開始日</label><input type="number" id="event-day-start" min="1" max="31" value="1"></div>
+                <div class="form-group"><label>結束日</label><input type="number" id="event-day-end" min="1" max="31" value="1" placeholder="同開始日則單天"></div>
                 <div class="form-group"><label>名稱</label><input type="text" id="event-name" placeholder="制服日"></div>
                 <div class="form-group"><label>色</label><input type="color" id="event-color" value="#e84393"></div>
                 <button class="btn" style="background: #e17055;" onclick="addEvent()">設定活動 (同步雲端)</button>
-            </div>
-            <div class="card" style="border: 2px solid #d63031;">
-                <h3>🚫 4. 新增出禁名單</h3>
-                <div class="form-group"><label>日期</label><input type="text" id="ban-date" placeholder="如: 2024/02/04"></div>
-                <div class="form-group"><label>名稱</label><input type="text" id="ban-name" placeholder="出禁者稱呼"></div>
-                <div class="form-group"><label>原因</label><textarea id="ban-reason" placeholder="請填寫出禁詳細原因..."></textarea></div>
-                <button class="btn" style="background: #d63031;" onclick="addBannedPerson()">新增出禁 (同步雲端)</button>
             </div>
             <p style="width: 100%; font-size: 12px; color: #d63031; margin-top: 5px;">💡 管理員提示：欲刪除日曆上的班表或活動，請直接在日曆上點擊該標籤即可刪除。刪除出禁人員請至「出禁公告」分頁操作。</p>
         </div>
@@ -408,6 +402,17 @@
 
     <div id="tab-banned" class="tab-content">
         <h2 style="color: #d63031; border-bottom-color: #fab1a0;">🚫 天界出禁公告</h2>
+        
+        <div class="admin-tools" id="admin-panel-banned" style="margin-bottom: 20px; border-color: #d63031;">
+            <div class="card" style="border: 2px solid #d63031; width: 100%;">
+                <h3>🚫 新增出禁名單</h3>
+                <div class="form-group"><label>日期</label><input type="text" id="ban-date" placeholder="如: 2024/02/04"></div>
+                <div class="form-group"><label>名稱</label><input type="text" id="ban-name" placeholder="出禁者稱呼"></div>
+                <div class="form-group"><label>原因</label><textarea id="ban-reason" placeholder="請填寫出禁詳細原因..."></textarea></div>
+                <button class="btn" style="background: #d63031;" onclick="addBannedPerson()">新增出禁 (同步雲端)</button>
+            </div>
+        </div>
+
         <div class="rules-container" style="border-left-color: #d63031; background-color: #fff0f0; margin-bottom: 20px;">
             <p style="margin: 0; color: #d63031; font-weight: bold; line-height: 1.6;">
                 為了維護天界的和平與各位天使、主人/大小姐的安全與權益，以下名單將永久拒絕提供任何服務，並禁止進入天使ハート 女僕咖啡廳。
@@ -548,18 +553,19 @@
     window.toggleAdmin = function() {
         const btn = document.getElementById('login-btn');
         const panel = document.getElementById('admin-panel');
+        const panelBanned = document.getElementById('admin-panel-banned');
         const deleteBanBtns = document.querySelectorAll('.btn-delete-ban');
         
         if (isAdmin) {
             isAdmin = false; btn.innerHTML = '🔒 店長登入'; btn.classList.remove('logged-in'); 
-            panel.style.display = 'none'; document.body.classList.remove('admin-mode'); 
+            panel.style.display = 'none'; panelBanned.style.display = 'none'; document.body.classList.remove('admin-mode'); 
             deleteBanBtns.forEach(b => b.style.display = 'none');
             window.renderCalendar(); 
         } else {
             const pwd = prompt('請輸入密碼：');
             if (pwd === 'angel') {
                 isAdmin = true; btn.innerHTML = '🔓 登出'; btn.classList.add('logged-in'); 
-                panel.style.display = 'flex'; document.body.classList.add('admin-mode'); 
+                panel.style.display = 'flex'; panelBanned.style.display = 'flex'; document.body.classList.add('admin-mode'); 
                 deleteBanBtns.forEach(b => b.style.display = 'block');
                 window.switchTab('tab-schedule', document.querySelectorAll('.tab-btn')[3]); 
                 window.renderCalendar(); 
@@ -658,17 +664,18 @@
 
         bannedData.push({ date: date, name: name, reason: reason });
         saveToCloud();
-
+        
         document.getElementById("ban-date").value = "";
         document.getElementById("ban-name").value = "";
         document.getElementById("ban-reason").value = "";
-        alert("已成功新增出禁名單！");
+        renderBannedList();
     }
 
     window.deleteBannedPerson = function(index) {
         if(confirm(`確定要刪除「${bannedData[index].name}」的出禁紀錄嗎？`)) {
             bannedData.splice(index, 1);
             saveToCloud();
+            renderBannedList();
         }
     }
 
@@ -756,33 +763,46 @@
         if (!scheduleData[monthKey]) scheduleData[monthKey] = {};
         if (!scheduleData[monthKey][day]) scheduleData[monthKey][day] = { event: null, shifts: [] };
         
-        scheduleData[monthKey][day].shifts.push({ name: name, time: timeText }); saveToCloud(); 
+        scheduleData[monthKey][day].shifts.push({ name: name, time: timeText }); 
+        saveToCloud(); 
+        renderCalendar();
+        renderTodayAngels();
     }
 
     window.addEvent = function() {
         const year = document.getElementById("view-year").value;
         const month = document.getElementById("view-month").value;
-        const day = document.getElementById("event-day").value;
-        const name = document.getElementById("event-name").value;
+        const startDay = parseInt(document.getElementById("event-day-start").value);
+        const endDayInput = document.getElementById("event-day-end").value;
+        const endDay = endDayInput ? parseInt(endDayInput) : startDay;
+        const name = document.getElementById("event-name").value.trim();
         const color = document.getElementById("event-color").value;
         const monthKey = `${year}-${month}`;
         
-        if (!scheduleData[monthKey]) scheduleData[monthKey] = {};
-        if (!scheduleData[monthKey][day]) scheduleData[monthKey][day] = { event: null, shifts: [] };
+        if (!name) return alert("請輸入活動名稱！");
+        if (startDay > endDay || startDay < 1 || endDay > 31) return alert("日期設定錯誤！");
         
-        scheduleData[monthKey][day].event = { name: name, color: color }; saveToCloud(); 
+        if (!scheduleData[monthKey]) scheduleData[monthKey] = {};
+        
+        for (let d = startDay; d <= endDay; d++) {
+            if (!scheduleData[monthKey][d]) scheduleData[monthKey][d] = { event: null, shifts: [] };
+            scheduleData[monthKey][d].event = { name: name, color: color }; 
+        }
+        
+        saveToCloud(); 
+        renderCalendar();
     }
 
     function updateMemberDropdown() {
         const select = document.getElementById("shift-member"); select.innerHTML = "";
-        Object.keys(maidData).forEach(m => {
+        Object.keys(maidData).sort().forEach(m => {
             const opt = document.createElement("option"); opt.value = m; opt.textContent = m; select.appendChild(opt);
         });
     }
 
     function renderFilters() {
         const filterBox = document.getElementById("filter-members"); filterBox.innerHTML = "";
-        Object.keys(maidData).forEach(member => {
+        Object.keys(maidData).sort().forEach(member => {
             const div = document.createElement("div"); div.className = "member-item";
             const checked = activeFilters.has(member) ? "checked" : "";
             const color = maidData[member].color;
@@ -807,7 +827,7 @@
 
     function renderMaidGallery() {
         const gallery = document.getElementById("maid-gallery"); gallery.innerHTML = "";
-        Object.keys(maidData).forEach(name => {
+        Object.keys(maidData).sort().forEach(name => {
             const data = maidData[name];
             let imgUrl = data.photo;
             if (!imgUrl) {
