@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>天使ハート 女僕咖啡廳 - 天界入口</title>
-    <link rel="icon" href="images/logo.png" type="image/jpeg">
+    <link rel="icon" href="images/logo.jpg" type="image/jpeg">
     <style>
         :root {
             --primary-color: #f36896; 
@@ -66,17 +66,18 @@
             --shift-off-bg: #991b1b; --shift-off-txt: #fee2e2;
         }
 
-        body { font-family: "Microsoft JhengHei", sans-serif; background-color: var(--bg-color); padding: 0; color: var(--text-color); margin: 0; -webkit-tap-highlight-color: transparent; display: flex; flex-direction: column; min-height: 100vh; transition: background-color 0.3s, color 0.3s; }
-        
+        body { font-family: "Microsoft JhengHei", sans-serif; background-color: var(--bg-color); padding: 0; color: var(--text-color); margin: 0; -webkit-tap-highlight-color: transparent; display: flex; flex-direction: column; min-height: 100vh; transition: background-color 0.3s, color 0.3s; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; }
+        input, textarea { user-select: text; -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; }
+
         .header { background-color: var(--header-bg); color: white; padding: 20px 10px 0 10px; text-align: center; position: relative; transition: 0.3s; }
-        .header h1 { margin: 0 0 10px 0; font-size: 20px; color: var(--primary-color); }
+        .header h1 { margin: 0 0 10px 0; font-size: 20px; color: var(--primary-color); cursor: pointer; }
         .header p { margin: 0 0 15px 0; font-size: 12px; color: #ccc; }
         
         .menu-toggle-btn { position: absolute; top: 15px; left: 15px; background: transparent; border: none; color: var(--primary-color); font-size: 24px; cursor: pointer; padding: 0; line-height: 1; z-index: 100; }
         .theme-toggle-btn { position: absolute; top: 18px; left: 55px; background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 5px 10px; border-radius: 20px; cursor: pointer; font-size: 11px; font-weight: bold; }
         
-        .admin-login-btn { position: absolute; top: 15px; right: 15px; background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: bold; }
-        .admin-login-btn.logged-in { background: #00b894; border-color: #00b894; color: white; }
+        .admin-login-btn { display: none; position: absolute; top: 15px; right: 15px; background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: bold; }
+        .admin-login-btn.logged-in { display: block; background: #00b894; border-color: #00b894; color: white; }
 
         @media (max-width: 768px) {
             .header { padding-top: 60px; } 
@@ -127,12 +128,12 @@
         .link-btn:hover { filter: brightness(1.1); }
         .map-container { margin-top: 10px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); height: 200px; }
 
-        .rules-red { background-color: var(--rules-red-bg); border-left: 4px solid var(--primary-color); padding: 15px; border-radius: 0 8px 8px 0; margin-top: 10px; font-size: 13.5px; line-height: 1.7; transition: 0.3s; }
-        .rules-purple { background-color: var(--rules-purple-bg); border-left: 4px solid #a29bfe; padding: 15px; border-radius: 0 8px 8px 0; margin-top: 10px; font-size: 13.5px; line-height: 1.7; transition: 0.3s; }
+        .rules-red { background-color: var(--rules-red-bg); border-left: 4px solid var(--price-color); padding: 15px; border-radius: 0 8px 8px 0; margin-top: 10px; font-size: 13.5px; line-height: 1.7; transition: 0.3s; }
+        .rules-purple { background-color: var(--rules-purple-bg); border-left: 4px solid var(--primary-color); padding: 15px; border-radius: 0 8px 8px 0; margin-top: 10px; font-size: 13.5px; line-height: 1.7; transition: 0.3s; }
         .rules-container h4 { margin: 0 0 8px 0; font-size: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 5px; }
-        .rules-red h4 { color: var(--primary-dark); }
-        .rules-purple h4 { color: #6c5ce7; }
-        body.dark-mode .rules-purple h4 { color: #a29bfe; }
+        .rules-red h4 { color: var(--price-color); }
+        .rules-purple h4 { color: var(--primary-dark); }
+        body.dark-mode .rules-purple h4 { color: var(--primary-color); }
         .rules-container ul { padding-left: 20px; margin-top: 5px; margin-bottom: 0; }
         .rules-container li { margin-bottom: 5px; }
         .rules-container strong { color: var(--price-color); }
@@ -153,12 +154,12 @@
         .maid-card { background: var(--card-bg); border: 1px solid var(--calendar-border); border-radius: 10px; overflow: hidden; text-align: center; transition: 0.3s; }
         .maid-photo-container { position: relative; height: 160px; overflow: hidden; background-color: var(--info-bg); }
         @media (min-width: 768px) { .maid-photo-container { height: 220px; } }
-        .maid-img { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.3s; }
+        .maid-img { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.3s; pointer-events: none; }
         .maid-photo-fallback { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; align-items: center; justify-content: center; font-size: 1.5em; font-weight: bold; color: var(--menu-sub); font-family: sans-serif; background-color: var(--info-bg); }
         .maid-info { padding: 10px; }
         .maid-name { font-size: 15px; font-weight: bold; margin: 0; }
         .maid-ig { color: var(--menu-sub); font-size: 12px; text-decoration: none; margin-bottom: 10px; display: block; }
-        .btn-schedule-link { background: var(--rules-red-bg); color: var(--primary-dark); border: 1px solid var(--border-color); padding: 6px; width: 100%; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; transition: 0.3s; }
+        .btn-schedule-link { background: var(--rules-purple-bg); color: var(--primary-dark); border: 1px solid var(--border-color); padding: 6px; width: 100%; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; transition: 0.3s; }
         
         body:not(.admin-mode) .admin-action { display: none !important; }
         .admin-btn-group { display: flex; gap: 5px; margin-top: 8px; }
@@ -216,7 +217,7 @@
         .today-angels-list { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
         .today-angels-list::-webkit-scrollbar { display: none; }
         .today-angel-item { display: flex; flex-direction: column; align-items: center; min-width: 70px; }
-        .today-angel-img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .today-angel-img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); pointer-events: none; }
         .today-angel-name { font-size: 13px; font-weight: bold; margin-top: 5px; color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
         .today-angel-time { font-size: 11px; color: var(--primary-dark); background: rgba(255,255,255,0.9); padding: 2px 6px; border-radius: 10px; margin-top: 2px; font-weight: bold; }
 
@@ -239,7 +240,7 @@
         .scroll-to-top:hover { transform: translateY(-3px); background-color: var(--primary-dark); }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;">
 
 <script>
     if (localStorage.getItem('angelTheme') === 'dark') {
@@ -254,18 +255,18 @@
         <button class="close-sidebar-btn" onclick="toggleSidebar()">×</button>
     </div>
     <ul class="sidebar-menu">
-        <li><a href="index.html" class="active-link">👼 天使ハート</a></li>
-        <li><a href="branch2.html">🔮 愛神・阿芙羅黛蒂</a></li>
+        <li><a href="index.html" class="active-link">👼 天使ハート (本館)</a></li>
+        <li><a href="branch2.html">🔮 愛神・阿芙羅黛蒂 (二館)</a></li>
     </ul>
 </div>
 
 <div class="header">
     <button class="menu-toggle-btn" onclick="toggleSidebar()">☰</button>
     <button class="theme-toggle-btn" id="theme-btn" onclick="toggleTheme()">🌙 護眼模式</button>
-    <button class="admin-login-btn" id="login-btn" onclick="toggleAdmin()">🔒 店長登入</button>
+    <button class="admin-login-btn" id="login-btn" onclick="toggleAdmin()">🔒 登出</button>
     
-    <img src="images/logo.png" alt="天使心 Logo" style="max-height: 80px; margin-bottom: 10px; display: block; margin-left: auto; margin-right: auto; border-radius: 50%;">
-    <h1 style="margin-top: 0;">天使ハート 女僕咖啡廳</h1>
+    <img src="images/logo.jpg" alt="天使心 Logo" style="max-height: 80px; margin-bottom: 10px; display: block; margin-left: auto; margin-right: auto; border-radius: 50%; pointer-events: none;">
+    <h1 style="margin-top: 0;" id="secret-login" onclick="triggerSecretLogin()">天使ハート 女僕咖啡廳</h1>
     <p>Angel Heart Maid Cafe - 天界入口</p>
     <div class="nav-tabs">
         <button class="tab-btn active" onclick="switchTab('tab-info', this)">🎀 店鋪與公告</button>
@@ -351,13 +352,12 @@
         <h2>🍽️ 天界菜單</h2>
         
         <div class="rules-container rules-red" style="margin-bottom: 15px;">
-            <h4>⚠️ 基本消費與用餐須知</h4>
+            <h4>⚠️ 基本消費與須知</h4>
             <ul style="margin-bottom: 0; font-size: 14px; line-height: 1.7;">
-                <li><strong>最低消費：</strong> 200元 + 10%服務費</li>
-                <li><strong>用餐時間：</strong> 90分鐘</li>
-                <li><strong>最後服務時間：</strong> 餐點至晚上 9:00，周邊加點至晚上 9:30。</li>
-                <li><strong>晚上 9:00 後：</strong> 低消不變，但不得點主餐、輕食、炸物。</li>
-                <li>所有餐點、飲品及周邊均收10%服務費。禁止於店內吸菸、攜帶外食。</li>
+                <li><strong>用餐與低消：</strong> 用餐時間為90分鐘，低消每人$250，收取10%服務費，女僕周邊不列入低消。</li>
+                <li><strong>延長登入：</strong> 如需購買女僕周邊，請於用餐結束前15分鐘購買完成或延長用餐時段(低消每人$250，可延長90分鐘)。</li>
+                <li><strong>點餐方式：</strong> 點餐時每人需各掃一張桌上QRCODE，若有其餘不可抗力因素導致無法掃碼點餐，可告知出勤女僕幫您手動點餐。</li>
+                <li><strong>會員集點：</strong> 會員制度總消費每滿300元(包含服務費10%)就可以累積1點，600元可累積2點，以此類推。集點僅為一人使用，不可多人使用，經發現則取消累積點數。</li>
             </ul>
         </div>
 
@@ -623,8 +623,59 @@
     let activeFilters = new Set();
     let isDataLoaded = false; 
     let currentEditName = null;
+    let secretClickCount = 0;
+    let secretClickTimer = null;
 
     const syncStatusEl = document.getElementById('sync-status');
+
+    // 🔥 專屬暗號登入功能
+    window.triggerSecretLogin = function() {
+        secretClickCount++;
+        if (secretClickCount === 1) {
+            secretClickTimer = setTimeout(() => { secretClickCount = 0; }, 1500);
+        }
+        if (secretClickCount === 3) {
+            clearTimeout(secretClickTimer);
+            secretClickCount = 0;
+            const pwd = prompt('請輸入天界管理權限密碼：');
+            if (pwd === 'angel') {
+                isAdmin = true;
+                const btn = document.getElementById('login-btn');
+                const panel = document.getElementById('admin-panel');
+                const panelBanned = document.getElementById('admin-panel-banned');
+                const deleteBanBtns = document.querySelectorAll('.btn-delete-ban');
+                
+                btn.innerHTML = '🔒 登出'; 
+                btn.classList.add('logged-in'); 
+                panel.style.display = 'flex'; 
+                panelBanned.style.display = 'flex'; 
+                document.body.classList.add('admin-mode'); 
+                deleteBanBtns.forEach(b => b.style.display = 'block');
+                window.switchTab('tab-schedule', document.querySelectorAll('.tab-btn')[3]); 
+                window.renderCalendar(); 
+            } else if (pwd !== null) {
+                alert('權限拒絕！密碼錯誤！');
+            }
+        }
+    }
+
+    window.toggleAdmin = function() {
+        if (isAdmin) {
+            isAdmin = false; 
+            const btn = document.getElementById('login-btn');
+            const panel = document.getElementById('admin-panel');
+            const panelBanned = document.getElementById('admin-panel-banned');
+            const deleteBanBtns = document.querySelectorAll('.btn-delete-ban');
+            
+            btn.innerHTML = '🔒 登出'; 
+            btn.classList.remove('logged-in'); 
+            panel.style.display = 'none'; 
+            panelBanned.style.display = 'none'; 
+            document.body.classList.remove('admin-mode'); 
+            deleteBanBtns.forEach(b => b.style.display = 'none');
+            window.renderCalendar(); 
+        }
+    }
 
     window.toggleTheme = function() {
         const body = document.body;
@@ -690,31 +741,6 @@
             alert('儲存失敗！請確認 Firebase 資料庫規則是否設定為測試模式。');
         }
     }
-    
-    window.toggleAdmin = function() {
-        const btn = document.getElementById('login-btn');
-        const panel = document.getElementById('admin-panel');
-        const panelBanned = document.getElementById('admin-panel-banned');
-        const deleteBanBtns = document.querySelectorAll('.btn-delete-ban');
-        
-        if (isAdmin) {
-            isAdmin = false; btn.innerHTML = '🔒 店長登入'; btn.classList.remove('logged-in'); 
-            panel.style.display = 'none'; panelBanned.style.display = 'none'; document.body.classList.remove('admin-mode'); 
-            deleteBanBtns.forEach(b => b.style.display = 'none');
-            window.renderCalendar(); 
-        } else {
-            const pwd = prompt('請輸入密碼：');
-            if (pwd === 'angel') {
-                isAdmin = true; btn.innerHTML = '🔓 登出'; btn.classList.add('logged-in'); 
-                panel.style.display = 'flex'; panelBanned.style.display = 'flex'; document.body.classList.add('admin-mode'); 
-                deleteBanBtns.forEach(b => b.style.display = 'block');
-                window.switchTab('tab-schedule', document.querySelectorAll('.tab-btn')[3]); 
-                window.renderCalendar(); 
-            } else if (pwd !== null) {
-                alert('密碼錯誤！');
-            }
-        }
-    }
 
     window.switchTab = function(tabId, btnElement) {
         document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
@@ -766,7 +792,6 @@
                     const mData = maidData[s.name] || {};
                     let imgUrl = mData.photo;
                     
-                    // 🔥 智慧資料夾判斷機制
                     if (imgUrl && !imgUrl.startsWith('http') && !imgUrl.startsWith('data:')) {
                         imgUrl = 'images/' + imgUrl;
                     }
@@ -1027,7 +1052,6 @@
             const data = maidData[name];
             let imgUrl = data.photo;
             
-            // 🔥 智慧資料夾判斷機制
             if (imgUrl && !imgUrl.startsWith('http') && !imgUrl.startsWith('data:')) {
                 imgUrl = 'images/' + imgUrl;
             }
