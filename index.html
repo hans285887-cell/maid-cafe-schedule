@@ -160,7 +160,7 @@
 
 <div class="header">
     <button class="admin-login-btn" id="login-btn" onclick="toggleAdmin()">🔒 店長登入</button>
-    <img src="logo.png" alt="天使心 Logo" style="max-height: 80px; margin-bottom: 10px; display: block; margin-left: auto; margin-right: auto; border-radius: 50%;">
+    <img src="logo.jpg" alt="天使心 Logo" style="max-height: 80px; margin-bottom: 10px; display: block; margin-left: auto; margin-right: auto; border-radius: 50%;">
     <h1 style="margin-top: 0;">天使ハート 女僕咖啡廳</h1>
     <p>Angel Heart Maid Cafe - 天界入口</p>
     <div class="nav-tabs">
@@ -374,13 +374,13 @@
                 <h3>📅 2. 新增排班</h3>
                 <div class="form-group"><label>日期</label><input type="number" id="shift-day" min="1" max="31" value="1"></div>
                 <div class="form-group"><label>女僕</label><select id="shift-member"></select></div>
-                <div class="form-group"><label>班別</label><select id="shift-type"><option value="morning">早班</option><option value="night">晚班</option><option value="full">一日</option></select></div>
+                <div class="form-group"><label>班別</label><select id="shift-type"><option value="morning">☀️ 早班</option><option value="night">🌙 晚班</option><option value="full">⭐ 全班</option></select></div>
                 <button class="btn" onclick="addShift()">新增排班 (同步雲端)</button>
             </div>
             <div class="card">
-                <h3>🎉 3. 主題活動 (可跨日)</h3>
+                <h3>🎉 3. 主題活動 (可連續)</h3>
                 <div class="form-group"><label>開始日</label><input type="number" id="event-day-start" min="1" max="31" value="1"></div>
-                <div class="form-group"><label>結束日</label><input type="number" id="event-day-end" min="1" max="31" value="1" placeholder="同開始日則單天"></div>
+                <div class="form-group"><label>結束日</label><input type="number" id="event-day-end" min="1" max="31" value="1" placeholder="同上則為單日"></div>
                 <div class="form-group"><label>名稱</label><input type="text" id="event-name" placeholder="制服日"></div>
                 <div class="form-group"><label>色</label><input type="color" id="event-color" value="#e84393"></div>
                 <button class="btn" style="background: #e17055;" onclick="addEvent()">設定活動 (同步雲端)</button>
@@ -757,13 +757,17 @@
         const name = document.getElementById("shift-member").value;
         const type = document.getElementById("shift-type").value;
         const monthKey = `${year}-${month}`;
-        const timeText = type === "full" ? "一日" : (type === "morning" ? "早班" : "晚班");
+        
+        let timeText = "⭐ 全班";
+        if (type === "morning") timeText = "☀️ 早班";
+        if (type === "night") timeText = "🌙 晚班";
 
         if (!scheduleData[monthKey]) scheduleData[monthKey] = {};
         if (!scheduleData[monthKey][day]) scheduleData[monthKey][day] = { event: null, shifts: [] };
         
         scheduleData[monthKey][day].shifts.push({ name: name, time: timeText }); 
         saveToCloud(); 
+        
         renderCalendar();
         renderTodayAngels();
     }
@@ -793,10 +797,17 @@
     }
 
     function updateMemberDropdown() {
-        const select = document.getElementById("shift-member"); select.innerHTML = "";
+        const select = document.getElementById("shift-member");
+        const currentSelection = select.value;
+        select.innerHTML = "";
+        
         Object.keys(maidData).sort().forEach(m => {
             const opt = document.createElement("option"); opt.value = m; opt.textContent = m; select.appendChild(opt);
         });
+        
+        if (currentSelection && maidData[currentSelection]) {
+            select.value = currentSelection;
+        }
     }
 
     function renderFilters() {
