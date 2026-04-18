@@ -72,18 +72,34 @@
         .header h1 { margin: 0 0 10px 0; font-size: 20px; color: var(--primary-color); }
         .header p { margin: 0 0 15px 0; font-size: 12px; color: #ccc; }
         
-        .theme-toggle-btn { position: absolute; top: 15px; left: 15px; background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: bold; }
+        /* 🔥 新增導覽列與側邊欄按鈕樣式 */
+        .menu-toggle-btn { position: absolute; top: 15px; left: 15px; background: transparent; border: none; color: var(--primary-color); font-size: 24px; cursor: pointer; padding: 0; line-height: 1; z-index: 100; }
+        .theme-toggle-btn { position: absolute; top: 18px; left: 55px; background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 5px 10px; border-radius: 20px; cursor: pointer; font-size: 11px; font-weight: bold; }
+        
         .admin-login-btn { position: absolute; top: 15px; right: 15px; background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: bold; }
         .admin-login-btn.logged-in { background: #00b894; border-color: #00b894; color: white; }
 
         @media (max-width: 768px) {
             .header { padding-top: 60px; } 
             .header h1 { font-size: 18px; }
-            .theme-toggle-btn { top: 10px; left: 10px; padding: 5px 10px; font-size: 11px; }
+            .menu-toggle-btn { top: 12px; left: 10px; font-size: 22px; }
+            .theme-toggle-btn { top: 14px; left: 45px; padding: 4px 8px; font-size: 10px; }
             .admin-login-btn { top: 10px; right: 10px; padding: 5px 10px; font-size: 11px; }
             .nav-tabs { display: flex !important; flex-wrap: wrap; justify-content: center; gap: 4px; }
             .tab-btn { flex: 1 1 calc(30% - 10px) !important; padding: 10px 5px !important; font-size: 13px !important; border-radius: 6px !important; max-width: none !important; }
         }
+
+        /* 🔥 側邊欄結構 CSS */
+        .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); z-index: 1999; opacity: 0; visibility: hidden; transition: 0.3s ease; }
+        .sidebar-overlay.active { opacity: 1; visibility: visible; }
+        .sidebar { position: fixed; top: 0; left: -280px; width: 260px; height: 100vh; background-color: var(--card-bg); z-index: 2000; transition: 0.3s ease; box-shadow: 4px 0 15px rgba(0,0,0,0.2); display: flex; flex-direction: column; }
+        .sidebar.active { left: 0; }
+        .sidebar-header-box { padding: 20px; background-color: var(--primary-color); color: white; font-size: 16px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        .close-sidebar-btn { background: transparent; border: none; color: white; font-size: 24px; cursor: pointer; line-height: 1; padding: 0; }
+        .sidebar-menu { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; }
+        .sidebar-menu li a { display: block; padding: 15px 20px; color: var(--text-color); text-decoration: none; font-weight: bold; border-bottom: 1px solid var(--border-color); transition: 0.2s; font-size: 15px; }
+        .sidebar-menu li a:hover { background-color: var(--today-bg); }
+        .sidebar-menu li a.active-link { background-color: var(--today-bg); color: var(--primary-dark); border-left: 5px solid var(--primary-color); }
 
         .nav-tabs { display: flex; justify-content: center; gap: 5px; flex-wrap: wrap; }
         .tab-btn { background-color: var(--tab-inactive-bg); color: var(--tab-inactive-txt); border: none; padding: 10px 20px; font-size: 14px; font-weight: bold; cursor: pointer; border-radius: 8px 8px 0 0; transition: 0.3s; flex-grow: 1; max-width: 150px; }
@@ -233,9 +249,23 @@
     }
 </script>
 
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header-box">
+        切換店鋪 ☕
+        <button class="close-sidebar-btn" onclick="toggleSidebar()">×</button>
+    </div>
+    <ul class="sidebar-menu">
+        <li><a href="index.html" class="active-link">👼 天使ハート (本館)</a></li>
+        <li><a href="branch2.html">😈 (輸入二館名稱)</a></li>
+    </ul>
+</div>
+
 <div class="header">
+    <button class="menu-toggle-btn" onclick="toggleSidebar()">☰</button>
     <button class="theme-toggle-btn" id="theme-btn" onclick="toggleTheme()">🌙 護眼模式</button>
     <button class="admin-login-btn" id="login-btn" onclick="toggleAdmin()">🔒 店長登入</button>
+    
     <img src="logo.png" alt="天使心 Logo" style="max-height: 80px; margin-bottom: 10px; display: block; margin-left: auto; margin-right: auto; border-radius: 50%;">
     <h1 style="margin-top: 0;">天使ハート 女僕咖啡廳</h1>
     <p>Angel Heart Maid Cafe - 天界入口</p>
@@ -610,8 +640,13 @@
         }
     }
 
-    if (document.body.classList.contains('dark-mode')) {
+    if (localStorage.getItem('angelTheme') === 'dark') {
         document.getElementById('theme-btn').innerHTML = '☀️ 亮色模式';
+    }
+
+    window.toggleSidebar = function() {
+        document.getElementById('sidebar').classList.toggle('active');
+        document.getElementById('sidebar-overlay').classList.toggle('active');
     }
 
     onSnapshot(docRef, (snapshot) => {
@@ -822,7 +857,7 @@
 
         for (let i = 0; i < firstDay; i++) {
             const empty = document.createElement("div"); empty.className = "day-cell";
-            calendarEl.appendChild(empty);
+            empty.style.background = "transparent"; calendarEl.appendChild(empty);
         }
 
         for (let day = 1; day <= daysInMonth; day++) {
