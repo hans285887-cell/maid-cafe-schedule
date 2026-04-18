@@ -66,22 +66,18 @@
             --shift-off-bg: #991b1b; --shift-off-txt: #fee2e2;
         }
 
-        /* 🔥 加入防選取與防複製 CSS */
         body { font-family: "Microsoft JhengHei", sans-serif; background-color: var(--bg-color); padding: 0; color: var(--text-color); margin: 0; -webkit-tap-highlight-color: transparent; display: flex; flex-direction: column; min-height: 100vh; transition: background-color 0.3s, color 0.3s; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; }
         
-        /* 允許輸入框可以選取文字 */
         input, textarea { user-select: text; -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; }
 
         .header { background-color: var(--header-bg); color: white; padding: 20px 10px 0 10px; text-align: center; position: relative; transition: 0.3s; }
         
-        /* 🔥 暗號入口：將游標改成指標，暗示可以點擊 */
         .header h1 { margin: 0 0 10px 0; font-size: 20px; color: var(--primary-color); cursor: pointer; }
         .header p { margin: 0 0 15px 0; font-size: 12px; color: #ccc; }
         
         .menu-toggle-btn { position: absolute; top: 15px; left: 15px; background: transparent; border: none; color: var(--primary-color); font-size: 24px; cursor: pointer; padding: 0; line-height: 1; z-index: 100; }
         .theme-toggle-btn { position: absolute; top: 18px; left: 55px; background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 5px 10px; border-radius: 20px; cursor: pointer; font-size: 11px; font-weight: bold; }
         
-        /* 🔥 隱藏原本的登入按鈕，只保留登出狀態的樣式 */
         .admin-login-btn { display: none; position: absolute; top: 15px; right: 15px; background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: bold; }
         .admin-login-btn.logged-in { display: block; background: #00b894; border-color: #00b894; color: white; }
 
@@ -296,23 +292,6 @@
             </p>
         </div>
 
-        <div class="announcement-box" style="border-left-color: #0984e3; background: var(--info-bg);">
-            <h3 style="color: #0984e3;">📢 【公告 📢 | 聯繫方式規範說明】</h3>
-            <p>
-                近期發現部分主人 / 大小姐<br>
-                透過私訊方式聯繫女僕之個人帳號（包含本帳），已對女僕造成實際困擾。<br><br>
-                為維護女僕之個人隱私與工作分際，<br>
-                愛神・阿芙羅黛蒂 女僕咖啡廳 特此說明：<br><br>
-                除「手機拍必要聯繫事項」外，<br>
-                <strong>請勿以任何形式私訊女僕之個人帳號。</strong><br><br>
-                所有店內相關事務、活動詢問、協助需求，<br>
-                請一律私訊 愛神・阿芙羅黛蒂 女僕咖啡廳 官方 IG，將由店方統一處理。<br><br>
-                敬請各位主人與大小姐理解並配合，<br>
-                共同維護良好、安全且舒適的營運與交流環境。<br><br>
-                <span style="font-size: 13px; color: var(--menu-sub);">特此公告<br>愛神・阿芙羅黛蒂 女僕咖啡廳 敬上</span>
-            </p>
-        </div>
-
         <h2>🎀 營業資訊與規範</h2>
         <div class="info-grid">
             <div class="info-card">
@@ -340,24 +319,87 @@
                 <div class="rules-container rules-red">
                     <h4>🚫 互動與隱私規範</h4>
                     <ul>
-                        <li><strong>6. </strong>嚴禁自行對女僕拍攝、錄音、錄影。</li>
-                        <li><strong>7. </strong>嚴禁觸摸女僕。</li>
-                        <li><strong>8. </strong>嚴禁詢問女僕聯絡方式及個人隱私資料。</li>
-                        <li><strong>10. </strong>請勿等待女僕下班，或在門外徘徊。</li>
+                        <li>嚴禁自行對女僕拍攝、錄音、錄影。</li>
+                        <li>嚴禁觸摸女僕。</li>
+                        <li>嚴禁詢問女僕聯絡方式及個人隱私資料。</li>
+                        <li><strong>聯繫規範：</strong>除「手機拍必要聯繫事項」外，請勿以任何形式私訊女僕之個人帳號（包含本帳）。所有店內相關事務、活動詢問、協助需求，請一律私訊官方 IG 統一處理。</li>
+                        <li>請勿等待女僕下班，或在門外徘徊。</li>
                     </ul>
                     
                     <h4 style="margin-top: 15px;">✨ 店內秩序</h4>
                     <ul>
-                        <li><strong>9. </strong>用餐期間請勿隨意走動，以免影響出餐及其他登入者。</li>
+                        <li>用餐期間請勿隨意走動，以免影響出餐及其他登入者。</li>
                     </ul>
                 </div>
                 
                 <div class="rules-container rules-purple" style="margin-top: 15px;">
                     <h4>🚨 違規處置</h4>
                     <ul>
-                        <li><strong>11. </strong>本店保留一切最終決定權，違者將永久拒絕登入愛神系統。</li>
+                        <li>本店保留一切最終決定權，違者將永久拒絕登入愛神系統。</li>
                     </ul>
                 </div>
+            </div>
+        </div>
+
+        <h2 style="margin-top: 20px;">👑 會員規則與制度</h2>
+        <div class="info-card" style="margin-bottom: 20px;">
+            <div class="rules-container rules-purple">
+                <h4 style="color: var(--primary-dark); font-size: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 5px;">🎖️ 階級與升級條件</h4>
+                <ul style="list-style: none; padding-left: 0; margin-top: 10px;">
+                    <li style="margin-bottom: 10px;"><strong>⚔️ 戰士 (無限期)</strong><br>
+                        <span style="font-size: 13px; color: var(--text-color);">
+                        - 消費滿 $300 均可索取集點卡。<br>
+                        - 消費滿 $300 集 1 點，滿 $600 集 2 點以此類推。<br>
+                        - 集點僅為一人使用，不可多人使用，經發現則取消累積點數。
+                        </span>
+                    </li>
+                    <li style="margin-bottom: 10px;"><strong>🛡️ 英雄</strong><br>
+                        <span style="font-size: 13px; color: var(--text-color);">
+                        - 戰士滿 20 點可升階成為英雄。<br>
+                        - 升階當天可兌換任意飲品 / 甜點一次。
+                        </span>
+                    </li>
+                    <li style="margin-bottom: 10px;"><strong>☕ 侍者</strong><br>
+                        <span style="font-size: 13px; color: var(--text-color);">
+                        - 英雄滿 50 點可升階成為侍者。<br>
+                        - 升階當天可兌換手機拍 2 張一次。<br>
+                        - 生日大合照可升級成寬幅拍立得大合照。
+                        </span>
+                    </li>
+                    <li style="margin-bottom: 10px;"><strong>🔮 先知</strong><br>
+                        <span style="font-size: 13px; color: var(--text-color);">
+                        - 侍者滿 150 點可升階成為先知。<br>
+                        - 升階當天可兌換手機拍 2 張、拍立得 2 張一次。<br>
+                        - 生日可兌換指定女僕心意卡。<br>
+                        - 生日大合照可升級成寬幅拍立得大合照。<br>
+                        - 餐點消費加一後 95 折，拍立得 95 折。
+                        </span>
+                    </li>
+                    <li style="margin-bottom: 10px;"><strong>👑 祭司</strong><br>
+                        <span style="font-size: 13px; color: var(--text-color);">
+                        - 先知滿 200 點可升階成為祭司。<br>
+                        - 升階當天可兌換手機拍 3 張、拍立得 3 張、牆拍 3 張一次。<br>
+                        - 生日可兌換 2 位指定女僕心意卡。<br>
+                        - 生日大合照可升級成寬幅拍立得大合照。<br>
+                        - 生日可指定女僕拍攝祝福影片 (15秒) 及 指定專屬生日禮物 (需提前一個月通知並於有效階級內)。<br>
+                        - 餐點消費加一後 9 折，拍立得 9 折。
+                        </span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="rules-container rules-red" style="margin-top: 15px;">
+                <h4 style="color: var(--price-color);">🎁 點數兌換與注意事項</h4>
+                <p style="font-size: 13px; margin: 5px 0 10px 0; font-weight: bold;">英雄以上會員資格可憑點兌換：</p>
+                <ul style="font-size: 13px; margin-bottom: 15px;">
+                    <li><strong>20點：</strong> 甜點 / 飲品一份</li>
+                    <li><strong>30點：</strong> 繪本封套</li>
+                    <li><strong>40點：</strong> 主餐一份</li>
+                </ul>
+                <p style="font-size: 12px; color: var(--menu-sub); border-top: 1px dashed var(--border-color); padding-top: 10px; margin-bottom: 0;">
+                    ⚠️ 英雄以上效期一年的資格到期後，需以當階的點數維持同等級，否則會往下降級。<br>
+                    ⚠️ 以上規則 愛神・阿芙羅黛蒂 留有最終決定權。
+                </p>
             </div>
         </div>
     </div>
@@ -368,11 +410,9 @@
         <div class="rules-container rules-red" style="margin-bottom: 20px;">
             <h4>⚠️ 基本消費與須知</h4>
             <ul style="margin-bottom: 0; font-size: 14px; line-height: 1.7;">
-                <li><strong>1. </strong>用餐時間為90分鐘，低消每人$250，收取10%服務費，女僕周邊不列入低消。</li>
-                <li><strong>2. </strong>如需購買女僕周邊，請於用餐結束前15分鐘購買完成或延長用餐時段(低消每人$250，可延長90分鐘)。</li>
-                <li><strong>3. </strong>點餐時每人需各掃一張桌上QRCODE，若有其餘不可抗力因素導致無法掃碼點餐，可告知出勤女僕幫您手動點餐。</li>
-                <li><strong>4. </strong>會員制度總消費每滿300元(包含服務費10%)就可以累積1點，600元可累積2點，以此類推。</li>
-                <li><strong>5. </strong>會員制度集點僅為一人使用，不可多人使用，經發現則取消累積點數。</li>
+                <li>用餐時間為90分鐘，低消每人$250，收取10%服務費，女僕周邊不列入低消。</li>
+                <li>如需購買女僕周邊，請於用餐結束前15分鐘購買完成或延長用餐時段(低消每人$250，可延長90分鐘)。</li>
+                <li>點餐時每人需各掃一張桌上QRCODE，若有其餘不可抗力因素導致無法掃碼點餐，可告知出勤女僕幫您手動點餐。</li>
             </ul>
         </div>
 
