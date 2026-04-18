@@ -66,16 +66,20 @@
             --shift-off-bg: #991b1b; --shift-off-txt: #fee2e2;
         }
 
+        /* 防選取與防複製 */
         body { font-family: "Microsoft JhengHei", sans-serif; background-color: var(--bg-color); padding: 0; color: var(--text-color); margin: 0; -webkit-tap-highlight-color: transparent; display: flex; flex-direction: column; min-height: 100vh; transition: background-color 0.3s, color 0.3s; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; }
         input, textarea { user-select: text; -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; }
 
         .header { background-color: var(--header-bg); color: white; padding: 20px 10px 0 10px; text-align: center; position: relative; transition: 0.3s; }
+        
+        /* 標題游標改為指標，暗示可點擊 */
         .header h1 { margin: 0 0 10px 0; font-size: 20px; color: var(--primary-color); cursor: pointer; }
         .header p { margin: 0 0 15px 0; font-size: 12px; color: #ccc; }
         
         .menu-toggle-btn { position: absolute; top: 15px; left: 15px; background: transparent; border: none; color: var(--primary-color); font-size: 24px; cursor: pointer; padding: 0; line-height: 1; z-index: 100; }
         .theme-toggle-btn { position: absolute; top: 18px; left: 55px; background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 5px 10px; border-radius: 20px; cursor: pointer; font-size: 11px; font-weight: bold; }
         
+        /* 隱藏登入按鈕，僅在登入後顯示登出 */
         .admin-login-btn { display: none; position: absolute; top: 15px; right: 15px; background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: bold; }
         .admin-login-btn.logged-in { display: block; background: #00b894; border-color: #00b894; color: white; }
 
@@ -313,35 +317,17 @@
             </div>
             
             <div class="info-card">
-                <h3>📜 天界公約與重要提醒</h3>
+                <h3>📜 天界規範 (STORE RULES)</h3>
                 <div class="rules-container rules-red">
-                    <h4>💬 互動與拍照界線</h4>
-                    <ul>
-                        <li><strong>禁止碰觸與餵食：</strong> 嚴禁隨意觸碰女僕（天使），亦禁止任何形式的「親手餵食」。</li>
-                        <li><strong>尊重個人尺度：</strong> 拍照姿勢與尺度依各女僕意願為主，嚴禁親吻等親密接觸。請勿以「別的女僕可以」為由勉強他人配合。</li>
-                        <li><strong>禁止霸佔女僕：</strong> 店內採「輪桌制」，請勿要求或強迫女僕一直停留在您的座位上。</li>
-                    </ul>
-                    
-                    <h4 style="margin-top: 15px;">🚫 隱私與防騷擾（踩線即面臨永久出禁）</h4>
-                    <ul>
-                        <li><strong>禁止私下騷擾：</strong> 嚴禁私約、過度傳訊、電話騷擾或探討女僕的個人隱私。</li>
-                        <li><strong>禁止跟蹤與堵人：</strong> 嚴禁在女僕下班後跟蹤、在樓下蹲點堵人，或前往女僕的其他工作場所打擾。</li>
-                        <li><strong>禁止情緒勒索與造謠：</strong> 勿對女僕進行情緒勒索；店內從未設立「天使長/女僕長」職位，請勿造謠或輕信謠言。</li>
-                    </ul>
-
-                    <h4 style="margin-top: 15px;">✨ 店內秩序與禮儀</h4>
-                    <ul>
-                        <li><strong>定點入座：</strong> 請勿在店內隨意走動或自行更換座位（若需換位請請示女僕）。</li>
-                        <li><strong>點餐效率：</strong> 繁忙時段請先決定好餐點與拍照項目，再呼叫女僕，並避免詢問與活動無關的問題以利作業。</li>
-                        <li><strong>候位禮儀：</strong> 於樓梯間候位時請留出通道，絕對不要打擾樓上鄰居與店家。</li>
-                        <li><strong>洗手間：</strong> 使用廁所請務必鎖門。</li>
-                        <li><strong>寵物規範：</strong> 為顧及過敏及衛生，攜帶寵物入店必須全程待在寵物籠內，嚴禁放出。</li>
-                    </ul>
-                    
-                    <h4 style="margin-top: 15px;">🚨 違規處置與官方聲明</h4>
-                    <ul>
-                        <li><strong>處分機制：</strong> 若違反上述規定，店家會先給予警告；若屢勸不聽或觸犯底線（如跟蹤、騷擾、嚴重越界），將立即請離並永久出禁（拒絕往來）。</li>
-                        <li><strong>意見反映：</strong> 店家重視顧客隱私與資安，若有任何建議或發現問題，請直接私訊官方 IG 粉專溝通。</li>
+                    <h4>🚫 店內規範與防騷擾</h4>
+                    <ul style="margin-bottom: 0; font-size: 14px; line-height: 1.7;">
+                        <li>請尊重天使的隱私與私人時間，請勿在店門口等待天使進出，或在天使離店後任意私下跟隨或攀談。</li>
+                        <li>請勿任意觸摸天使身體或是服裝。</li>
+                        <li>未經許可請勿以任何方式對天使們進行拍照、攝影、錄音等行為。</li>
+                        <li>請勿詢問天使私下聯絡方式，如果有喜歡的天使，可以追蹤天使的官方IG做互動。</li>
+                        <li>請勿有任何危及天使人身安全或會令天使產生精神壓力之行為。</li>
+                        <li>請勿於店內大聲喧嘩，及隨意起身走動，或在走道逗留。</li>
+                        <li><strong>以上各種規定請各位主人/大小姐務必遵守，如有經過勸導但仍不遵守，天使們將無法為您提供服務。</strong></li>
                     </ul>
                 </div>
             </div>
@@ -352,26 +338,14 @@
         <h2>🍽️ 天界菜單</h2>
         
         <div class="rules-container rules-red" style="margin-bottom: 15px;">
-            <h4>⚠️ 基本消費與須知</h4>
+            <h4>⚠️ PRECAUTIONS (注意事項) & 基本規定</h4>
             <ul style="margin-bottom: 0; font-size: 14px; line-height: 1.7;">
-                <li><strong>用餐與低消：</strong> 用餐時間為90分鐘，低消每人$250，收取10%服務費，女僕周邊不列入低消。</li>
-                <li><strong>延長登入：</strong> 如需購買女僕周邊，請於用餐結束前15分鐘購買完成或延長用餐時段(低消每人$250，可延長90分鐘)。</li>
-                <li><strong>點餐方式：</strong> 點餐時每人需各掃一張桌上QRCODE，若有其餘不可抗力因素導致無法掃碼點餐，可告知出勤女僕幫您手動點餐。</li>
-                <li><strong>會員集點：</strong> 會員制度總消費每滿300元(包含服務費10%)就可以累積1點，600元可累積2點，以此類推。集點僅為一人使用，不可多人使用，經發現則取消累積點數。</li>
-            </ul>
-        </div>
-
-        <div class="rules-container rules-purple" style="margin-bottom: 20px;">
-            <h4>📸 周邊、拍立得與活動規範</h4>
-            <ul style="margin-bottom: 15px; font-size: 14px; line-height: 1.7;">
-                <li><strong>優先兌換：</strong> 入場後請優先辦理周邊領取與生日禮兌換，以免影響後續流程。</li>
-                <li><strong>拍立得取件：</strong> 領取拍立得時，必須於該名女僕有排班的時段前來（畢業或一日活動除外），以免找不到相片。</li>
-                <li><strong>拍立得繪製：</strong> 紀念拍立得有固定的繪圖標準，請勿要求女僕畫得更加精緻。若需精緻繪圖，請購買特定的「15號牆拍」。</li>
-            </ul>
-            <h4 style="margin-top: 15px;">🎂 生日禮</h4>
-            <ul style="margin-bottom: 0; font-size: 14px; line-height: 1.7;">
-                <li>生日前後一天內(含當天)出示證件，贈送特製繪盤蛋糕一份！</li>
-                <li>一人一年限領一次。當日壽星加贈全體天使拍立得一張。</li>
+                <li><strong>最低消費：</strong> 200元 + 10%服務費</li>
+                <li><strong>用餐時間：</strong> 90分鐘</li>
+                <li>周邊商品請於該段用餐時間，結束前半小時點餐完成。</li>
+                <li>當日最後餐點服務時間為晚上9點。最後加點周邊商品時間為晚上9點半。</li>
+                <li>晚上9點後，最低消費為200元+10%服務費，但不得購買餐點(正餐、輕食、炸物)，9點半過後不得點購周邊服務。</li>
+                <li>禁止於店內吸菸、禁止攜帶外食入內食用。</li>
             </ul>
         </div>
 
