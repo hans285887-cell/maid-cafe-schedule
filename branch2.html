@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>愛神・阿芙羅黛蒂 女僕咖啡廳 - 愛神系統</title>
-    <link rel="icon" href="aphrodite_logo.png" type="image/png">
+    <link rel="icon" href="images/aphrodite_logo.png" type="image/png">
     <style>
         :root {
             --primary-color: #a29bfe; 
@@ -242,7 +242,7 @@
 <body>
 
 <script>
-    if (localStorage.getItem('angelTheme') === 'dark') {
+    if (localStorage.getItem('aphroditeTheme') === 'dark') {
         document.body.classList.add('dark-mode');
     }
 </script>
@@ -254,8 +254,8 @@
         <button class="close-sidebar-btn" onclick="toggleSidebar()">×</button>
     </div>
     <ul class="sidebar-menu">
-        <li><a href="index.html">👼 天使ハート</a></li>
-        <li><a href="aphrodite.html" class="active-link">🔮 愛神・阿芙羅黛蒂</a></li>
+        <li><a href="index.html">👼 天使ハート (一館)</a></li>
+        <li><a href="aphrodite.html" class="active-link">🔮 愛神・阿芙羅黛蒂 (二館)</a></li>
     </ul>
 </div>
 
@@ -264,7 +264,7 @@
     <button class="theme-toggle-btn" id="theme-btn" onclick="toggleTheme()">🌙 護眼模式</button>
     <button class="admin-login-btn" id="login-btn" onclick="toggleAdmin()">🔒 店長登入</button>
     
-    <img src="aphrodite_logo.png" alt="愛神 Logo" style="max-height: 80px; margin-bottom: 10px; display: block; margin-left: auto; margin-right: auto; border-radius: 50%;">
+    <img src="images/aphrodite_logo.png" alt="愛神 Logo" style="max-height: 80px; margin-bottom: 10px; display: block; margin-left: auto; margin-right: auto; border-radius: 50%;">
     <h1 style="margin-top: 0;">愛神・阿芙羅黛蒂 女僕咖啡廳</h1>
     <p>Aphrodite Maid Cafe - 愛神系統</p>
     <div class="nav-tabs">
@@ -353,6 +353,20 @@
             </ul>
         </div>
 
+        <div class="rules-container rules-purple" style="margin-bottom: 20px;">
+            <h4>📸 周邊、拍立得與活動規範</h4>
+            <ul style="margin-bottom: 15px; font-size: 14px; line-height: 1.7;">
+                <li><strong>優先兌換：</strong> 入場後請優先辦理周邊領取與生日禮兌換，以免影響後續流程。</li>
+                <li><strong>拍立得取件：</strong> 領取拍立得時，必須於該名女僕有排班的時段前來（畢業或一日活動除外），以免找不到相片。</li>
+                <li><strong>拍立得繪製：</strong> 紀念拍立得有固定的繪圖標準，請勿要求女僕畫得更加精緻。若需精緻繪圖，請購買特定的「15號牆拍」。</li>
+            </ul>
+            <h4 style="margin-top: 15px;">🎂 生日禮</h4>
+            <ul style="margin-bottom: 0; font-size: 14px; line-height: 1.7;">
+                <li>生日前後一天內(含當天)出示證件，贈送特製繪盤蛋糕一份！</li>
+                <li>一人一年限領一次。當日壽星加贈全體天使拍立得一張。</li>
+            </ul>
+        </div>
+
         <div class="menu-grid">
             <div class="menu-section">
                 <h3 class="menu-title">🍛 測試主餐分類</h3>
@@ -397,7 +411,7 @@
                 <h3 id="edit-title">👥 1. 建立/編輯女僕</h3>
                 <div class="form-group"><label>名稱</label><input type="text" id="new-name" placeholder="小聯"></div>
                 <div class="form-group"><label>IG</label><input type="text" id="new-ig" placeholder="@ig"></div>
-                <div class="form-group"><label>照片</label><input type="text" id="new-photo" placeholder="網址或檔名 (如: lian.jpg)"></div>
+                <div class="form-group"><label>照片</label><input type="text" id="new-photo" placeholder="檔名 (如: lian.png)"></div>
                 <div class="form-group"><label>色</label><input type="color" id="new-color" value="#a29bfe"></div>
                 <button class="btn" id="btn-save-member" style="background: var(--header-bg);" onclick="addOrUpdateMember()">💾 儲存 (同步雲端)</button>
             </div>
@@ -692,6 +706,12 @@
                 }).forEach(s => {
                     const mData = maidData[s.name] || {};
                     let imgUrl = mData.photo;
+                    
+                    // 🔥 智慧資料夾判斷機制
+                    if (imgUrl && !imgUrl.startsWith('http') && !imgUrl.startsWith('data:')) {
+                        imgUrl = 'images/' + imgUrl;
+                    }
+
                     if (!imgUrl) {
                         const encodedColor = (mData.color || '#ccc').replace('#', '%23');
                         imgUrl = `data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='${encodedColor}' opacity='0.2'/%3E%3Ctext x='50%25' y='50%25' fill='${encodedColor}' font-size='20' font-family='sans-serif' font-weight='bold' dominant-baseline='middle' text-anchor='middle'%3E${s.name}%3C/text%3E%3C/svg%3E`;
@@ -947,6 +967,12 @@
         Object.keys(maidData).sort().forEach(name => {
             const data = maidData[name];
             let imgUrl = data.photo;
+            
+            // 🔥 智慧資料夾判斷機制
+            if (imgUrl && !imgUrl.startsWith('http') && !imgUrl.startsWith('data:')) {
+                imgUrl = 'images/' + imgUrl;
+            }
+
             if (!imgUrl) {
                 const encodedColor = data.color.replace('#', '%23');
                 imgUrl = `data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Crect width='300' height='300' fill='${encodedColor}' opacity='0.2'/%3E%3Ctext x='50%25' y='50%25' fill='${encodedColor}' font-size='40' font-family='sans-serif' font-weight='bold' dominant-baseline='middle' text-anchor='middle'%3E${name}%3C/text%3E%3C/svg%3E`;
