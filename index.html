@@ -112,6 +112,9 @@
         .color-dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; }
         .btn-show-all { background: #2d3436; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold; white-space: nowrap; }
 
+        .calendar-wrapper { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 10px; border: 1px solid #eee; border-radius: 8px; }
+        .calendar-inner { min-width: 800px; }
+
         .calendar-header { display: grid; grid-template-columns: repeat(7, 1fr); background: #2d3436; color: white; text-align: center; font-weight: bold; font-size: 12px; border-radius: 6px 6px 0 0; }
         .calendar-header div { padding: 8px 0; }
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); grid-auto-rows: minmax(90px, auto); border-left: 1px solid #eee; }
@@ -119,10 +122,10 @@
         
         .day-cell { border-right: 1px solid #eee; border-bottom: 1px solid #eee; padding: 4px; position: relative; background: #fff; font-size: 11px; transition: 0.2s; }
         .today-cell { background-color: var(--today-bg) !important; box-shadow: inset 0 0 0 2px #fdcb6e; }
-        .today-badge { position: absolute; top: 2px; right: 2px; background: #fdcb6e; color: #d35400; font-size: 10px; padding: 2px 5px; border-radius: 4px; font-weight: bold; }
+        .today-badge { position: absolute; top: 2px; right: 2px; background: #fdcb6e; color: #d35400; font-size: 10px; padding: 2px 5px; border-radius: 4px; font-weight: bold; z-index: 2; }
         .date-num { font-weight: bold; margin-bottom: 4px; color: #636e72; font-size: 12px; }
-        .event-label { color: white; font-size: 10px; padding: 3px; border-radius: 3px; text-align: center; font-weight: bold; margin-bottom: 4px; display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-        .shift-tag { font-size: 10px; padding: 2px 4px; border-radius: 3px; margin-bottom: 3px; border-left: 4px solid; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.1); display: block; font-weight: bold; }
+        .event-label { color: white; font-size: 10px; padding: 3px; border-radius: 3px; text-align: center; font-weight: bold; margin-bottom: 4px; display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; line-height: 1.3; }
+        .shift-tag { font-size: 10px; padding: 3px 4px; border-radius: 3px; margin-bottom: 4px; border-left: 4px solid; display: block; font-weight: bold; word-wrap: break-word; line-height: 1.3; }
         @media (min-width: 768px) { .event-label { font-size: 12px; padding: 4px; } .shift-tag { font-size: 12px; border-left-width: 5px; padding: 4px; } }
         
         body.admin-mode .shift-tag:hover, body.admin-mode .event-label:hover { cursor: pointer; filter: brightness(0.9); text-decoration: line-through; }
@@ -374,7 +377,17 @@
                 <h3>📅 2. 新增排班</h3>
                 <div class="form-group"><label>日期</label><input type="number" id="shift-day" min="1" max="31" value="1"></div>
                 <div class="form-group"><label>女僕</label><select id="shift-member"></select></div>
-                <div class="form-group"><label>班別</label><select id="shift-type"><option value="morning">☀️ 早班</option><option value="night">🌙 晚班</option><option value="full">⭐ 全班</option></select></div>
+                <div class="form-group">
+                    <label>班別</label>
+                    <select id="shift-type">
+                        <option value="morning">☀️ 早班</option>
+                        <option value="night">🌙 晚班</option>
+                        <option value="full">⭐ 全班</option>
+                        <option value="off_full">🏠 全日公休</option>
+                        <option value="off_morning">🌅 早班公休</option>
+                        <option value="off_night">🌃 晚班公休</option>
+                    </select>
+                </div>
                 <button class="btn" onclick="addShift()">新增排班 (同步雲端)</button>
             </div>
             <div class="card">
@@ -396,8 +409,12 @@
             <button class="btn-show-all" onclick="showAllMembers()">顯示所有人</button>
         </div>
 
-        <div class="calendar-header"><div>日</div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div></div>
-        <div class="calendar-grid" id="calendar"></div>
+        <div class="calendar-wrapper">
+            <div class="calendar-inner">
+                <div class="calendar-header"><div>日</div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div></div>
+                <div class="calendar-grid" id="calendar"></div>
+            </div>
+        </div>
     </div>
 
     <div id="tab-banned" class="tab-content">
@@ -608,22 +625,37 @@
         let htmlContent = '';
 
         if (scheduleData[monthKey] && scheduleData[monthKey][day] && scheduleData[monthKey][day].shifts && scheduleData[monthKey][day].shifts.length > 0) {
-            scheduleData[monthKey][day].shifts.forEach(s => {
-                const mData = maidData[s.name] || {};
-                let imgUrl = mData.photo;
-                if (!imgUrl) {
-                    const encodedColor = (mData.color || '#ccc').replace('#', '%23');
-                    imgUrl = `data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='${encodedColor}' opacity='0.2'/%3E%3Ctext x='50%25' y='50%25' fill='${encodedColor}' font-size='20' font-family='sans-serif' font-weight='bold' dominant-baseline='middle' text-anchor='middle'%3E${s.name}%3C/text%3E%3C/svg%3E`;
-                }
-                htmlContent += `
-                    <div class="today-angel-item">
-                        <img src="${imgUrl}" class="today-angel-img" style="border-color: ${mData.color || '#fff'};" onerror="window.handlePhotoError(this, '${s.name}')">
-                        <div class="maid-photo-fallback" style="border-radius: 50%; width: 60px; height: 60px; font-size: 14px;">${s.name}</div>
-                        <span class="today-angel-name">${s.name}</span>
-                        <span class="today-angel-time">${s.time}</span>
-                    </div>
-                `;
-            });
+            
+            let workingShifts = scheduleData[monthKey][day].shifts.filter(s => !s.time.includes('公休'));
+            
+            if (workingShifts.length > 0) {
+                workingShifts.sort((a, b) => {
+                    const getW = t => {
+                        if(t.includes('全班')) return 1;
+                        if(t.includes('早班')) return 2;
+                        if(t.includes('晚班')) return 3;
+                        return 4;
+                    };
+                    return getW(a.time) - getW(b.time);
+                }).forEach(s => {
+                    const mData = maidData[s.name] || {};
+                    let imgUrl = mData.photo;
+                    if (!imgUrl) {
+                        const encodedColor = (mData.color || '#ccc').replace('#', '%23');
+                        imgUrl = `data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='${encodedColor}' opacity='0.2'/%3E%3Ctext x='50%25' y='50%25' fill='${encodedColor}' font-size='20' font-family='sans-serif' font-weight='bold' dominant-baseline='middle' text-anchor='middle'%3E${s.name}%3C/text%3E%3C/svg%3E`;
+                    }
+                    htmlContent += `
+                        <div class="today-angel-item">
+                            <img src="${imgUrl}" class="today-angel-img" style="border-color: ${mData.color || '#fff'};" onerror="window.handlePhotoError(this, '${s.name}')">
+                            <div class="maid-photo-fallback" style="border-radius: 50%; width: 60px; height: 60px; font-size: 14px;">${s.name}</div>
+                            <span class="today-angel-name">${s.name}</span>
+                            <span class="today-angel-time">${s.time}</span>
+                        </div>
+                    `;
+                });
+            } else {
+                htmlContent = '<div style="font-size: 14px; color: #fff; padding: 10px; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.1);">今日天使皆為公休，天界休息喔！</div>';
+            }
         } else {
             htmlContent = '<div style="font-size: 14px; color: #fff; padding: 10px; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.1);">今日天界休息，或天使們尚未排班喔！</div>';
         }
@@ -722,11 +754,37 @@
                     html += `<div class="event-label" style="background-color: ${ec};" ${clickAction}>${dayData.event.name}</div>`;
                 }
                 
-                dayData.shifts.forEach((s, index) => {
+                let shiftsWithIndex = dayData.shifts.map((s, idx) => ({ ...s, originalIndex: idx }));
+                
+                shiftsWithIndex.sort((a, b) => {
+                    const getWeight = (t) => {
+                        if (t.includes('全班')) return 1;
+                        if (t.includes('早班') && !t.includes('公休')) return 2;
+                        if (t.includes('晚班') && !t.includes('公休')) return 3;
+                        if (t.includes('公休')) return 4;
+                        return 5;
+                    };
+                    return getWeight(a.time) - getWeight(b.time);
+                });
+
+                shiftsWithIndex.forEach((s) => {
                     if (activeFilters.has(s.name)) {
                         const mc = maidData[s.name] ? maidData[s.name].color : "#ccc";
-                        const clickAction = isAdmin ? `onclick="deleteShift('${monthKey}', ${day}, ${index})"` : '';
-                        html += `<div class="shift-tag" style="border-left-color: ${mc}; background-color: ${mc}1A; color: #333;" ${clickAction}>${s.name}(${s.time})</div>`;
+                        
+                        let bgColor = `${mc}1A`; 
+                        let txtColor = '#333';
+                        if (s.time.includes('早班') && !s.time.includes('公休')) {
+                            bgColor = '#fff3e0'; txtColor = '#d35400';
+                        } else if (s.time.includes('晚班') && !s.time.includes('公休')) {
+                            bgColor = '#ebf8ff'; txtColor = '#0984e3';
+                        } else if (s.time.includes('全班')) {
+                            bgColor = '#fff9db'; txtColor = '#b8860b';
+                        } else if (s.time.includes('公休')) {
+                            bgColor = '#ffebee'; txtColor = '#c0392b';
+                        }
+
+                        const clickAction = isAdmin ? `onclick="deleteShift('${monthKey}', ${day}, ${s.originalIndex})"` : '';
+                        html += `<div class="shift-tag" style="border-left-color: ${mc}; background-color: ${bgColor}; color: ${txtColor};" ${clickAction}>${s.name}(${s.time})</div>`;
                     }
                 });
             }
@@ -761,6 +819,9 @@
         let timeText = "⭐ 全班";
         if (type === "morning") timeText = "☀️ 早班";
         if (type === "night") timeText = "🌙 晚班";
+        if (type === "off_full") timeText = "🏠 全日公休";
+        if (type === "off_morning") timeText = "🌅 早班公休";
+        if (type === "off_night") timeText = "🌃 晚班公休";
 
         if (!scheduleData[monthKey]) scheduleData[monthKey] = {};
         if (!scheduleData[monthKey][day]) scheduleData[monthKey][day] = { event: null, shifts: [] };
