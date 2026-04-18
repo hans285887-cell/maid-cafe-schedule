@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>愛神・阿芙羅黛蒂 女 ব্রিজ咖啡廳 - 愛神系統</title>
+    <title>愛神・阿芙羅黛蒂 女僕咖啡廳 - 愛神系統</title>
     <link rel="icon" href="images/aphrodite_logo.png" type="image/png">
     <style>
         :root {
@@ -66,17 +66,24 @@
             --shift-off-bg: #991b1b; --shift-off-txt: #fee2e2;
         }
 
-        body { font-family: "Microsoft JhengHei", sans-serif; background-color: var(--bg-color); padding: 0; color: var(--text-color); margin: 0; -webkit-tap-highlight-color: transparent; display: flex; flex-direction: column; min-height: 100vh; transition: background-color 0.3s, color 0.3s; }
+        /* 🔥 加入防選取與防複製 CSS */
+        body { font-family: "Microsoft JhengHei", sans-serif; background-color: var(--bg-color); padding: 0; color: var(--text-color); margin: 0; -webkit-tap-highlight-color: transparent; display: flex; flex-direction: column; min-height: 100vh; transition: background-color 0.3s, color 0.3s; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; }
         
+        /* 允許輸入框可以選取文字 */
+        input, textarea { user-select: text; -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; }
+
         .header { background-color: var(--header-bg); color: white; padding: 20px 10px 0 10px; text-align: center; position: relative; transition: 0.3s; }
-        .header h1 { margin: 0 0 10px 0; font-size: 20px; color: var(--primary-color); }
+        
+        /* 🔥 暗號入口：將游標改成指標，暗示可以點擊 */
+        .header h1 { margin: 0 0 10px 0; font-size: 20px; color: var(--primary-color); cursor: pointer; }
         .header p { margin: 0 0 15px 0; font-size: 12px; color: #ccc; }
         
         .menu-toggle-btn { position: absolute; top: 15px; left: 15px; background: transparent; border: none; color: var(--primary-color); font-size: 24px; cursor: pointer; padding: 0; line-height: 1; z-index: 100; }
         .theme-toggle-btn { position: absolute; top: 18px; left: 55px; background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 5px 10px; border-radius: 20px; cursor: pointer; font-size: 11px; font-weight: bold; }
         
-        .admin-login-btn { position: absolute; top: 15px; right: 15px; background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: bold; }
-        .admin-login-btn.logged-in { background: #00b894; border-color: #00b894; color: white; }
+        /* 🔥 隱藏原本的登入按鈕，只保留登出狀態的樣式 */
+        .admin-login-btn { display: none; position: absolute; top: 15px; right: 15px; background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: bold; }
+        .admin-login-btn.logged-in { display: block; background: #00b894; border-color: #00b894; color: white; }
 
         @media (max-width: 768px) {
             .header { padding-top: 60px; } 
@@ -153,7 +160,7 @@
         .maid-card { background: var(--card-bg); border: 1px solid var(--calendar-border); border-radius: 10px; overflow: hidden; text-align: center; transition: 0.3s; }
         .maid-photo-container { position: relative; height: 160px; overflow: hidden; background-color: var(--info-bg); }
         @media (min-width: 768px) { .maid-photo-container { height: 220px; } }
-        .maid-img { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.3s; }
+        .maid-img { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.3s; pointer-events: none; }
         .maid-photo-fallback { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; align-items: center; justify-content: center; font-size: 1.5em; font-weight: bold; color: var(--menu-sub); font-family: sans-serif; background-color: var(--info-bg); }
         .maid-info { padding: 10px; }
         .maid-name { font-size: 15px; font-weight: bold; margin: 0; }
@@ -216,7 +223,7 @@
         .today-angels-list { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
         .today-angels-list::-webkit-scrollbar { display: none; }
         .today-angel-item { display: flex; flex-direction: column; align-items: center; min-width: 70px; }
-        .today-angel-img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .today-angel-img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); pointer-events: none; }
         .today-angel-name { font-size: 13px; font-weight: bold; margin-top: 5px; color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
         .today-angel-time { font-size: 11px; color: var(--primary-dark); background: rgba(255,255,255,0.9); padding: 2px 6px; border-radius: 10px; margin-top: 2px; font-weight: bold; }
 
@@ -239,7 +246,7 @@
         .scroll-to-top:hover { transform: translateY(-3px); background-color: var(--primary-dark); }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;">
 
 <script>
     if (localStorage.getItem('aphroditeTheme') === 'dark') {
@@ -255,17 +262,15 @@
     </div>
     <ul class="sidebar-menu">
         <li><a href="index.html">👼 天使ハート (一館)</a></li>
-        <li><a href="branch2.html" class="active-link">🔮 愛神・阿芙羅黛蒂 (二館)</a></li>
+        <li><a href="aphrodite.html" class="active-link">🔮 愛神・阿芙羅黛蒂 (二館)</a></li>
     </ul>
 </div>
 
 <div class="header">
     <button class="menu-toggle-btn" onclick="toggleSidebar()">☰</button>
     <button class="theme-toggle-btn" id="theme-btn" onclick="toggleTheme()">🌙 護眼模式</button>
-    <button class="admin-login-btn" id="login-btn" onclick="toggleAdmin()">🔒 店長登入</button>
-    
-    <img src="images/aphrodite_logo.png" alt="愛神 Logo" style="max-height: 80px; margin-bottom: 10px; display: block; margin-left: auto; margin-right: auto; border-radius: 50%;">
-    <h1 style="margin-top: 0;">愛神・阿芙羅黛蒂 女僕咖啡廳</h1>
+    <button class="admin-login-btn" id="login-btn" onclick="toggleAdmin()">🔒 登出</button> <img src="images/aphrodite_logo.png" alt="愛神 Logo" style="max-height: 80px; margin-bottom: 10px; display: block; margin-left: auto; margin-right: auto; border-radius: 50%; pointer-events: none;">
+    <h1 style="margin-top: 0;" id="secret-login" onclick="triggerSecretLogin()">愛神・阿芙羅黛蒂 女僕咖啡廳</h1>
     <p>Aphrodite Maid Cafe - 愛神系統</p>
     <div class="nav-tabs">
         <button class="tab-btn active" onclick="switchTab('tab-info', this)">🎀 營運與公告</button>
@@ -600,7 +605,6 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    // ⚠️ 【重要】資料庫位置已改為 Aphrodite，兩家店資料將完全獨立
     const docRef = doc(db, "Aphrodite", "MainData");
 
     const defaultBannedData = [
@@ -633,8 +637,58 @@
     let activeFilters = new Set();
     let isDataLoaded = false; 
     let currentEditName = null;
+    let secretClickCount = 0;
+    let secretClickTimer = null;
 
     const syncStatusEl = document.getElementById('sync-status');
+
+    window.triggerSecretLogin = function() {
+        secretClickCount++;
+        if (secretClickCount === 1) {
+            secretClickTimer = setTimeout(() => { secretClickCount = 0; }, 1500);
+        }
+        if (secretClickCount === 3) {
+            clearTimeout(secretClickTimer);
+            secretClickCount = 0;
+            const pwd = prompt('請輸入系統管理權限密碼：');
+            if (pwd === 'angel') {
+                isAdmin = true;
+                const btn = document.getElementById('login-btn');
+                const panel = document.getElementById('admin-panel');
+                const panelBanned = document.getElementById('admin-panel-banned');
+                const deleteBanBtns = document.querySelectorAll('.btn-delete-ban');
+                
+                btn.innerHTML = '🔒 登出'; 
+                btn.classList.add('logged-in'); 
+                panel.style.display = 'flex'; 
+                panelBanned.style.display = 'flex'; 
+                document.body.classList.add('admin-mode'); 
+                deleteBanBtns.forEach(b => b.style.display = 'block');
+                window.switchTab('tab-schedule', document.querySelectorAll('.tab-btn')[3]); 
+                window.renderCalendar(); 
+            } else if (pwd !== null) {
+                alert('權限拒絕！密碼錯誤！');
+            }
+        }
+    }
+
+    window.toggleAdmin = function() {
+        if (isAdmin) {
+            isAdmin = false; 
+            const btn = document.getElementById('login-btn');
+            const panel = document.getElementById('admin-panel');
+            const panelBanned = document.getElementById('admin-panel-banned');
+            const deleteBanBtns = document.querySelectorAll('.btn-delete-ban');
+            
+            btn.innerHTML = '🔒 登出'; 
+            btn.classList.remove('logged-in'); 
+            panel.style.display = 'none'; 
+            panelBanned.style.display = 'none'; 
+            document.body.classList.remove('admin-mode'); 
+            deleteBanBtns.forEach(b => b.style.display = 'none');
+            window.renderCalendar(); 
+        }
+    }
 
     window.toggleTheme = function() {
         const body = document.body;
@@ -647,11 +701,6 @@
             localStorage.setItem('aphroditeTheme', 'light');
             btn.innerHTML = '🌙 護眼模式';
         }
-    }
-
-    if (localStorage.getItem('aphroditeTheme') === 'dark') {
-        document.body.classList.add('dark-mode');
-        document.getElementById('theme-btn').innerHTML = '☀️ 亮色模式';
     }
 
     window.toggleSidebar = function() {
@@ -698,31 +747,6 @@
             await setDoc(docRef, { maidData: maidData, scheduleData: scheduleData, bannedData: bannedData }); 
         } catch (e) { 
             alert('儲存失敗！請確認 Firebase 資料庫規則是否設定為測試模式。');
-        }
-    }
-    
-    window.toggleAdmin = function() {
-        const btn = document.getElementById('login-btn');
-        const panel = document.getElementById('admin-panel');
-        const panelBanned = document.getElementById('admin-panel-banned');
-        const deleteBanBtns = document.querySelectorAll('.btn-delete-ban');
-        
-        if (isAdmin) {
-            isAdmin = false; btn.innerHTML = '🔒 店長登入'; btn.classList.remove('logged-in'); 
-            panel.style.display = 'none'; panelBanned.style.display = 'none'; document.body.classList.remove('admin-mode'); 
-            deleteBanBtns.forEach(b => b.style.display = 'none');
-            window.renderCalendar(); 
-        } else {
-            const pwd = prompt('請輸入密碼：');
-            if (pwd === 'angel') {
-                isAdmin = true; btn.innerHTML = '🔓 登出'; btn.classList.add('logged-in'); 
-                panel.style.display = 'flex'; panelBanned.style.display = 'flex'; document.body.classList.add('admin-mode'); 
-                deleteBanBtns.forEach(b => b.style.display = 'block');
-                window.switchTab('tab-schedule', document.querySelectorAll('.tab-btn')[3]); 
-                window.renderCalendar(); 
-            } else if (pwd !== null) {
-                alert('密碼錯誤！');
-            }
         }
     }
 
@@ -776,7 +800,6 @@
                     const mData = maidData[s.name] || {};
                     let imgUrl = mData.photo;
                     
-                    // 🔥 智慧資料夾判斷機制
                     if (imgUrl && !imgUrl.startsWith('http') && !imgUrl.startsWith('data:')) {
                         imgUrl = 'images/' + imgUrl;
                     }
@@ -1037,7 +1060,6 @@
             const data = maidData[name];
             let imgUrl = data.photo;
             
-            // 🔥 智慧資料夾判斷機制
             if (imgUrl && !imgUrl.startsWith('http') && !imgUrl.startsWith('data:')) {
                 imgUrl = 'images/' + imgUrl;
             }
