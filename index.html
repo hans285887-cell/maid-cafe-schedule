@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>天使ハート 女僕咖啡廳 - 天界入口</title>
-    <link rel="icon" href="images/logo.png" type="image/jpeg">
+    <link rel="icon" href="images/logo.jpg" type="image/jpeg">
     <style>
         :root {
             --primary-color: #f36896; 
@@ -66,17 +66,20 @@
             --shift-off-bg: #991b1b; --shift-off-txt: #fee2e2;
         }
 
+        /* 防選取與防複製 */
         body { font-family: "Microsoft JhengHei", sans-serif; background-color: var(--bg-color); padding: 0; color: var(--text-color); margin: 0; -webkit-tap-highlight-color: transparent; display: flex; flex-direction: column; min-height: 100vh; transition: background-color 0.3s, color 0.3s; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; }
         input, textarea { user-select: text; -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; }
 
         .header { background-color: var(--header-bg); color: white; padding: 20px 10px 0 10px; text-align: center; position: relative; transition: 0.3s; }
         
+        /* 標題游標改為指標，暗示可點擊 */
         .header h1 { margin: 0 0 10px 0; font-size: 20px; color: var(--primary-color); cursor: pointer; }
         .header p { margin: 0 0 15px 0; font-size: 12px; color: #ccc; }
         
         .menu-toggle-btn { position: absolute; top: 15px; left: 15px; background: transparent; border: none; color: var(--primary-color); font-size: 24px; cursor: pointer; padding: 0; line-height: 1; z-index: 100; }
         .theme-toggle-btn { position: absolute; top: 18px; left: 55px; background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 5px 10px; border-radius: 20px; cursor: pointer; font-size: 11px; font-weight: bold; }
         
+        /* 隱藏登入按鈕，僅在登入後顯示登出 */
         .admin-login-btn { display: none; position: absolute; top: 15px; right: 15px; background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: bold; }
         .admin-login-btn.logged-in { display: block; background: #00b894; border-color: #00b894; color: white; }
 
@@ -261,8 +264,8 @@
         <button class="close-sidebar-btn" onclick="toggleSidebar()">×</button>
     </div>
     <ul class="sidebar-menu">
-        <li><a href="index.html" class="active-link">👼 天使ハート</a></li>
-        <li><a href="branch2.html">🔮 愛神・阿芙羅黛蒂</a></li>
+        <li><a href="index.html" class="active-link">👼 天使ハート (本館)</a></li>
+        <li><a href="branch2.html">🔮 愛神・阿芙羅黛蒂 (二館)</a></li>
     </ul>
 </div>
 
@@ -271,7 +274,7 @@
     <button class="theme-toggle-btn" id="theme-btn" onclick="toggleTheme()">🌙 護眼模式</button>
     <button class="admin-login-btn" id="login-btn" onclick="toggleAdmin()">🔒 登出</button>
     
-    <img src="images/logo.png" alt="天使心 Logo" style="max-height: 80px; margin-bottom: 10px; display: block; margin-left: auto; margin-right: auto; border-radius: 50%; pointer-events: none;">
+    <img src="images/logo.jpg" alt="天使心 Logo" style="max-height: 80px; margin-bottom: 10px; display: block; margin-left: auto; margin-right: auto; border-radius: 50%; pointer-events: none;">
     <h1 style="margin-top: 0;" id="secret-login" onclick="triggerSecretLogin()">天使ハート 女僕咖啡廳</h1>
     <p>Angel Heart Maid Cafe - 天界入口</p>
     <div class="nav-tabs">
@@ -340,14 +343,27 @@
         <h2>🍽️ 天界菜單</h2>
         
         <div class="rules-container rules-red" style="margin-bottom: 15px;">
-            <h4>⚠️ PRECAUTIONS (注意事項) & 基本規定</h4>
+            <h4>⚠️ 基本消費與用餐須知</h4>
             <ul style="margin-bottom: 0; font-size: 14px; line-height: 1.7;">
                 <li><strong style="color: var(--price-color);">最低消費：</strong> 200元 + 10%服務費</li>
                 <li><strong style="color: var(--price-color);">用餐時間：</strong> 90分鐘</li>
-                <li>周邊商品請於該段用餐時間，結束前半小時點餐完成。</li>
-                <li>當日最後餐點服務時間為晚上9點。最後加點周邊商品時間為晚上9點半。</li>
-                <li>晚上9點後，最低消費為200元+10%服務費，但不得購買餐點(正餐、輕食、炸物)，9點半過後不得點購周邊服務。</li>
-                <li>禁止於店內吸菸、禁止攜帶外食入內食用。</li>
+                <li><strong style="color: var(--price-color);">最後服務時間：</strong> 餐點至晚上 9:00，周邊加點至晚上 9:30。</li>
+                <li><strong style="color: var(--price-color);">晚上 9:00 後：</strong> 低消不變，但不得點主餐、輕食、炸物。</li>
+                <li>所有餐點、飲品及周邊均收10%服務費。禁止於店內吸菸、攜帶外食。</li>
+            </ul>
+        </div>
+
+        <div class="rules-container rules-purple" style="margin-bottom: 20px;">
+            <h4>📸 周邊、拍立得與活動規範</h4>
+            <ul style="margin-bottom: 15px; font-size: 14px; line-height: 1.7;">
+                <li><strong style="color: var(--primary-color);">優先兌換：</strong> 入場後請優先辦理周邊領取與生日禮兌換，以免影響後續流程。</li>
+                <li><strong style="color: var(--primary-color);">拍立得取件：</strong> 領取拍立得時，必須於該名女僕有排班的時段前來（畢業或一日活動除外），以免找不到相片。</li>
+                <li><strong style="color: var(--primary-color);">拍立得繪製：</strong> 紀念拍立得有固定的繪圖標準，請勿要求女僕畫得更加精緻。若需精緻繪圖，請購買特定的「15號牆拍」。</li>
+            </ul>
+            <h4 style="margin-top: 15px;">🎂 生日禮</h4>
+            <ul style="margin-bottom: 0; font-size: 14px; line-height: 1.7;">
+                <li>生日前後一天內(含當天)出示證件，贈送特製繪盤蛋糕一份！</li>
+                <li>一人一年限領一次。當日壽星加贈全體天使拍立得一張。</li>
             </ul>
         </div>
 
@@ -475,11 +491,15 @@
                 <div class="form-group"><label>色</label><input type="color" id="event-color" value="#e84393"></div>
                 <button class="btn" style="background: #e17055;" onclick="addEvent()">設定活動 (同步雲端)</button>
             </div>
+            
             <div class="card" style="border: 2px solid #00b894;">
-                <h3 style="color: #00b894;">💾 4. 系統資料庫備份</h3>
-                <p style="font-size: 12px; color: var(--menu-sub); margin-bottom: 8px;">為了防止意外，請定期下載全店備份檔案。</p>
-                <button class="btn" style="background: #00b894;" onclick="exportBackup()">📥 下載全店資料 (JSON)</button>
+                <h3 style="color: #00b894;">💾 4. 系統資料庫備份與還原</h3>
+                <p style="font-size: 12px; color: var(--menu-sub); margin-bottom: 8px;">定期下載備份，或在資料遺失時上傳 JSON 檔還原全店資料。</p>
+                <button class="btn" style="background: #00b894; margin-bottom: 8px;" onclick="exportBackup()">📥 下載全店資料 (JSON)</button>
+                <input type="file" id="import-file" style="display: none;" accept=".json" onchange="importBackup(event)">
+                <button class="btn" style="background: #e17055;" onclick="document.getElementById('import-file').click()">📤 載入還原備份 (JSON)</button>
             </div>
+
             <p style="width: 100%; font-size: 12px; color: var(--price-color); margin-top: 5px;">💡 管理員提示：欲刪除日曆上的班表或活動，請直接在日曆上點擊該標籤即可刪除。刪除出禁人員請至「出禁公告」分頁操作。</p>
         </div>
 
@@ -608,7 +628,6 @@
 
     const syncStatusEl = document.getElementById('sync-status');
 
-    // 🔥 專屬暗號登入功能
     window.triggerSecretLogin = function() {
         secretClickCount++;
         if (secretClickCount === 1) {
@@ -702,7 +721,6 @@
             renderTodayAngels();
             renderBannedList();
         } else {
-            // 🔥 防止空資料庫鎖死
             setDoc(docRef, { maidData: {}, scheduleData: {}, bannedData: defaultBannedData })
             .then(() => {
                 isDataLoaded = true;
@@ -723,7 +741,6 @@
     });
 
     async function saveToCloud() {
-        // 🔥 終極安全鎖
         if (!isDataLoaded) {
             alert('⚠️ 【安全鎖啟動】系統尚未讀取到雲端資料！\n為防止您的舊資料被覆蓋，已阻擋本次儲存。\n請等待上方顯示綠字「已連線」後再操作。如果持續紅字，請重新整理網頁。');
             return;
@@ -736,7 +753,7 @@
         }
     }
 
-    // 🔥 新增備份功能
+    // 🔥 匯出備份 (Export)
     window.exportBackup = function() {
         if (!isDataLoaded) {
             alert("⚠️ 系統尚未讀取到雲端資料，無法備份！請稍後再試。");
@@ -758,6 +775,46 @@
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
         alert("✅ 備份檔案已成功下載！請妥善保存此 .json 檔案。");
+    }
+
+    // 🔥 匯入還原 (Import)
+    window.importBackup = function(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+            try {
+                const data = JSON.parse(e.target.result);
+                if (data.maidData && data.scheduleData && data.bannedData) {
+                    const backupTime = data.exportTime || '未知時間';
+                    if(confirm(`⚠️ 警告：這將會用備份檔覆蓋目前的雲端資料！\n\n備份檔建立時間：${backupTime}\n\n確定要還原嗎？`)) {
+                        
+                        maidData = data.maidData;
+                        scheduleData = data.scheduleData;
+                        bannedData = data.bannedData;
+                        
+                        await saveToCloud();
+                        
+                        activeFilters = new Set(Object.keys(maidData));
+                        updateMemberDropdown();
+                        renderMaidGallery();
+                        renderFilters();
+                        renderCalendar();
+                        renderTodayAngels();
+                        renderBannedList();
+                        
+                        alert("✅ 備份資料已成功還原並同步至雲端！");
+                    }
+                } else {
+                    alert("❌ 檔案格式錯誤，這似乎不是系統產出的備份檔。");
+                }
+            } catch (err) {
+                alert("❌ 讀取檔案失敗或格式不符！");
+            }
+            event.target.value = ''; // 重置 input 以便下次可以重複選擇同一個檔案
+        };
+        reader.readAsText(file);
     }
 
     window.switchTab = function(tabId, btnElement) {
@@ -1158,5 +1215,3 @@
 </script>
 </body>
 </html>
-``` 你可以隨時要求我編輯或刪除已排定的動作。排定的動作準備就緒後，「近期」中的這個對話旁邊會顯示一個小圓點。
-http://googleusercontent.com/task_confirmation_content/0
