@@ -72,14 +72,12 @@
 
         .header { background-color: var(--header-bg); color: white; padding: 20px 10px 0 10px; text-align: center; position: relative; transition: 0.3s; }
         
-        /* 標題游標改為指標，暗示可點擊 */
         .header h1 { margin: 0 0 10px 0; font-size: 20px; color: var(--primary-color); cursor: pointer; }
         .header p { margin: 0 0 15px 0; font-size: 12px; color: #ccc; }
         
         .menu-toggle-btn { position: absolute; top: 15px; left: 15px; background: transparent; border: none; color: var(--primary-color); font-size: 24px; cursor: pointer; padding: 0; line-height: 1; z-index: 100; }
         .theme-toggle-btn { position: absolute; top: 18px; left: 55px; background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 5px 10px; border-radius: 20px; cursor: pointer; font-size: 11px; font-weight: bold; }
         
-        /* 隱藏登入按鈕，僅在登入後顯示登出 */
         .admin-login-btn { display: none; position: absolute; top: 15px; right: 15px; background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: bold; }
         .admin-login-btn.logged-in { display: block; background: #00b894; border-color: #00b894; color: white; }
 
@@ -122,15 +120,19 @@
         body.dark-mode .announcement-box h3 { color: #fdcb6e; }
         .announcement-box p { font-size: 14px; line-height: 1.7; margin-bottom: 0; font-weight: bold; }
 
-        .info-grid { display: flex; flex-direction: column; gap: 15px; }
-        @media (min-width: 768px) { .info-grid { flex-direction: row; } .info-card { flex: 1; } }
-        .info-card { background: var(--info-bg); border: 1px solid var(--border-color); padding: 15px; border-radius: 8px; transition: 0.3s; }
-        .info-list { list-style: none; padding: 0; line-height: 1.6; font-size: 14px; }
+        .info-grid { display: flex; flex-direction: column; gap: 15px; align-items: stretch; }
+        @media (min-width: 992px) { 
+            .info-grid { flex-direction: row; } 
+            .info-card { flex: 1 1 50%; width: 50%; box-sizing: border-box; } 
+        }
+        
+        .info-card { background: var(--info-bg); border: 1px solid var(--border-color); padding: 15px; border-radius: 8px; transition: 0.3s; display: flex; flex-direction: column;}
+        .info-list { list-style: none; padding: 0; line-height: 1.6; font-size: 14px; margin-top: 0;}
         .info-list li { margin-bottom: 8px; border-bottom: 1px dashed var(--border-color); padding-bottom: 4px; }
         .info-list span { font-weight: bold; color: var(--primary-dark); width: 70px; display: inline-block; }
         .link-btn { display: block; text-align: center; background: var(--primary-color); color: white; text-decoration: none; padding: 10px; border-radius: 5px; margin-top: 10px; font-weight: bold; transition: 0.3s; }
         .link-btn:hover { filter: brightness(1.1); }
-        .map-container { margin-top: 10px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); height: 200px; }
+        .map-container { margin-top: 10px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); height: 200px; flex-shrink: 0;}
 
         .rules-red { background-color: var(--rules-red-bg); border-left: 4px solid var(--price-color); padding: 15px; border-radius: 0 8px 8px 0; margin-top: 10px; font-size: 13.5px; line-height: 1.7; transition: 0.3s; }
         .rules-purple { background-color: var(--rules-purple-bg); border-left: 4px solid var(--primary-color); padding: 15px; border-radius: 0 8px 8px 0; margin-top: 10px; font-size: 13.5px; line-height: 1.7; transition: 0.3s; }
@@ -216,11 +218,11 @@
         body.admin-mode .shift-tag:hover, body.admin-mode .event-label:hover { cursor: pointer; filter: brightness(0.9); text-decoration: line-through; }
         #sync-status { text-align: center; font-size: 12px; color: #00b894; margin-bottom: 10px; font-weight: bold; display: none; }
 
-        .today-angels-banner { background: var(--banner-bg); border-radius: 10px; padding: 15px; color: #fff; box-shadow: 0 4px 15px var(--banner-shadow); display: none; transition: 0.3s; }
+        .today-angels-banner { background: var(--banner-bg); border-radius: 10px; padding: 15px; color: #fff; box-shadow: 0 4px 15px var(--banner-shadow); display: none; transition: 0.3s; margin-top: auto;}
         .today-angels-banner h3 { margin: 0 0 10px 0; color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); font-size: 16px; display: flex; align-items: center; gap: 5px; }
-        .today-angels-list { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
-        .today-angels-list::-webkit-scrollbar { display: none; }
-        .today-angel-item { display: flex; flex-direction: column; align-items: center; min-width: 70px; }
+        .today-angels-list { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; padding-bottom: 5px; }
+        
+        .today-angel-item { display: flex; flex-direction: column; align-items: center; min-width: 70px; margin-bottom: 10px; }
         .today-angel-img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); pointer-events: none; }
         .today-angel-name { font-size: 13px; font-weight: bold; margin-top: 5px; color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
         .today-angel-time { font-size: 11px; color: var(--primary-dark); background: rgba(255,255,255,0.9); padding: 2px 6px; border-radius: 10px; margin-top: 2px; font-weight: bold; }
@@ -259,7 +261,7 @@
         <button class="close-sidebar-btn" onclick="toggleSidebar()">×</button>
     </div>
     <ul class="sidebar-menu">
-        <li><a href="index.html" class="active-link">👼 天使ハート</a></li>
+        <li><a href="index.html" class="active-link">👼 天使ハート)</a></li>
         <li><a href="branch2.html">🔮 愛神・阿芙羅黛蒂</a></li>
     </ul>
 </div>
@@ -709,7 +711,15 @@
             renderTodayAngels();
             renderBannedList();
         } else {
-            setDoc(docRef, { maidData: {}, scheduleData: {}, bannedData: defaultBannedData }).catch(err => {
+            // 🔥 防止空資料庫鎖死
+            setDoc(docRef, { maidData: {}, scheduleData: {}, bannedData: defaultBannedData })
+            .then(() => {
+                isDataLoaded = true;
+                syncStatusEl.innerText = '🟢 雲端資料庫初始化完成，已連線！';
+                syncStatusEl.style.color = '#00b894';
+                syncStatusEl.style.display = 'block';
+            })
+            .catch(err => {
                 syncStatusEl.innerText = '🔴 資料庫初始化失敗，請檢查 Firebase 權限。';
                 syncStatusEl.style.color = '#d63031';
                 syncStatusEl.style.display = 'block';
@@ -722,10 +732,16 @@
     });
 
     async function saveToCloud() {
+        // 🔥 終極安全鎖：如果還沒連線到雲端抓取舊資料，絕對不允許覆蓋上傳！
+        if (!isDataLoaded) {
+            alert('⚠️ 【安全鎖啟動】系統尚未讀取到雲端資料！\n為防止您的舊資料被覆蓋，已阻擋本次儲存。\n請等待上方顯示綠字「已連線」後再操作。如果持續紅字，請重新整理網頁。');
+            return;
+        }
+        
         try { 
             await setDoc(docRef, { maidData: maidData, scheduleData: scheduleData, bannedData: bannedData }); 
         } catch (e) { 
-            alert('儲存失敗！請確認 Firebase 資料庫規則是否設定為測試模式。');
+            alert('儲存失敗！請確認 Firebase 資料庫權限。');
         }
     }
 
