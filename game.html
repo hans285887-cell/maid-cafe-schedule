@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>防線博弈 (DDoS Protocol) v2.8</title>
+    <title>防線博弈 (DDoS Protocol) 最終對陣版</title>
     <style>
         :root {
             --bg-dark: #0d1117;
@@ -28,7 +28,10 @@
         .status-board { display: flex; justify-content: space-between; background: var(--panel-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 20px; align-items: flex-start;}
         .hp-box { text-align: center; font-size: 1.1em; flex: 1; padding-top: 10px;}
         .boss-hp { color: var(--color-red); font-weight: bold; font-size: 1.8em; margin-top: 5px;}
+        .boss-shield { color: var(--color-yellow); font-size: 0.85em; font-weight: bold; margin-top: 5px; background: rgba(227, 179, 65, 0.1); padding: 2px 5px; border-radius: 4px; display: inline-block;}
+        .boss-cache { color: var(--text-muted); font-size: 0.8em; margin-top: 5px;}
         .hacker-hp { color: var(--color-green); font-weight: bold; font-size: 1.8em; margin-top: 5px;}
+        
         .power-box { flex: 1.2; text-align: center; border-left: 1px solid var(--border-color); border-right: 1px solid var(--border-color); padding: 0 10px;}
         .power-title { font-size: 1.1em; margin-top: 10px; color: var(--text-muted);}
         .power-number { font-size: 2.5em; color: var(--color-yellow); font-weight: bold; margin: 5px 0;}
@@ -73,23 +76,21 @@
         .guide-section ul { padding-left: 20px; margin: 5px 0; color: var(--text-main); font-size: 0.9em;}
         .guide-section li { margin-bottom: 8px; }
         .highlight-bg { background: #fff; border-radius:3px; padding:0 4px; font-weight: bold; font-family: sans-serif;}
-
-        @media (max-width: 900px) {
-            .layout-wrapper { flex-direction: column; }
-            .sidebar { width: 100%; position: static; box-sizing: border-box;}
-        }
     </style>
 </head>
 <body>
 
-<h1>防線博弈 DDoS Protocol v2.8</h1>
+<h1>防線博弈 DDoS Protocol 最終對陣版</h1>
 
 <div class="layout-wrapper">
     <div class="main-content">
         <div class="status-board">
             <div class="hp-box">
                 <div style="color: var(--text-muted);">[ 目標伺服器 ]</div>
-                <div class="boss-hp" id="boss-hp-display">40</div> </div>
+                <div class="boss-hp" id="boss-hp-display">50</div>
+                <div class="boss-shield" id="boss-shield-display">🛡️ 護盾: 0 / 15</div>
+                <div class="boss-cache" id="boss-cache-display">📦 緩存: 2 / 4</div>
+            </div>
             <div class="power-box">
                 <div class="power-title">[ 當前可用算力 ]</div>
                 <div class="power-number" id="power-display">0</div>
@@ -100,7 +101,7 @@
             </div>
             <div class="hp-box">
                 <div style="color: var(--text-muted);">[ 駭客隱蔽度 ]</div>
-                <div class="hacker-hp" id="hacker-hp-display">50</div>
+                <div class="hacker-hp" id="hacker-hp-display">25</div>
             </div>
         </div>
 
@@ -120,7 +121,7 @@
         <div class="cards-area" id="hand-display"></div>
 
         <div class="log-box" id="log-box">
-            <div class="log-entry log-sys">系統初始化完成。載入 v2.8 終極平衡補丁：算力升級為 5 骰，伺服器血量削弱至 40，警戒線下調至 15。</div>
+            <div class="log-entry log-sys">系統初始化完成。載入終極平衡：駭客 HP 25 (4骰) vs 伺服器 HP 50 (15盾)。</div>
         </div>
     </div>
 
@@ -128,43 +129,34 @@
         <div class="guide-section">
             <h3>[ 你的駭客腳本 ]</h3>
             <ul>
-                <li><span class="highlight-bg suit-spade">♠ 黑桃</span> 造成點數傷害。</li>
-                <li><span class="highlight-bg suit-heart">♥ 紅心</span> 恢復隱蔽度 (上限50)。</li>
+                <li><span class="highlight-bg suit-spade">♠ 黑桃</span> 攻擊 (優先扣除伺服器護盾)。</li>
+                <li><span class="highlight-bg suit-heart">♥ 紅心</span> 恢復隱蔽度 (<strong style="color:var(--color-green)">單張最高 10 點</strong>)。</li>
                 <li><span class="highlight-bg suit-club">♣ 梅花</span> 擴張網路 (每 3 點抽 1 張)。</li>
                 <li><span class="highlight-bg suit-diamond">♦ 方塊</span> 硬體超頻 (每 4 點，<span style="color:var(--color-yellow)">下回合</span>加擲 1 骰。若出 1 短路扣2血)。</li>
             </ul>
         </div>
 
         <div class="guide-section">
-            <h3>[ 防火牆反擊規則 ]</h3>
+            <h3>[ 伺服器防禦機制 ]</h3>
             <ul>
-                <li><span style="color:var(--text-muted);">♠/♣ 黑色：</span>反追蹤扣血。<br>(單次上限最高 <strong style="color:var(--color-red)">8</strong> 點)</li>
-                <li><span style="color:var(--color-red);">♥ 紅心：</span>伺服器修復。<br>(單次上限最高 <strong style="color:var(--color-green)">6</strong> 點)</li>
-                <li><span style="color:var(--color-yellow);">♦ 方塊：</span>封包壞軌 <strong style="color:var(--color-yellow)">(Miss 躲過一劫)</strong>。</li>
+                <li><strong>行動：</strong> 開局存 2 牌。每回合抽 1 牌，手牌上限 4 張。<br>一般狀態出 1 張，殘血 (≤10) 可出 2 張。</li>
+                <li><span style="color:var(--text-muted);">♠/♣ 黑色：</span> 反追蹤扣血 (<strong style="color:var(--color-red)">單張上限 9 點</strong>)。</li>
+                <li><span style="color:var(--color-red);">♥ 紅心：</span> 系統修復 (<strong style="color:var(--color-green)">單張上限 7 點</strong>)。</li>
+                <li><span style="color:var(--color-yellow);">♦ 方塊：</span> 建立護盾 (<strong style="color:var(--color-yellow)">單張上限 10 點</strong>，總護盾池疊加上限 15 點)。</li>
             </ul>
-        </div>
-
-        <div class="guide-section">
-            <h3>[ 警戒等級 ]</h3>
-            <ul>
-                <li><span style="color:var(--color-green);">[低]</span> Boss > 15 HP：每回合翻 1 張牌。</li>
-                <li><span style="color:var(--color-red);">[高]</span> Boss <= 15 HP：每回合 <strong style="color:var(--color-red)">翻 2 張牌</strong>。</li>
-            </ul>
-        </div>
-
-        <div class="guide-section" style="border-top: 1px solid var(--border-color); padding-top: 10px; margin-bottom: 0;">
-            <span style="color:var(--text-muted); font-size:0.85em;">* 提示：若點數不足卡手，可點選卡牌後按「結束回合」來棄牌重抽。</span>
         </div>
     </div>
-
 </div>
 
 <script>
     let gameState = {
-        hackerHP: 50,
-        bossHP: 40,      // v2.8: 初始血量改為 40
-        maxHackerHP: 50, 
-        maxBossHP: 40,   // v2.8: 初始血量改為 40
+        hackerHP: 25,
+        bossHP: 50,
+        maxHackerHP: 25, 
+        maxBossHP: 50,
+        bossShield: 0,
+        maxBossShield: 15,
+        bossHand: [],
         power: 0,
         diceArray: [], 
         pendingBonusDice: 0, 
@@ -218,13 +210,20 @@
 
     function startGame() {
         gameState.deck = initDeck();
-        drawCards(5);
+        drawCards(5); // 駭客起手 5 張
+        
+        // 伺服器起手 2 張
+        gameState.bossHand.push(gameState.deck.pop());
+        gameState.bossHand.push(gameState.deck.pop());
+
         updateUI();
     }
 
     function updateUI() {
         document.getElementById('boss-hp-display').innerText = gameState.bossHP;
         document.getElementById('hacker-hp-display').innerText = gameState.hackerHP;
+        document.getElementById('boss-shield-display').innerText = `🛡️ 護盾: ${gameState.bossShield} / ${gameState.maxBossShield}`;
+        document.getElementById('boss-cache-display').innerText = `📦 緩存: ${gameState.bossHand.length} / 4`;
         document.getElementById('power-display').innerText = gameState.power;
         
         const buffIndicator = document.getElementById('buff-indicator');
@@ -289,8 +288,8 @@
         let bonusDiceCount = gameState.pendingBonusDice;
         gameState.pendingBonusDice = 0; 
 
-        // v2.8: 基礎骰子增加為 5 顆
-        for (let i = 0; i < 5; i++) {
+        // 駭客 4 顆基礎骰子
+        for (let i = 0; i < 4; i++) {
             let r = Math.floor(Math.random() * 6) + 1;
             rolls.push(r);
             total += r;
@@ -309,7 +308,7 @@
             }
             log(`<span class='log-sys'>發送指令！基礎骰 [${rolls.join(', ')}]，超頻骰 [${bonusRolls.join(', ')}]，算力：${total}</span>`);
         } else {
-            log(`<span class='log-sys'>發送指令！擲出 5 顆基礎骰子 [${rolls.join(', ')}]，算力：${total}</span>`);
+            log(`<span class='log-sys'>發送指令！擲出 4 顆基礎骰子 [${rolls.join(', ')}]，算力：${total}</span>`);
         }
         
         gameState.power = total;
@@ -349,20 +348,33 @@
         
         selectedCards.forEach(card => {
             if (card.suit.action === 'damage') {
-                gameState.bossHP -= card.value;
-                log(`<span class='log-atk'>發動 DDoS (${card.suit.symbol}${card.display})：造成 ${card.value} 點傷害。</span>`);
+                let dmg = card.value;
+                if (gameState.bossShield > 0) {
+                    if (dmg <= gameState.bossShield) {
+                        gameState.bossShield -= dmg;
+                        log(`<span class='log-atk'>發動 DDoS (${card.suit.symbol}${card.display})：造成 ${dmg} 點傷害 (遭伺服器護盾完全吸收)。</span>`);
+                        dmg = 0;
+                    } else {
+                        let blocked = gameState.bossShield;
+                        dmg -= gameState.bossShield;
+                        gameState.bossShield = 0;
+                        log(`<span class='log-atk'>發動 DDoS (${card.suit.symbol}${card.display})：擊破護盾 (吸收 ${blocked} 點)，並對伺服器造成 ${dmg} 點真實傷害！</span>`);
+                    }
+                } else {
+                    log(`<span class='log-atk'>發動 DDoS (${card.suit.symbol}${card.display})：造成 ${dmg} 點傷害。</span>`);
+                }
+                gameState.bossHP -= dmg;
             } 
             else if (card.suit.action === 'heal') {
-                gameState.hackerHP = Math.min(gameState.maxHackerHP, gameState.hackerHP + card.value);
-                log(`<span class='log-sys'>清除日誌 (${card.suit.symbol}${card.display})：隱蔽度恢復至 ${gameState.hackerHP}。</span>`);
+                let heal = Math.min(card.value, 10); // 駭客補血鎖定最高 10 點
+                gameState.hackerHP = Math.min(gameState.maxHackerHP, gameState.hackerHP + heal);
+                log(`<span class='log-sys'>清除日誌 (${card.suit.symbol}${card.display})：隱蔽度恢復 ${heal} 點 (目前 ${gameState.hackerHP})。</span>`);
             } 
             else if (card.suit.action === 'draw') {
                 let drawCount = Math.floor(card.value / 3);
                 if (drawCount > 0) {
                     drawCards(drawCount);
                     log(`<span class='log-sys'>殭屍擴張 (${card.suit.symbol}${card.display})：成功抽 ${drawCount} 張牌。</span>`);
-                } else {
-                    log(`<span class='log-warn'>殭屍擴張 (${card.suit.symbol}${card.display})：失敗 (點數不足)。</span>`);
                 }
             } 
             else if (card.suit.action === 'buff') {
@@ -370,8 +382,6 @@
                 if (addDiceCount > 0) {
                     gameState.pendingBonusDice += addDiceCount;
                     log(`<span class='log-sys' style='color:var(--color-yellow);'>硬體超頻 (${card.suit.symbol}${card.display})：排程加擲 ${addDiceCount} 骰。</span>`);
-                } else {
-                    log(`<span class='log-warn'>硬體超頻 (${card.suit.symbol}${card.display})：失敗 (點數不足)。</span>`);
                 }
             }
             gameState.hand = gameState.hand.filter(c => c.id !== card.id);
@@ -395,50 +405,91 @@
             renderHand(); 
         }
 
-        log("<span class='log-warn'>--- 防火牆啟動反向溯源 ---</span>");
+        log("<span class='log-warn'>--- 防火牆啟動反擊序列 ---</span>");
         
-        // v2.8: 警戒閾值改為 15
-        let flipCount = gameState.bossHP <= 15 ? 2 : 1;
-        if (gameState.bossHP <= 15) log("<span class='log-warn'>[!!] 伺服器紅色警戒：反擊頻率加倍！</span>");
+        // 伺服器抽牌
+        checkAndShuffleDeck();
+        gameState.bossHand.push(gameState.deck.pop());
+        
+        if (gameState.bossHand.length > 4) {
+            gameState.bossHand.sort((a, b) => a.value - b.value);
+            gameState.bossHand.shift(); // 棄掉最小的
+            log(`<span class='log-sys'>伺服器緩存溢出，捨棄低階封包。</span>`);
+        }
 
-        for (let i = 0; i < flipCount; i++) {
-            checkAndShuffleDeck(); 
-            let card = gameState.deck.pop();
-            
-            let isBlack = (card.suit.name === '黑桃' || card.suit.name === '梅花');
-            let isHeart = (card.suit.name === '紅心');
-            let isDiamond = (card.suit.name === '方塊');
-            
-            if (isBlack) {
-                let damage = card.value;
-                if (damage > 8) {
-                    damage = 8;
-                    log(`<span class='log-sys'>偵測 (${card.suit.symbol}${card.display})：封包攔截，傷害鎖定為 8。</span>`);
+        let playLimit = gameState.bossHP <= 10 ? 2 : 1;
+        if (gameState.bossHP <= 10) log("<span class='log-warn'>[!!] 伺服器紅色警戒：反擊頻率加倍！</span>");
+
+        let playedCount = 0;
+        for (let i = 0; i < playLimit; i++) {
+            if (gameState.bossHand.length === 0) break;
+            gameState.bossHand.sort((a, b) => b.value - a.value);
+
+            let playedCard = null;
+
+            // 1. 斬殺
+            let lethalCard = gameState.bossHand.find(c => (c.suit.name === '黑桃' || c.suit.name === '梅花') && Math.min(c.value, 9) >= gameState.hackerHP);
+            if (lethalCard) playedCard = lethalCard;
+
+            // 2. 緊急補血
+            if (!playedCard && gameState.bossHP < 25) {
+                let healCard = gameState.bossHand.find(c => c.suit.name === '紅心');
+                if (healCard) playedCard = healCard;
+            }
+
+            // 3. 彈性蓄力
+            if (!playedCard && gameState.bossHand.length < 4 && gameState.bossHP > 10 && Math.random() < 0.7) {
+                log(`<span class='log-sys'>伺服器正在蓄力，無反擊動作。 (當前緩存: ${gameState.bossHand.length}/4)</span>`);
+                break; 
+            }
+
+            // 4. 架盾
+            if (!playedCard && gameState.bossShield < gameState.maxBossShield) {
+                let shieldCard = gameState.bossHand.find(c => c.suit.name === '方塊');
+                if (shieldCard) playedCard = shieldCard;
+            }
+
+            // 5. 攻擊
+            if (!playedCard) {
+                let atkCard = gameState.bossHand.find(c => c.suit.name === '黑桃' || c.suit.name === '梅花');
+                if (atkCard) playedCard = atkCard;
+            }
+
+            // 6. 保底丟牌
+            if (!playedCard) playedCard = gameState.bossHand[0];
+
+            // 結算伺服器卡牌
+            if (playedCard) {
+                gameState.bossHand = gameState.bossHand.filter(c => c.id !== playedCard.id);
+                playedCount++;
+
+                let isBlack = (playedCard.suit.name === '黑桃' || playedCard.suit.name === '梅花');
+                let isHeart = (playedCard.suit.name === '紅心');
+                let isDiamond = (playedCard.suit.name === '方塊');
+
+                if (isBlack) {
+                    let dmg = Math.min(playedCard.value, 9);
+                    gameState.hackerHP -= dmg;
+                    log(`<span class='log-warn'>防火牆反擊 (${playedCard.suit.symbol})！駭客隱蔽度降低 ${dmg} 點。</span>`);
+                } else if (isHeart) {
+                    let heal = Math.min(playedCard.value, 7);
+                    gameState.bossHP = Math.min(gameState.maxBossHP, gameState.bossHP + heal);
+                    log(`<span class='log-sys' style='color:var(--color-green);'>伺服器修復 (${playedCard.suit.symbol})，恢復 ${heal} 點負載。</span>`);
+                } else if (isDiamond) {
+                    let shield = Math.min(playedCard.value, 10);
+                    let actualShield = Math.min(shield, gameState.maxBossShield - gameState.bossShield);
+                    gameState.bossShield += actualShield;
+                    log(`<span class='log-sys' style='color:var(--color-yellow);'>伺服器建構護盾 (${playedCard.suit.symbol})，裝甲增加 ${actualShield} 點 (目前 ${gameState.bossShield}/${gameState.maxBossShield})。</span>`);
                 }
-                gameState.hackerHP -= damage;
-                log(`<span class='log-warn'>防火牆反擊！駭客隱蔽度降低 ${damage} 點。</span>`);
-            } 
-            else if (isHeart) {
-                let heal = card.value;
-                if (heal > 6) {
-                    heal = 6;
-                    log(`<span class='log-sys'>修復 (${card.suit.symbol}${card.display})：頻寬受限，最大修復鎖定為 6。</span>`);
-                }
-                gameState.bossHP = Math.min(gameState.maxBossHP, gameState.bossHP + heal);
-                log(`<span class='log-sys' style='color:var(--color-green);'>伺服器修復，恢復 ${heal} 點負載。</span>`);
-            } 
-            else if (isDiamond) {
-                log(`<span class='log-sys' style='color:var(--color-yellow);'>偵測 (${card.suit.symbol}${card.display})：產生壞軌，防火牆無動作 (Miss)！</span>`);
             }
         }
 
         gameState.power = 0;
         gameState.diceArray = []; 
-        
         let neededCards = 5 - gameState.hand.length;
         if (neededCards > 0) {
             drawCards(neededCards);
-            log(`<span class='log-sys'>補給完成，重抽 ${neededCards} 張牌。</span>`);
+            log(`<span class='log-sys'>駭客補給完成，重抽 ${neededCards} 張牌。</span>`);
         }
         
         gameState.phase = 'ROLL';
@@ -453,65 +504,8 @@
             localAI(); 
             return;
         }
-
-        log(`<span class='log-ai'>[AI] 正在將數據上傳至 Gemini 雲端進行戰術演練...</span>`);
-        document.getElementById('btn-ai').disabled = true;
-        
-        const handInfo = gameState.hand.map((c, idx) => `[索引${idx}] ${c.suit.name}${c.display}(耗${c.value})`).join(', ');
-        const prompt = `你是資安駭客遊戲助手。狀態:算力${gameState.power},玩家HP${gameState.hackerHP}/50,BossHP${gameState.bossHP}/40,手牌:${handInfo}。
-規則:黑桃傷害,紅心補血,梅花(3點)抽牌,方塊(4點)下回合骰。若算力不足請建議棄牌。
-請用一句駭客風格建議並給JSON: {"recommended_indexes": [0, 2]}`;
-
-        try {
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: prompt }] }],
-                    generationConfig: { temperature: 0.2 }
-                })
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(`HTTP ${response.status} - ${errorData.error?.message || "網路錯誤"}`);
-            }
-            
-            const data = await response.json();
-            const aiText = data.candidates[0].content.parts[0].text;
-            const jsonMatch = aiText.match(/\{.*?\}/);
-            let recommendedIndexes = [];
-            let cleanMsg = aiText;
-            
-            if (jsonMatch) {
-                try {
-                    const parsed = JSON.parse(jsonMatch[0]);
-                    recommendedIndexes = parsed.recommended_indexes || [];
-                    cleanMsg = aiText.replace(jsonMatch[0], '').trim();
-                } catch(e) {}
-            }
-
-            log(`<span class='log-ai'>[Gemini] ${cleanMsg}</span>`);
-            highlightCardsByIndex(recommendedIndexes);
-
-        } catch (error) {
-            log(`<span class='log-warn'>[AI失敗] ${error.message}。</span>`);
-            localAI();
-        } finally {
-            document.getElementById('btn-ai').disabled = false;
-        }
-    }
-
-    function highlightCardsByIndex(indexes) {
-        const allCards = document.querySelectorAll('.card');
-        allCards.forEach(c => { c.classList.remove('selected', 'ai-suggested'); });
-        allCards.forEach(el => {
-            let idx = parseInt(el.dataset.index);
-            if (indexes.includes(idx)) {
-                el.classList.add('selected');       
-                el.classList.add('ai-suggested');   
-            }
-        });
+        // 若需接回 Gemini API，請補回 fetch 邏輯
+        localAI();
     }
 
     function localAI() {
@@ -520,7 +514,7 @@
         let selectedIndexes = [];
         let sortedHand = [...gameState.hand].map((c, i) => ({...c, originalIndex: i})).sort((a, b) => b.value - a.value);
 
-        if (gameState.hackerHP < 25) {
+        if (gameState.hackerHP < (gameState.maxHackerHP * 0.5)) {
             for (let card of sortedHand) {
                 if (card.suit.action === 'heal' && availablePower >= card.value) {
                     selectedIndexes.push(card.originalIndex);
@@ -535,8 +529,19 @@
                 availablePower -= card.value;
             }
         }
-        log(`<span class='log-ai'>[本地分析] 計算完成，已標記最佳攻擊鏈。</span>`);
+        log(`<span class='log-ai'>[本地分析] 計算完成，已標記最佳戰術鏈。</span>`);
         highlightCardsByIndex(selectedIndexes);
+    }
+
+    function highlightCardsByIndex(indexes) {
+        const allCards = document.querySelectorAll('.card');
+        allCards.forEach(c => { c.classList.remove('selected', 'ai-suggested'); });
+        allCards.forEach(el => {
+            let idx = parseInt(el.dataset.index);
+            if (indexes.includes(idx)) {
+                el.classList.add('selected', 'ai-suggested');   
+            }
+        });
     }
 
     function log(message) {
@@ -551,10 +556,12 @@
             gameState.bossHP = 0;
             log("<span class='log-atk' style='font-size: 1.2em; font-weight: bold;'>[破譯成功] 目標伺服器已癱瘓！(F5 重新挑戰)</span>");
             gameState.phase = 'GAMEOVER';
+            updateUI();
         } else if (gameState.hackerHP <= 0) {
             gameState.hackerHP = 0;
             log("<span class='log-warn' style='font-size: 1.2em; font-weight: bold;'>[遭逮捕] 你的 IP 已被鎖定。請清理主機後重試。</span>");
             gameState.phase = 'GAMEOVER';
+            updateUI();
         }
     }
 
