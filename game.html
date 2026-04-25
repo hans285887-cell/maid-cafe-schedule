@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>防線博弈 (DDoS Protocol) 終極對陣版</title>
+    <title>防線博弈 (DDoS Protocol) 最終對陣版</title>
     <style>
         :root {
             --bg-dark: #0d1117;
@@ -43,10 +43,6 @@
         .die.fail { background: #da3633; color: white; } 
         
         .control-panel { text-align: center; margin-bottom: 20px; }
-        .api-config { background: var(--bg-dark); padding: 10px; border-radius: 5px; margin-bottom: 15px; border: 1px dashed var(--border-color); display: inline-block;}
-        .api-config input { background: var(--bg-dark); border: 1px solid var(--border-color); color: var(--text-main); padding: 5px 10px; border-radius: 3px; width: 250px;}
-        .api-config input:focus { outline: none; border-color: var(--color-purple); }
-
         button { background: var(--panel-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 10px 15px; font-size: 0.95em; border-radius: 5px; cursor: pointer; margin: 5px; font-family: inherit; font-weight: bold; transition: all 0.2s;}
         button:disabled { color: #484f58; cursor: not-allowed; border-color: transparent;}
         
@@ -87,8 +83,8 @@
         <div class="status-board">
             <div class="hp-box">
                 <div style="color: var(--text-muted);">[ 目標伺服器 ]</div>
-                <div class="boss-hp" id="boss-hp-display">75</div>
-                <div class="boss-shield" id="boss-shield-display">🛡️ 護盾: 0 / 25</div>
+                <div class="boss-hp" id="boss-hp-display">50</div>
+                <div class="boss-shield" id="boss-shield-display">🛡️ 護盾: 0 / 15</div>
                 <div class="boss-cache" id="boss-cache-display">📦 緩存: 2 / 4</div>
             </div>
             <div class="power-box">
@@ -101,7 +97,7 @@
             </div>
             <div class="hp-box">
                 <div style="color: var(--text-muted);">[ 駭客隱蔽度 ]</div>
-                <div class="hacker-hp" id="hacker-hp-display">15</div>
+                <div class="hacker-hp" id="hacker-hp-display">25</div>
             </div>
         </div>
 
@@ -116,8 +112,8 @@
         <div class="cards-area" id="hand-display"></div>
 
         <div class="log-box" id="log-box">
-            <div class="log-entry log-sys">系統初始化完成。載入終極平衡：駭客 HP 15 (4骰) vs 伺服器 HP 75 (25盾)。</div>
-            <div class="log-entry log-sys">✨ 核心升級：實裝「多卡聚合傷害引擎」與「全排列最佳化 AI」。</div>
+            <div class="log-entry log-sys">系統初始化完成。載入終極平衡：駭客 HP 25 (4骰) vs 伺服器 HP 50 (15盾)。</div>
+            <div class="log-entry log-sys">✨ 核心狀態：多卡聚合傷害引擎與全排列 AI 啟動中。</div>
         </div>
     </div>
 
@@ -138,20 +134,21 @@
                 <li><strong>行動：</strong> 開局存 2 牌。每回合抽 1 牌，手牌上限 4 張。<br>一般狀態出 1 張，殘血 (≤10) 可出 2 張。</li>
                 <li><span style="color:var(--text-muted);">♠/♣ 黑色：</span> 反追蹤扣血 (<strong style="color:var(--color-red)">單張上限 9 點</strong>)。</li>
                 <li><span style="color:var(--color-red);">♥ 紅心：</span> 系統修復 (<strong style="color:var(--color-green)">單張上限 7 點</strong>)。</li>
-                <li><span style="color:var(--color-yellow);">♦ 方塊：</span> 建立護盾 (<strong style="color:var(--color-yellow)">單張上限 10 點</strong>，總上限 25 點)。</li>
+                <li><span style="color:var(--color-yellow);">♦ 方塊：</span> 建立護盾 (<strong style="color:var(--color-yellow)">單張上限 10 點</strong>，總上限 15 點)。</li>
             </ul>
         </div>
     </div>
 </div>
 
 <script>
+    // 鎖定 UI 數值
     let gameState = {
-        hackerHP: 15,
-        bossHP: 75,
-        maxHackerHP: 15, 
-        maxBossHP: 75,
+        hackerHP: 25,
+        bossHP: 50,
+        maxHackerHP: 25, 
+        maxBossHP: 50,
         bossShield: 0,
-        maxBossShield: 25,
+        maxBossShield: 15,
         bossHand: [],
         power: 0,
         diceArray: [], 
@@ -331,7 +328,7 @@
 
         gameState.power -= totalCost;
         
-        // --- 核心修正：先將所有選中卡牌的效果聚合 ---
+        // --- 聚合傷害引擎 ---
         let totalDmg = 0;
         let totalHeal = 0;
         let totalDraw = 0;
@@ -350,7 +347,6 @@
 
         log(`<span class='log-sys'>執行腳本：[${cardNames.join(', ')}]，總消耗算力 ${totalCost}。</span>`);
 
-        // --- 聚合結算 ---
         if (totalDmg > 0) {
             if (gameState.bossShield > 0) {
                 if (totalDmg <= gameState.bossShield) {
@@ -361,7 +357,7 @@
                     let actualDmg = totalDmg - gameState.bossShield;
                     gameState.bossShield = 0;
                     gameState.bossHP -= actualDmg;
-                    log(`<span class='log-atk'>⚔️ 發動 聯合 DDoS：總計 ${totalDmg} 點傷害，擊破護盾 (吸收 ${blocked} 點)，並對伺服器造成 ${actualDmg} 點真實傷害！</span>`);
+                    log(`<span class='log-atk'>⚔️ 發動 聯合 DDoS：總計 ${totalDmg} 點傷害，擊破護盾 (吸收 ${blocked} 點)，造成 ${actualDmg} 點真實傷害！</span>`);
                 }
             } else {
                 gameState.bossHP -= totalDmg;
@@ -492,14 +488,12 @@
         updateUI();
     }
 
-    // --- 核心修正：全排列最佳化演算法 AI ---
+    // --- 全排列最佳化演算法 AI ---
     function localAI() {
         if (gameState.power === 0) return;
 
         let bestCombo = [];
         let maxScore = -1;
-        
-        // 駭客手牌最多 5 張，計算 2^5 = 32 種所有可能出牌組合
         const numCombos = 1 << gameState.hand.length;
 
         for (let i = 0; i < numCombos; i++) {
@@ -523,11 +517,8 @@
                 }
             }
 
-            // 如果組合的算力不超過當前總算力，則對該組合進行「戰術評分」
             if (currentCost <= gameState.power) {
                 let score = 0;
-                
-                // 1. 評估補血價值 (如果殘血，補血分數極高)
                 let missingHP = gameState.maxHackerHP - gameState.hackerHP;
                 let actualHeal = Math.min(currentHeal, missingHP);
                 if (gameState.hackerHP < (gameState.maxHackerHP * 0.5)) {
@@ -536,17 +527,13 @@
                     score += actualHeal * 5; 
                 }
 
-                // 2. 評估傷害價值 (能打穿護盾的分數更高)
                 let realDmg = Math.max(0, currentDmg - gameState.bossShield);
                 let shieldDmg = Math.min(currentDmg, gameState.bossShield);
-                score += realDmg * 20; // 對本體造成的真實傷害
-                score += shieldDmg * 10; // 破盾也有分數
+                score += realDmg * 20; 
+                score += shieldDmg * 10; 
 
-                // 3. 評估擴張與超頻價值
                 score += currentDraw * 15;
                 score += currentBuff * 12;
-
-                // 4. 同分時，消耗算力越接近上限越好 (榨乾算力)
                 score += (currentCost * 0.1);
 
                 if (score > maxScore) {
@@ -556,7 +543,7 @@
             }
         }
 
-        log(`<span class='log-ai'>[AI] 運算完畢。核心窮舉了 ${numCombos} 種組合，已為您標記最佳執行路徑。</span>`);
+        log(`<span class='log-ai'>[AI] 運算完畢。已為您標記最佳執行路徑。</span>`);
         highlightCardsByIndex(bestCombo);
     }
 
