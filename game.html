@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>防線博弈 (DDoS Protocol) 最終對陣版</title>
+    <title>防線博弈 (DDoS Protocol) 終極對陣版</title>
     <style>
         :root {
             --bg-dark: #0d1117;
@@ -87,8 +87,8 @@
         <div class="status-board">
             <div class="hp-box">
                 <div style="color: var(--text-muted);">[ 目標伺服器 ]</div>
-                <div class="boss-hp" id="boss-hp-display">50</div>
-                <div class="boss-shield" id="boss-shield-display">🛡️ 護盾: 0 / 15</div>
+                <div class="boss-hp" id="boss-hp-display">75</div>
+                <div class="boss-shield" id="boss-shield-display">🛡️ 護盾: 0 / 25</div>
                 <div class="boss-cache" id="boss-cache-display">📦 緩存: 2 / 4</div>
             </div>
             <div class="power-box">
@@ -101,18 +101,13 @@
             </div>
             <div class="hp-box">
                 <div style="color: var(--text-muted);">[ 駭客隱蔽度 ]</div>
-                <div class="hacker-hp" id="hacker-hp-display">25</div>
+                <div class="hacker-hp" id="hacker-hp-display">15</div>
             </div>
         </div>
 
         <div class="control-panel">
-            <div class="api-config">
-                <span style="color:var(--color-purple); font-weight:bold;">🤖 AI 模組：</span>
-                <input type="password" id="api-key-input" placeholder="貼上 Gemini API Key (選填)">
-            </div><br>
-            
             <button id="btn-roll" onclick="rollDice()">🎲 獲取算力 (擲骰)</button>
-            <button id="btn-ai" onclick="triggerAI()" disabled>🤖 戰術分析</button>
+            <button id="btn-ai" onclick="localAI()" disabled>🤖 戰術分析</button>
             <button id="btn-execute" onclick="executeScripts()" disabled>⚡ 執行腳本</button>
             <button id="btn-boss-turn" onclick="bossTurn()" disabled>🛡️ 結束回合 (棄牌)</button>
         </div>
@@ -121,7 +116,8 @@
         <div class="cards-area" id="hand-display"></div>
 
         <div class="log-box" id="log-box">
-            <div class="log-entry log-sys">系統初始化完成。載入終極平衡：駭客 HP 25 (4骰) vs 伺服器 HP 50 (15盾)。</div>
+            <div class="log-entry log-sys">系統初始化完成。載入終極平衡：駭客 HP 15 (4骰) vs 伺服器 HP 75 (25盾)。</div>
+            <div class="log-entry log-sys">✨ 核心升級：實裝「多卡聚合傷害引擎」與「全排列最佳化 AI」。</div>
         </div>
     </div>
 
@@ -129,10 +125,10 @@
         <div class="guide-section">
             <h3>[ 你的駭客腳本 ]</h3>
             <ul>
-                <li><span class="highlight-bg suit-spade">♠ 黑桃</span> 攻擊 (優先扣除伺服器護盾)。</li>
+                <li><span class="highlight-bg suit-spade">♠ 黑桃</span> 攻擊 (多張可疊加總傷害，優先破盾)。</li>
                 <li><span class="highlight-bg suit-heart">♥ 紅心</span> 恢復隱蔽度 (<strong style="color:var(--color-green)">單張最高 10 點</strong>)。</li>
                 <li><span class="highlight-bg suit-club">♣ 梅花</span> 擴張網路 (每 3 點抽 1 張)。</li>
-                <li><span class="highlight-bg suit-diamond">♦ 方塊</span> 硬體超頻 (每 4 點，<span style="color:var(--color-yellow)">下回合</span>加擲 1 骰。若出 1 短路扣2血)。</li>
+                <li><span class="highlight-bg suit-diamond">♦ 方塊</span> 硬體超頻 (每 4 點下回合加 1 骰)。</li>
             </ul>
         </div>
 
@@ -142,7 +138,7 @@
                 <li><strong>行動：</strong> 開局存 2 牌。每回合抽 1 牌，手牌上限 4 張。<br>一般狀態出 1 張，殘血 (≤10) 可出 2 張。</li>
                 <li><span style="color:var(--text-muted);">♠/♣ 黑色：</span> 反追蹤扣血 (<strong style="color:var(--color-red)">單張上限 9 點</strong>)。</li>
                 <li><span style="color:var(--color-red);">♥ 紅心：</span> 系統修復 (<strong style="color:var(--color-green)">單張上限 7 點</strong>)。</li>
-                <li><span style="color:var(--color-yellow);">♦ 方塊：</span> 建立護盾 (<strong style="color:var(--color-yellow)">單張上限 10 點</strong>，總護盾池疊加上限 15 點)。</li>
+                <li><span style="color:var(--color-yellow);">♦ 方塊：</span> 建立護盾 (<strong style="color:var(--color-yellow)">單張上限 10 點</strong>，總上限 25 點)。</li>
             </ul>
         </div>
     </div>
@@ -150,12 +146,12 @@
 
 <script>
     let gameState = {
-        hackerHP: 25,
-        bossHP: 50,
-        maxHackerHP: 25, 
-        maxBossHP: 50,
+        hackerHP: 15,
+        bossHP: 75,
+        maxHackerHP: 15, 
+        maxBossHP: 75,
         bossShield: 0,
-        maxBossShield: 15,
+        maxBossShield: 25,
         bossHand: [],
         power: 0,
         diceArray: [], 
@@ -210,12 +206,9 @@
 
     function startGame() {
         gameState.deck = initDeck();
-        drawCards(5); // 駭客起手 5 張
-        
-        // 伺服器起手 2 張
+        drawCards(5); 
         gameState.bossHand.push(gameState.deck.pop());
         gameState.bossHand.push(gameState.deck.pop());
-
         updateUI();
     }
 
@@ -227,11 +220,7 @@
         document.getElementById('power-display').innerText = gameState.power;
         
         const buffIndicator = document.getElementById('buff-indicator');
-        if (gameState.pendingBonusDice > 0) {
-            buffIndicator.innerText = `⚡ 預備超頻：下回合 +${gameState.pendingBonusDice} 骰`;
-        } else {
-            buffIndicator.innerText = "";
-        }
+        buffIndicator.innerText = gameState.pendingBonusDice > 0 ? `⚡ 預備超頻：下回合 +${gameState.pendingBonusDice} 骰` : "";
         
         const diceContainer = document.getElementById('dice-container');
         diceContainer.innerHTML = '';
@@ -254,10 +243,7 @@
         document.getElementById('btn-ai').disabled = (gameState.phase !== 'ACTION'); 
         
         if (gameState.bossHP <= 0 || gameState.hackerHP <= 0) {
-            document.getElementById('btn-roll').disabled = true;
-            document.getElementById('btn-execute').disabled = true;
-            document.getElementById('btn-boss-turn').disabled = true;
-            document.getElementById('btn-ai').disabled = true;
+            document.querySelectorAll('button').forEach(btn => btn.disabled = true);
         }
     }
 
@@ -288,7 +274,6 @@
         let bonusDiceCount = gameState.pendingBonusDice;
         gameState.pendingBonusDice = 0; 
 
-        // 駭客 4 顆基礎骰子
         for (let i = 0; i < 4; i++) {
             let r = Math.floor(Math.random() * 6) + 1;
             rolls.push(r);
@@ -306,9 +291,9 @@
                 if (isFail) shortCircuits++;
                 gameState.diceArray.push({ value: r, isBonus: !isFail, isFail: isFail });
             }
-            log(`<span class='log-sys'>發送指令！基礎骰 [${rolls.join(', ')}]，超頻骰 [${bonusRolls.join(', ')}]，算力：${total}</span>`);
+            log(`<span class='log-sys'>發送指令！基礎骰 [${rolls.join(', ')}]，超頻骰 [${bonusRolls.join(', ')}]，總算力：${total}</span>`);
         } else {
-            log(`<span class='log-sys'>發送指令！擲出 4 顆基礎骰子 [${rolls.join(', ')}]，算力：${total}</span>`);
+            log(`<span class='log-sys'>發送指令！擲出 4 顆基礎骰子 [${rolls.join(', ')}]，總算力：${total}</span>`);
         }
         
         gameState.power = total;
@@ -346,46 +331,58 @@
 
         gameState.power -= totalCost;
         
+        // --- 核心修正：先將所有選中卡牌的效果聚合 ---
+        let totalDmg = 0;
+        let totalHeal = 0;
+        let totalDraw = 0;
+        let totalBuff = 0;
+        let cardNames = [];
+
         selectedCards.forEach(card => {
-            if (card.suit.action === 'damage') {
-                let dmg = card.value;
-                if (gameState.bossShield > 0) {
-                    if (dmg <= gameState.bossShield) {
-                        gameState.bossShield -= dmg;
-                        log(`<span class='log-atk'>發動 DDoS (${card.suit.symbol}${card.display})：造成 ${dmg} 點傷害 (遭伺服器護盾完全吸收)。</span>`);
-                        dmg = 0;
-                    } else {
-                        let blocked = gameState.bossShield;
-                        dmg -= gameState.bossShield;
-                        gameState.bossShield = 0;
-                        log(`<span class='log-atk'>發動 DDoS (${card.suit.symbol}${card.display})：擊破護盾 (吸收 ${blocked} 點)，並對伺服器造成 ${dmg} 點真實傷害！</span>`);
-                    }
-                } else {
-                    log(`<span class='log-atk'>發動 DDoS (${card.suit.symbol}${card.display})：造成 ${dmg} 點傷害。</span>`);
-                }
-                gameState.bossHP -= dmg;
-            } 
-            else if (card.suit.action === 'heal') {
-                let heal = Math.min(card.value, 10); // 駭客補血鎖定最高 10 點
-                gameState.hackerHP = Math.min(gameState.maxHackerHP, gameState.hackerHP + heal);
-                log(`<span class='log-sys'>清除日誌 (${card.suit.symbol}${card.display})：隱蔽度恢復 ${heal} 點 (目前 ${gameState.hackerHP})。</span>`);
-            } 
-            else if (card.suit.action === 'draw') {
-                let drawCount = Math.floor(card.value / 3);
-                if (drawCount > 0) {
-                    drawCards(drawCount);
-                    log(`<span class='log-sys'>殭屍擴張 (${card.suit.symbol}${card.display})：成功抽 ${drawCount} 張牌。</span>`);
-                }
-            } 
-            else if (card.suit.action === 'buff') {
-                let addDiceCount = Math.floor(card.value / 4);
-                if (addDiceCount > 0) {
-                    gameState.pendingBonusDice += addDiceCount;
-                    log(`<span class='log-sys' style='color:var(--color-yellow);'>硬體超頻 (${card.suit.symbol}${card.display})：排程加擲 ${addDiceCount} 骰。</span>`);
-                }
-            }
+            cardNames.push(`${card.suit.symbol}${card.display}`);
+            if (card.suit.action === 'damage') totalDmg += card.value;
+            else if (card.suit.action === 'heal') totalHeal += Math.min(card.value, 10);
+            else if (card.suit.action === 'draw') totalDraw += Math.floor(card.value / 3);
+            else if (card.suit.action === 'buff') totalBuff += Math.floor(card.value / 4);
+            
             gameState.hand = gameState.hand.filter(c => c.id !== card.id);
         });
+
+        log(`<span class='log-sys'>執行腳本：[${cardNames.join(', ')}]，總消耗算力 ${totalCost}。</span>`);
+
+        // --- 聚合結算 ---
+        if (totalDmg > 0) {
+            if (gameState.bossShield > 0) {
+                if (totalDmg <= gameState.bossShield) {
+                    gameState.bossShield -= totalDmg;
+                    log(`<span class='log-atk'>⚔️ 發動 聯合 DDoS：總計 ${totalDmg} 點傷害 (遭伺服器護盾完全吸收)。</span>`);
+                } else {
+                    let blocked = gameState.bossShield;
+                    let actualDmg = totalDmg - gameState.bossShield;
+                    gameState.bossShield = 0;
+                    gameState.bossHP -= actualDmg;
+                    log(`<span class='log-atk'>⚔️ 發動 聯合 DDoS：總計 ${totalDmg} 點傷害，擊破護盾 (吸收 ${blocked} 點)，並對伺服器造成 ${actualDmg} 點真實傷害！</span>`);
+                }
+            } else {
+                gameState.bossHP -= totalDmg;
+                log(`<span class='log-atk'>⚔️ 發動 聯合 DDoS：總計造成 ${totalDmg} 點真實傷害。</span>`);
+            }
+        }
+
+        if (totalHeal > 0) {
+            gameState.hackerHP = Math.min(gameState.maxHackerHP, gameState.hackerHP + totalHeal);
+            log(`<span class='log-sys' style='color:var(--color-green);'>💚 清除日誌：隱蔽度共恢復 ${totalHeal} 點 (目前 ${gameState.hackerHP})。</span>`);
+        }
+
+        if (totalDraw > 0) {
+            drawCards(totalDraw);
+            log(`<span class='log-sys'>📡 殭屍擴張：網路擴張，成功抽 ${totalDraw} 張牌。</span>`);
+        }
+
+        if (totalBuff > 0) {
+            gameState.pendingBonusDice += totalBuff;
+            log(`<span class='log-sys' style='color:var(--color-yellow);'>⚡ 硬體超頻：排程下回合加擲 ${totalBuff} 骰。</span>`);
+        }
 
         renderHand();
         checkWinCondition();
@@ -407,13 +404,12 @@
 
         log("<span class='log-warn'>--- 防火牆啟動反擊序列 ---</span>");
         
-        // 伺服器抽牌
         checkAndShuffleDeck();
         gameState.bossHand.push(gameState.deck.pop());
         
         if (gameState.bossHand.length > 4) {
             gameState.bossHand.sort((a, b) => a.value - b.value);
-            gameState.bossHand.shift(); // 棄掉最小的
+            gameState.bossHand.shift(); 
             log(`<span class='log-sys'>伺服器緩存溢出，捨棄低階封包。</span>`);
         }
 
@@ -437,16 +433,16 @@
                 if (healCard) playedCard = healCard;
             }
 
-            // 3. 彈性蓄力
-            if (!playedCard && gameState.bossHand.length < 4 && gameState.bossHP > 10 && Math.random() < 0.7) {
-                log(`<span class='log-sys'>伺服器正在蓄力，無反擊動作。 (當前緩存: ${gameState.bossHand.length}/4)</span>`);
-                break; 
-            }
-
-            // 4. 架盾
+            // 3. 架盾
             if (!playedCard && gameState.bossShield < gameState.maxBossShield) {
                 let shieldCard = gameState.bossHand.find(c => c.suit.name === '方塊');
                 if (shieldCard) playedCard = shieldCard;
+            }
+
+            // 4. 戰術蓄力
+            if (!playedCard && gameState.bossHand.length < 4 && gameState.bossHP > 10 && Math.random() < 0.7) {
+                log(`<span class='log-sys'>伺服器正在蓄力，無反擊動作。 (當前緩存: ${gameState.bossHand.length}/4)</span>`);
+                break; 
             }
 
             // 5. 攻擊
@@ -458,7 +454,6 @@
             // 6. 保底丟牌
             if (!playedCard) playedCard = gameState.bossHand[0];
 
-            // 結算伺服器卡牌
             if (playedCard) {
                 gameState.bossHand = gameState.bossHand.filter(c => c.id !== playedCard.id);
                 playedCount++;
@@ -497,40 +492,72 @@
         updateUI();
     }
 
-    async function triggerAI() {
-        const apiKey = document.getElementById('api-key-input').value.trim();
-        if (!apiKey) {
-            log(`<span class='log-ai'>[AI] 未偵測金鑰，啟動本地核心分析...</span>`);
-            localAI(); 
-            return;
-        }
-        // 若需接回 Gemini API，請補回 fetch 邏輯
-        localAI();
-    }
-
+    // --- 核心修正：全排列最佳化演算法 AI ---
     function localAI() {
         if (gameState.power === 0) return;
-        let availablePower = gameState.power;
-        let selectedIndexes = [];
-        let sortedHand = [...gameState.hand].map((c, i) => ({...c, originalIndex: i})).sort((a, b) => b.value - a.value);
 
-        if (gameState.hackerHP < (gameState.maxHackerHP * 0.5)) {
-            for (let card of sortedHand) {
-                if (card.suit.action === 'heal' && availablePower >= card.value) {
-                    selectedIndexes.push(card.originalIndex);
-                    availablePower -= card.value;
-                    break;
+        let bestCombo = [];
+        let maxScore = -1;
+        
+        // 駭客手牌最多 5 張，計算 2^5 = 32 種所有可能出牌組合
+        const numCombos = 1 << gameState.hand.length;
+
+        for (let i = 0; i < numCombos; i++) {
+            let currentCost = 0;
+            let currentDmg = 0;
+            let currentHeal = 0;
+            let currentDraw = 0;
+            let currentBuff = 0;
+            let comboIndexes = [];
+
+            for (let j = 0; j < gameState.hand.length; j++) {
+                if (i & (1 << j)) {
+                    let card = gameState.hand[j];
+                    currentCost += card.value;
+                    comboIndexes.push(j);
+
+                    if (card.suit.action === 'damage') currentDmg += card.value;
+                    if (card.suit.action === 'heal') currentHeal += Math.min(card.value, 10);
+                    if (card.suit.action === 'draw') currentDraw += Math.floor(card.value / 3);
+                    if (card.suit.action === 'buff') currentBuff += Math.floor(card.value / 4);
+                }
+            }
+
+            // 如果組合的算力不超過當前總算力，則對該組合進行「戰術評分」
+            if (currentCost <= gameState.power) {
+                let score = 0;
+                
+                // 1. 評估補血價值 (如果殘血，補血分數極高)
+                let missingHP = gameState.maxHackerHP - gameState.hackerHP;
+                let actualHeal = Math.min(currentHeal, missingHP);
+                if (gameState.hackerHP < (gameState.maxHackerHP * 0.5)) {
+                    score += actualHeal * 50; 
+                } else {
+                    score += actualHeal * 5; 
+                }
+
+                // 2. 評估傷害價值 (能打穿護盾的分數更高)
+                let realDmg = Math.max(0, currentDmg - gameState.bossShield);
+                let shieldDmg = Math.min(currentDmg, gameState.bossShield);
+                score += realDmg * 20; // 對本體造成的真實傷害
+                score += shieldDmg * 10; // 破盾也有分數
+
+                // 3. 評估擴張與超頻價值
+                score += currentDraw * 15;
+                score += currentBuff * 12;
+
+                // 4. 同分時，消耗算力越接近上限越好 (榨乾算力)
+                score += (currentCost * 0.1);
+
+                if (score > maxScore) {
+                    maxScore = score;
+                    bestCombo = comboIndexes;
                 }
             }
         }
-        for (let card of sortedHand) {
-            if (card.suit.action === 'damage' && availablePower >= card.value && !selectedIndexes.includes(card.originalIndex)) {
-                selectedIndexes.push(card.originalIndex);
-                availablePower -= card.value;
-            }
-        }
-        log(`<span class='log-ai'>[本地分析] 計算完成，已標記最佳戰術鏈。</span>`);
-        highlightCardsByIndex(selectedIndexes);
+
+        log(`<span class='log-ai'>[AI] 運算完畢。核心窮舉了 ${numCombos} 種組合，已為您標記最佳執行路徑。</span>`);
+        highlightCardsByIndex(bestCombo);
     }
 
     function highlightCardsByIndex(indexes) {
