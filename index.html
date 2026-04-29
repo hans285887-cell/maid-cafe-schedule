@@ -66,20 +66,17 @@
             --shift-off-bg: #991b1b; --shift-off-txt: #fee2e2;
         }
 
-        /* 防選取與防複製 */
         body { font-family: "Microsoft JhengHei", sans-serif; background-color: var(--bg-color); padding: 0; color: var(--text-color); margin: 0; -webkit-tap-highlight-color: transparent; display: flex; flex-direction: column; min-height: 100vh; transition: background-color 0.3s, color 0.3s; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; }
         input, textarea { user-select: text; -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; }
 
         .header { background-color: var(--header-bg); color: white; padding: 20px 10px 0 10px; text-align: center; position: relative; transition: 0.3s; }
         
-        /* 標題游標改為指標，暗示可點擊 */
         .header h1 { margin: 0 0 10px 0; font-size: 20px; color: var(--primary-color); cursor: pointer; }
         .header p { margin: 0 0 15px 0; font-size: 12px; color: #ccc; }
         
         .menu-toggle-btn { position: absolute; top: 15px; left: 15px; background: transparent; border: none; color: var(--primary-color); font-size: 24px; cursor: pointer; padding: 0; line-height: 1; z-index: 100; }
         .theme-toggle-btn { position: absolute; top: 18px; left: 55px; background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 5px 10px; border-radius: 20px; cursor: pointer; font-size: 11px; font-weight: bold; }
         
-        /* 隱藏登入按鈕，僅在登入後顯示登出 */
         .admin-login-btn { display: none; position: absolute; top: 15px; right: 15px; background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: bold; }
         .admin-login-btn.logged-in { display: block; background: #00b894; border-color: #00b894; color: white; }
 
@@ -247,6 +244,22 @@
         
         .scroll-to-top { position: fixed; bottom: 20px; right: 20px; background-color: var(--primary-color); color: white; width: 45px; height: 45px; border-radius: 50%; display: none; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1000; font-size: 20px; font-weight: bold; transition: 0.3s; }
         .scroll-to-top:hover { transform: translateY(-3px); background-color: var(--primary-dark); }
+        
+        /* 🔥 新增畢業生區塊的樣式 */
+        .gallery-section-title {
+            color: var(--primary-dark);
+            margin-top: 25px;
+            margin-bottom: 10px;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 8px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        body.dark-mode .gallery-section-title { color: var(--primary-color); }
+        #maid-gallery-graduated { opacity: 0.85; filter: grayscale(15%); transition: 0.3s; }
+        #maid-gallery-graduated:hover { opacity: 1; filter: grayscale(0%); }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -264,10 +277,10 @@
         <button class="close-sidebar-btn" onclick="toggleSidebar()">×</button>
     </div>
     <ul class="sidebar-menu">
-    <li><a href="index.html">👼 天使ハート</a></li>
-    <li><a href="branch2.html" class="active-link">🔮 愛神・阿芙羅黛蒂</a></li>
-    <li><a href="game.html" style="color: #ff7b72; border-left: 5px solid #ff7b72;">🖥️ 駭客終端 (防線博弈)</a></li>
-</ul>
+        <li><a href="index.html" class="active-link">👼 天使ハート</a></li>
+        <li><a href="branch2.html">🔮 愛神・阿芙羅黛蒂</a></li>
+        <li><a href="game.html" style="color: #ff7b72; border-left: 5px solid #ff7b72;">🖥️ 駭客終端 (防線博弈)</a></li>
+    </ul>
 </div>
 
 <div class="header">
@@ -443,7 +456,14 @@
 
     <div id="tab-members" class="tab-content">
         <h2>💖 天使成員圖鑑</h2>
-        <div class="maid-grid" id="maid-gallery"></div>
+        
+        <h3 class="gallery-section-title">✨ 現役天使</h3>
+        <div class="maid-grid" id="maid-gallery-active"></div>
+        
+        <div id="graduated-section" style="display: none;">
+            <h3 class="gallery-section-title" style="color: var(--menu-sub); margin-top: 30px;">🌸 畢業天使</h3>
+            <div class="maid-grid" id="maid-gallery-graduated"></div>
+        </div>
     </div>
 
     <div id="tab-schedule" class="tab-content">
@@ -465,6 +485,13 @@
                 <div class="form-group"><label>IG</label><input type="text" id="new-ig" placeholder="@ig"></div>
                 <div class="form-group"><label>照片</label><input type="text" id="new-photo" placeholder="檔名 (如: anchen.png)"></div>
                 <div class="form-group"><label>色</label><input type="color" id="new-color" value="#f36896"></div>
+                <div class="form-group">
+                    <label>狀態</label>
+                    <div style="flex:1; display:flex; align-items:center;">
+                        <input type="checkbox" id="new-graduated" style="flex:none; width:auto; margin:0 5px 0 0;">
+                        <span style="color:var(--text-color); font-size:13px; font-weight:bold;">🌸 設定為「已畢業」</span>
+                    </div>
+                </div>
                 <button class="btn" id="btn-save-member" style="background: var(--header-bg);" onclick="addOrUpdateMember()">💾 儲存 (同步雲端)</button>
             </div>
             <div class="card">
@@ -592,6 +619,7 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    // ⚠️ 天使心專屬資料庫位置
     const docRef = doc(db, "AngelHeart", "MainData");
 
     const defaultBannedData = [
@@ -1089,7 +1117,9 @@
         select.innerHTML = "";
         
         Object.keys(maidData).sort().forEach(m => {
-            const opt = document.createElement("option"); opt.value = m; opt.textContent = m; select.appendChild(opt);
+            const opt = document.createElement("option"); opt.value = m; 
+            opt.textContent = maidData[m].isGraduated ? `${m} (已畢業)` : m; 
+            select.appendChild(opt);
         });
         
         if (currentSelection && maidData[currentSelection]) {
@@ -1103,10 +1133,11 @@
             const div = document.createElement("div"); div.className = "member-item";
             const checked = activeFilters.has(member) ? "checked" : "";
             const color = maidData[member].color;
+            const labelText = maidData[member].isGraduated ? `${member}(畢業)` : member;
             div.innerHTML = `
                 <input type="checkbox" ${checked} onchange="toggleFilter('${member}')" id="chk-${member}">
                 <span class="color-dot" style="background-color: ${color};"></span>
-                <label for="chk-${member}" style="cursor: pointer; font-weight: bold; color: var(--text-color);">${member}</label>
+                <label for="chk-${member}" style="cursor: pointer; font-weight: bold; color: var(--text-color);">${labelText}</label>
             `;
             filterBox.appendChild(div);
         });
@@ -1122,8 +1153,16 @@
         activeFilters = new Set(Object.keys(maidData)); renderFilters(); window.renderCalendar();
     }
 
+    // 🔥 修改：成員圖鑑自動分類現役與畢業天使
     function renderMaidGallery() {
-        const gallery = document.getElementById("maid-gallery"); gallery.innerHTML = "";
+        const galleryActive = document.getElementById("maid-gallery-active");
+        const galleryGraduated = document.getElementById("maid-gallery-graduated");
+        const graduatedSection = document.getElementById("graduated-section");
+        
+        galleryActive.innerHTML = "";
+        galleryGraduated.innerHTML = "";
+        let hasGraduated = false;
+
         Object.keys(maidData).sort().forEach(name => {
             const data = maidData[name];
             let imgUrl = data.photo;
@@ -1133,27 +1172,41 @@
             }
 
             if (!imgUrl) {
-                const encodedColor = data.color.replace('#', '%23');
+                const encodedColor = (data.color || '#ccc').replace('#', '%23');
                 imgUrl = `data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Crect width='300' height='300' fill='${encodedColor}' opacity='0.2'/%3E%3Ctext x='50%25' y='50%25' fill='${encodedColor}' font-size='40' font-family='sans-serif' font-weight='bold' dominant-baseline='middle' text-anchor='middle'%3E${name}%3C/text%3E%3C/svg%3E`;
             }
+            
             const div = document.createElement("div"); div.className = "maid-card";
             div.innerHTML = `
                 <div class="maid-photo-container">
-                    <img src="${imgUrl}" alt="${name}" class="maid-img" style="border-bottom: 3px solid ${data.color};" onerror="window.handlePhotoError(this)">
+                    <img src="${imgUrl}" alt="${name}" class="maid-img" style="border-bottom: 3px solid ${data.color || '#ccc'};" onerror="window.handlePhotoError(this)">
                     <div class="maid-photo-fallback">${name}</div>
                 </div>
                 <div class="maid-info">
-                    <h3 class="maid-name"><span class="color-dot" style="background-color: ${data.color}"></span> ${name}</h3>
-                    <a href="https://instagram.com/${data.ig.replace('@','')}" target="_blank" class="maid-ig">${data.ig || "IG"}</a>
-                    <button class="btn-schedule-link" style="color:${data.color}; border-color:${data.color};" onclick="viewMaidSchedule('${name}')">📅 班表</button>
+                    <h3 class="maid-name"><span class="color-dot" style="background-color: ${data.color || '#ccc'}"></span> ${name}</h3>
+                    <a href="https://instagram.com/${(data.ig || '').replace('@','')}" target="_blank" class="maid-ig">${data.ig || "IG"}</a>
+                    <button class="btn-schedule-link" style="color:${data.color || '#888'}; border-color:${data.color || '#888'};" onclick="viewMaidSchedule('${name}')">📅 班表</button>
                     <div class="admin-btn-group admin-action">
                         <button class="btn-edit" onclick="editMember('${name}')">✏️</button>
                         <button class="btn-delete" onclick="deleteMember('${name}')">🗑️</button>
                     </div>
                 </div>
             `;
-            gallery.appendChild(div);
+            
+            if (data.isGraduated) {
+                galleryGraduated.appendChild(div);
+                hasGraduated = true;
+            } else {
+                galleryActive.appendChild(div);
+            }
         });
+
+        // 只有在有畢業天使時才顯示畢業專區
+        if (hasGraduated) {
+            graduatedSection.style.display = "block";
+        } else {
+            graduatedSection.style.display = "none";
+        }
     }
 
     window.viewMaidSchedule = function(n) { 
@@ -1168,6 +1221,7 @@
         document.getElementById("new-ig").value = data.ig || "";
         document.getElementById("new-photo").value = data.photo || ""; 
         document.getElementById("new-color").value = data.color || "#f36896";
+        document.getElementById("new-graduated").checked = data.isGraduated === true;
         currentEditName = name;
         document.getElementById("edit-title").innerText = `✏️ 編輯：${name}`;
         window.switchTab('tab-schedule', document.querySelectorAll('.tab-btn')[3]);
@@ -1183,6 +1237,8 @@
         const ig = document.getElementById("new-ig").value.trim(); 
         const photo = document.getElementById("new-photo").value.trim();
         const c = document.getElementById("new-color").value;
+        const isGraduated = document.getElementById("new-graduated").checked;
+
         if(!n) return alert("輸入名稱！"); 
         
         if (currentEditName && currentEditName !== n) {
@@ -1196,11 +1252,16 @@
             }
         }
         
-        maidData[n] = { color: c, ig: ig, photo: photo }; 
+        maidData[n] = { color: c, ig: ig, photo: photo, isGraduated: isGraduated }; 
         activeFilters.add(n); saveToCloud(); 
         
-        document.getElementById("new-name").value = ""; document.getElementById("new-ig").value = ""; document.getElementById("new-photo").value = "";
-        currentEditName = null; document.getElementById("edit-title").innerText = "👥 1. 建立/編輯女僕";
+        // 儲存後清空輸入框與打勾狀態
+        document.getElementById("new-name").value = ""; 
+        document.getElementById("new-ig").value = ""; 
+        document.getElementById("new-photo").value = "";
+        document.getElementById("new-graduated").checked = false;
+        currentEditName = null; 
+        document.getElementById("edit-title").innerText = "👥 1. 建立/編輯女僕";
     }
 
     initCalendarDropdowns();
