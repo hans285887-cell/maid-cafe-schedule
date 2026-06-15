@@ -245,7 +245,7 @@
         .scroll-to-top { position: fixed; bottom: 20px; right: 20px; background-color: var(--primary-color); color: white; width: 45px; height: 45px; border-radius: 50%; display: none; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1000; font-size: 20px; font-weight: bold; transition: 0.3s; }
         .scroll-to-top:hover { transform: translateY(-3px); background-color: var(--primary-dark); }
         
-        /* 🔥 新增畢業生區塊的樣式 */
+        /*  新增畢業生區塊的樣式 */
         .gallery-section-title {
             color: var(--primary-dark);
             margin-top: 25px;
@@ -619,7 +619,7 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    // ⚠️ 天使心專屬資料庫位置
+    // 天使心專屬資料庫位置
     const docRef = doc(db, "AngelHeart", "MainData");
 
     const defaultBannedData = [
@@ -782,7 +782,7 @@
         }
     }
 
-    // 🔥 匯出備份 (Export)
+    //  匯出備份 (Export)
     window.exportBackup = function() {
         if (!isDataLoaded) {
             alert("⚠️ 系統尚未讀取到雲端資料，無法備份！請稍後再試。");
@@ -806,7 +806,7 @@
         alert("✅ 備份檔案已成功下載！請妥善保存此 .json 檔案。");
     }
 
-    // 🔥 匯入還原 (Import)
+    //  匯入還原 (Import)
     window.importBackup = function(event) {
         const file = event.target.files[0];
         if (!file) return;
@@ -1153,7 +1153,7 @@
         activeFilters = new Set(Object.keys(maidData)); renderFilters(); window.renderCalendar();
     }
 
-    // 🔥 修改：成員圖鑑自動分類現役與畢業天使
+    // 修改：成員圖鑑自動分類現役與畢業天使
     function renderMaidGallery() {
         const galleryActive = document.getElementById("maid-gallery-active");
         const galleryGraduated = document.getElementById("maid-gallery-graduated");
