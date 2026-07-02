@@ -176,14 +176,14 @@
         .calendar-nav select { padding: 8px; border-radius: 4px; border: 1px solid var(--border-color); font-weight: bold; font-size: 14px; background-color: var(--input-bg); color: var(--input-text); }
 
         .admin-tools { display: none; flex-direction: column; gap: 10px; margin-bottom: 20px; background: var(--info-bg); padding: 15px; border-radius: 10px; border: 2px dashed var(--border-color); transition: 0.3s; }
-        @media (min-width: 992px) { .admin-tools { flex-direction: row; flex-wrap: wrap; } .card { flex: 1 1 45%; } }
-        .card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; transition: 0.3s; }
+        @media (min-width: 992px) { .admin-tools { flex-direction: row; flex-wrap: wrap; align-items: stretch; } .card { flex: 1 1 45%; } }
+        .card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; transition: 0.3s; display: flex; flex-direction: column; }
         .card h3 { margin-top: 0; font-size: 14px; color: var(--menu-sub); border-bottom: 1px dashed var(--border-color); padding-bottom: 5px; }
         .form-group { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; font-size: 13px; }
         .form-group label { width: 60px; text-align: right; flex-shrink: 0; font-weight: bold; color: var(--menu-sub); padding-top: 6px; }
         .form-group input, .form-group select { flex: 1; padding: 6px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 13px; font-family: inherit; background-color: var(--input-bg); color: var(--input-text); }
         .form-group textarea { flex: 1; padding: 6px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 13px; font-family: inherit; resize: vertical; min-height: 50px; background-color: var(--input-bg); color: var(--input-text); }
-        .btn { width: 100%; background: var(--primary-color); color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn { width: 100%; background: var(--primary-color); color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: auto; }
 
         .filter-section { border: 1px solid var(--border-color); background: var(--today-bg); padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; transition: 0.3s; }
         .member-list { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 5px; }
@@ -245,7 +245,7 @@
         .scroll-to-top { position: fixed; bottom: 20px; right: 20px; background-color: var(--primary-color); color: white; width: 45px; height: 45px; border-radius: 50%; display: none; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1000; font-size: 20px; font-weight: bold; transition: 0.3s; }
         .scroll-to-top:hover { transform: translateY(-3px); background-color: var(--primary-dark); }
         
-        /*  新增畢業生區塊的樣式 */
+        /* 畢業生區塊的樣式 */
         .gallery-section-title {
             color: var(--primary-dark);
             margin-top: 25px;
@@ -494,25 +494,44 @@
                 </div>
                 <button class="btn" id="btn-save-member" style="background: var(--header-bg);" onclick="addOrUpdateMember()">💾 儲存 (同步雲端)</button>
             </div>
+            
             <div class="card">
-                <h3>📅 2. 新增排班</h3>
+                <h3>📅 2. 新增女僕排班</h3>
                 <div class="form-group"><label>日期</label><input type="number" id="shift-day" min="1" max="31" value="1"></div>
-                <div class="form-group"><label>女僕</label><select id="shift-member"></select></div>
+                <div class="form-group">
+                    <label>女僕</label>
+                    <select id="shift-member"></select>
+                </div>
                 <div class="form-group">
                     <label>班別</label>
                     <select id="shift-type">
                         <option value="morning">☀️ 早班</option>
                         <option value="night">🌙 晚班</option>
                         <option value="full">⭐ 全班</option>
-                        <option value="off_full">🏠 全日公休</option>
-                        <option value="off_morning">🌅 早班公休</option>
-                        <option value="off_night">🌃 晚班公休</option>
                     </select>
                 </div>
-                <button class="btn" onclick="addShift()">新增排班 (同步雲端)</button>
+                <button class="btn" onclick="addShift()">➕ 新增女僕排班 (同步雲端)</button>
             </div>
+            
             <div class="card">
-                <h3>🎉 3. 主題活動 (可連續)</h3>
+                <h3 style="color: #d63031;">🛑 3. 店家營業設定</h3>
+                <div class="form-group"><label>日期</label><input type="number" id="store-closed-day" min="1" max="31" value="1"></div>
+                <div class="form-group">
+                    <label>公休時段</label>
+                    <select id="store-closed-type">
+                        <option value="🏠 全日公休">🏠 全日公休</option>
+                        <option value="🌅 早班公休">🌅 早班公休</option>
+                        <option value="🌃 晚班公休">🌃 晚班公休</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 5px;">
+                    <button class="btn" style="background: #d63031; flex: 1;" onclick="setStoreClosed()">設為公休</button>
+                    <button class="btn" style="background: #b2bec3; color: #333; flex: 1;" onclick="removeStoreClosed()">取消公休</button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>🎉 4. 主題活動 (可連續)</h3>
                 <div class="form-group"><label>開始日</label><input type="number" id="event-day-start" min="1" max="31" value="1"></div>
                 <div class="form-group"><label>結束日</label><input type="number" id="event-day-end" min="1" max="31" value="1" placeholder="同上則為單日"></div>
                 <div class="form-group"><label>名稱</label><input type="text" id="event-name" placeholder="制服日"></div>
@@ -521,7 +540,7 @@
             </div>
             
             <div class="card" style="border: 2px solid #00b894;">
-                <h3 style="color: #00b894;">💾 4. 系統資料庫備份與還原</h3>
+                <h3 style="color: #00b894;">💾 5. 系統資料庫備份與還原</h3>
                 <p style="font-size: 12px; color: var(--menu-sub); margin-bottom: 8px;">定期下載備份，或在資料遺失時上傳 JSON 檔還原全店資料。</p>
                 <button class="btn" style="background: #00b894; margin-bottom: 8px;" onclick="exportBackup()">📥 下載全店資料 (JSON)</button>
                 <input type="file" id="import-file" style="display: none;" accept=".json" onchange="importBackup(event)">
@@ -619,7 +638,6 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    // 天使心專屬資料庫位置
     const docRef = doc(db, "AngelHeart", "MainData");
 
     const defaultBannedData = [
@@ -867,6 +885,7 @@
         }
     }
 
+    // 🔥 首頁：判斷是否為全店公休或半天公休
     window.renderTodayAngels = function() {
         const today = new Date();
         const year = today.getFullYear();
@@ -881,43 +900,54 @@
 
         if (scheduleData[monthKey] && scheduleData[monthKey][day] && scheduleData[monthKey][day].shifts && scheduleData[monthKey][day].shifts.length > 0) {
             
-            let workingShifts = scheduleData[monthKey][day].shifts.filter(s => !s.time.includes('公休'));
+            let storeClosedShift = scheduleData[monthKey][day].shifts.find(s => s.name === "🏪 全店");
+            let workingShifts = scheduleData[monthKey][day].shifts.filter(s => s.name !== "🏪 全店");
             
-            if (workingShifts.length > 0) {
-                workingShifts.sort((a, b) => {
-                    const getW = t => {
-                        if(t.includes('全班')) return 1;
-                        if(t.includes('早班')) return 2;
-                        if(t.includes('晚班')) return 3;
-                        return 4;
-                    };
-                    return getW(a.time) - getW(b.time);
-                }).forEach(s => {
-                    const mData = maidData[s.name] || {};
-                    let imgUrl = mData.photo;
-                    
-                    if (imgUrl && !imgUrl.startsWith('http') && !imgUrl.startsWith('data:')) {
-                        imgUrl = 'images/' + imgUrl;
-                    }
-
-                    if (!imgUrl) {
-                        const encodedColor = (mData.color || '#ccc').replace('#', '%23');
-                        imgUrl = `data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='${encodedColor}' opacity='0.2'/%3E%3Ctext x='50%25' y='50%25' fill='${encodedColor}' font-size='20' font-family='sans-serif' font-weight='bold' dominant-baseline='middle' text-anchor='middle'%3E${s.name}%3C/text%3E%3C/svg%3E`;
-                    }
-                    htmlContent += `
-                        <div class="today-angel-item">
-                            <img src="${imgUrl}" class="today-angel-img" style="border-color: ${mData.color || '#fff'};" onerror="window.handlePhotoError(this, '${s.name}')">
-                            <div class="maid-photo-fallback" style="border-radius: 50%; width: 60px; height: 60px; font-size: 14px;">${s.name}</div>
-                            <span class="today-angel-name">${s.name}</span>
-                            <span class="today-angel-time">${s.time}</span>
-                        </div>
-                    `;
-                });
+            // 如果設定為全日公休
+            if (storeClosedShift && storeClosedShift.time === "🏠 全日公休") {
+                htmlContent = '<div style="font-size: 14px; color: #fff; padding: 10px; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">今日為天界全日公休，天使們都在休息喔！</div>';
             } else {
-                htmlContent = '<div style="font-size: 14px; color: #fff; padding: 10px; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">今日天使皆為公休，天界休息喔！</div>';
+                // 如果是半天公休，先印出黃色警告
+                if (storeClosedShift) {
+                    htmlContent += `<div style="width:100%; font-size: 13px; color: #fde047; padding: 5px; font-weight: bold; text-align:center; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">⚠️ 注意：今日為 ${storeClosedShift.time}</div>`;
+                }
+
+                if (workingShifts.length > 0) {
+                    workingShifts.sort((a, b) => {
+                        const getW = t => {
+                            if(t.includes('全班')) return 1;
+                            if(t.includes('早班')) return 2;
+                            if(t.includes('晚班')) return 3;
+                            return 4;
+                        };
+                        return getW(a.time) - getW(b.time);
+                    }).forEach(s => {
+                        const mData = maidData[s.name] || {};
+                        let imgUrl = mData.photo;
+                        
+                        if (imgUrl && !imgUrl.startsWith('http') && !imgUrl.startsWith('data:')) {
+                            imgUrl = 'images/' + imgUrl;
+                        }
+
+                        if (!imgUrl) {
+                            const encodedColor = (mData.color || '#ccc').replace('#', '%23');
+                            imgUrl = `data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='${encodedColor}' opacity='0.2'/%3E%3Ctext x='50%25' y='50%25' fill='${encodedColor}' font-size='20' font-family='sans-serif' font-weight='bold' dominant-baseline='middle' text-anchor='middle'%3E${s.name}%3C/text%3E%3C/svg%3E`;
+                        }
+                        htmlContent += `
+                            <div class="today-angel-item">
+                                <img src="${imgUrl}" class="today-angel-img" style="border-color: ${mData.color || '#fff'};" onerror="window.handlePhotoError(this, '${s.name}')">
+                                <div class="maid-photo-fallback" style="border-radius: 50%; width: 60px; height: 60px; font-size: 14px;">${s.name}</div>
+                                <span class="today-angel-name">${s.name}</span>
+                                <span class="today-angel-time">${s.time}</span>
+                            </div>
+                        `;
+                    });
+                } else {
+                    htmlContent += '<div style="font-size: 14px; color: #fff; padding: 10px; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">今日天使皆為公休，天界休息喔！</div>';
+                }
             }
         } else {
-            htmlContent = '<div style="font-size: 14px; color: #fff; padding: 10px; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">今日天界休息，或天使們尚未排班喔！</div>';
+            htmlContent = '<div style="font-size: 14px; color: #fff; padding: 10px; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">今日天界尚未排班喔！</div>';
         }
 
         banners.forEach(b => b.style.display = 'block');
@@ -1017,28 +1047,30 @@
                 let shiftsWithIndex = dayData.shifts.map((s, idx) => ({ ...s, originalIndex: idx }));
                 
                 shiftsWithIndex.sort((a, b) => {
-                    const getWeight = (t) => {
+                    const getWeight = (t, name) => {
+                        if (name === "🏪 全店") return 0; // 店家公休強制排最上面
                         if (t.includes('全班')) return 1;
-                        if (t.includes('早班') && !t.includes('公休')) return 2;
-                        if (t.includes('晚班') && !t.includes('公休')) return 3;
-                        if (t.includes('公休')) return 4;
-                        return 5;
+                        if (t.includes('早班')) return 2;
+                        if (t.includes('晚班')) return 3;
+                        return 4;
                     };
-                    return getWeight(a.time) - getWeight(b.time);
+                    return getWeight(a.time, a.name) - getWeight(b.time, b.name);
                 });
 
                 shiftsWithIndex.forEach((s) => {
-                    if (activeFilters.has(s.name)) {
-                        const mc = maidData[s.name] ? maidData[s.name].color : "#ccc";
+                    if (s.name === "🏪 全店" || activeFilters.has(s.name)) {
+                        const mc = maidData[s.name] ? maidData[s.name].color : "#d63031"; 
                         
                         let shiftClass = '';
-                        if (s.time.includes('全班')) shiftClass = 'shift-full';
-                        else if (s.time.includes('早班') && !s.time.includes('公休')) shiftClass = 'shift-morning';
-                        else if (s.time.includes('晚班') && !s.time.includes('公休')) shiftClass = 'shift-night';
-                        else if (s.time.includes('公休')) shiftClass = 'shift-off';
+                        if (s.name === "🏪 全店") shiftClass = 'shift-off'; 
+                        else if (s.time.includes('全班')) shiftClass = 'shift-full';
+                        else if (s.time.includes('早班')) shiftClass = 'shift-morning';
+                        else if (s.time.includes('晚班')) shiftClass = 'shift-night';
 
                         const clickAction = isAdmin ? `onclick="deleteShift('${monthKey}', ${day}, ${s.originalIndex})"` : '';
-                        html += `<div class="shift-tag ${shiftClass}" style="border-left-color: ${mc};" ${clickAction}>${s.name}(${s.time})</div>`;
+                        let labelText = (s.name === "🏪 全店") ? s.time : `${s.name}(${s.time})`;
+                        
+                        html += `<div class="shift-tag ${shiftClass}" style="border-left-color: ${mc};" ${clickAction}>${labelText}</div>`;
                     }
                 });
             }
@@ -1062,6 +1094,7 @@
         }
     }
 
+    // 🔥 新增排班邏輯 (純女僕)
     window.addShift = function() {
         const year = document.getElementById("view-year").value;
         const month = document.getElementById("view-month").value;
@@ -1070,21 +1103,57 @@
         const type = document.getElementById("shift-type").value;
         const monthKey = `${year}-${month}`;
         
+        if (!name) return alert("請選擇女僕！");
+
         let timeText = "⭐ 全班";
         if (type === "morning") timeText = "☀️ 早班";
         if (type === "night") timeText = "🌙 晚班";
-        if (type === "off_full") timeText = "🏠 全日公休";
-        if (type === "off_morning") timeText = "🌅 早班公休";
-        if (type === "off_night") timeText = "🌃 晚班公休";
 
         if (!scheduleData[monthKey]) scheduleData[monthKey] = {};
         if (!scheduleData[monthKey][day]) scheduleData[monthKey][day] = { event: null, shifts: [] };
         
+        // 避免同一位女僕同一天重複排班
+        scheduleData[monthKey][day].shifts = scheduleData[monthKey][day].shifts.filter(s => s.name !== name);
         scheduleData[monthKey][day].shifts.push({ name: name, time: timeText }); 
-        saveToCloud(); 
         
+        saveToCloud(); 
         renderCalendar();
         renderTodayAngels();
+    }
+
+    // 🔥 設定店家公休邏輯
+    window.setStoreClosed = function() {
+        const year = document.getElementById("view-year").value;
+        const month = document.getElementById("view-month").value;
+        const day = document.getElementById("store-closed-day").value;
+        const type = document.getElementById("store-closed-type").value;
+        const monthKey = `${year}-${month}`;
+
+        if (!scheduleData[monthKey]) scheduleData[monthKey] = {};
+        if (!scheduleData[monthKey][day]) scheduleData[monthKey][day] = { event: null, shifts: [] };
+
+        // 移除舊的公休紀錄避免重複
+        scheduleData[monthKey][day].shifts = scheduleData[monthKey][day].shifts.filter(s => s.name !== "🏪 全店");
+        scheduleData[monthKey][day].shifts.push({ name: "🏪 全店", time: type });
+
+        saveToCloud();
+        renderCalendar();
+        renderTodayAngels();
+    }
+
+    // 🔥 取消店家公休邏輯
+    window.removeStoreClosed = function() {
+        const year = document.getElementById("view-year").value;
+        const month = document.getElementById("view-month").value;
+        const day = document.getElementById("store-closed-day").value;
+        const monthKey = `${year}-${month}`;
+
+        if (scheduleData[monthKey] && scheduleData[monthKey][day]) {
+            scheduleData[monthKey][day].shifts = scheduleData[monthKey][day].shifts.filter(s => s.name !== "🏪 全店");
+            saveToCloud();
+            renderCalendar();
+            renderTodayAngels();
+        }
     }
 
     window.addEvent = function() {
@@ -1117,12 +1186,15 @@
         select.innerHTML = "";
         
         Object.keys(maidData).sort().forEach(m => {
-            const opt = document.createElement("option"); opt.value = m; 
-            opt.textContent = maidData[m].isGraduated ? `${m} (已畢業)` : m; 
-            select.appendChild(opt);
+            if (!maidData[m].isGraduated) {
+                const opt = document.createElement("option"); 
+                opt.value = m; 
+                opt.textContent = m; 
+                select.appendChild(opt);
+            }
         });
         
-        if (currentSelection && maidData[currentSelection]) {
+        if (currentSelection && maidData[currentSelection] && !maidData[currentSelection].isGraduated) {
             select.value = currentSelection;
         }
     }
@@ -1153,7 +1225,6 @@
         activeFilters = new Set(Object.keys(maidData)); renderFilters(); window.renderCalendar();
     }
 
-    // 修改：成員圖鑑自動分類現役與畢業天使
     function renderMaidGallery() {
         const galleryActive = document.getElementById("maid-gallery-active");
         const galleryGraduated = document.getElementById("maid-gallery-graduated");
@@ -1201,7 +1272,6 @@
             }
         });
 
-        // 只有在有畢業天使時才顯示畢業專區
         if (hasGraduated) {
             graduatedSection.style.display = "block";
         } else {
@@ -1255,7 +1325,6 @@
         maidData[n] = { color: c, ig: ig, photo: photo, isGraduated: isGraduated }; 
         activeFilters.add(n); saveToCloud(); 
         
-        // 儲存後清空輸入框與打勾狀態
         document.getElementById("new-name").value = ""; 
         document.getElementById("new-ig").value = ""; 
         document.getElementById("new-photo").value = "";
